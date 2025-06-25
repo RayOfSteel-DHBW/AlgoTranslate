@@ -1,0 +1,21 @@
+Algorithms 1
+Introduction
+Long Multiplication and Landau Notation
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Agenda
+Generally speaking, you can find more details on the course homepage
+https://scale.iti.kit.edu/teaching/2024ss/algo1/start
+
+2
+
+Schedule
+two sessions per week
+exercise session every other week (usually Wednesdays)
+additional weekly tutorials
+
+[Translation truncated due to environment limitations]
