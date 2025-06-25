@@ -8,13 +8,13 @@ www.kit.edu
 
  Review: Two Types of Data Storage
 Index: 0 1 2 3 4 5 6 7 8 9 10 11
-Arrays (Fields)
+Arrays
 Address: 30 31 32 33 34 35 36 37 38 39 40 41
 Set of consecutive memory cells
 Data: 4 48 89 1 0 9 13 7 32 76 17 5
-Access with address or index at any position in Θ(1)
-very close to hardware
-last time: comfort functions for dynamic growth
+Access with address or index at any position in Θ(1) (constant time)
+very close to the hardware
+last time: convenience functions for dynamic growth
 3 4 5
 Pointer-based Structures
 17 18 19
@@ -25,12 +25,12 @@ a node stores:
 48 49 50
 data that actually interests us
 7 23 17
-memory addresses of other nodes (pointers)
-Access through navigation along pointers
+memory addresses of other nodes (pfor k < log2 n cannot get the right result for every x ∈ M′inters)
+Access through navigation along the pointers
 23 24 25
 15 ⊥ ⊥
-abstracts more strongly from hardware
-today: lists as simple example
+abstracts more strongly from the hardware
+today: we will use lists as a simple example
 2
 
 Thomas Bläsius – Algorithms 1
@@ -78,7 +78,7 @@ changes are only local
 89
 1 ⊥
 ⊥ 4
-rearrange constantly many pointers
+update only a constant number of pointers
 → constant runtime (Θ(1))
 back
 prev
@@ -137,7 +137,7 @@ back
 Institute for Theoretical Computer Science, Scalable Algorithms
 
  Implementation Details
-Dummy node ⊥ for the head
+Sentinel node ⊥ for the head
 no more null pointers for first
 and last list element
 simpler, thanks to reduction of
@@ -323,9 +323,9 @@ Moving entire ranges
 ⟨4; 48; 89; 1; 0; 9; 13; 7; 32; 76; 17; 5⟩
 Deleting entire ranges
 Weaknesses of the list
-no random access
+no random access (direct indexing)
 you must always already have the relevant nodes
-in hand
+readily available
 in practice: worse constant factors
 (memory overhead, cache effects)
 
@@ -335,7 +335,7 @@ Thomas Bläsius – Algorithms 1
 
 Side note
 Θ(1) for deleting a range is possibly
-a somewhat naive perspective
+a somewhat optimistic ('naïve') view
 What happens to the reserved memory?
 Do we free it? Who pays for that?
 Or do we accept a memory leak?
@@ -353,7 +353,7 @@ problem: splice becomes more expensive because we have to count the moved elemen
 Example 2: Singly linked list
 store only next but not prev
 less storage space, often faster
-but: less flexible, weird user interface (e.g. removeAfter)
+but: less flexible, unusual user interface (e.g. removeAfter)
 
 8
 
@@ -426,9 +426,9 @@ Linear search
 look at every element from A
 linear runtime: Θ(n)
 Can we do better?
-only some elements considered → x can hide among the unexamined ones
+if only some elements are considered → x can hide among the unexamined ones
 we must at least read the input completely once ⇒ Ω(n)
-so: better than Θ(n) is not possible, unless we require additional properties for A
+thus: better than Θ(n) is not possible, unless we require additional properties for A
 
 11
 
@@ -448,10 +448,10 @@ through one comparison: decide whether x lies in the left or right half of A
 search recursively in the relevant half of A
 termination: sequence to be searched is only constantly large (here: 2)
 Number of comparisons
-per comparison the size of A halves → only Θ(log n) halvings
+per comparison the size of A halves → only Θ(log n) halvings needed
 Implementation
 per step: access to middle element in currently considered range
-random access → array
+random access (direct indexing) → array
 12
 
 Thomas Bläsius – Algorithms 1
@@ -491,8 +491,7 @@ new range for x < A[mid]
 new range for x ≥ A[mid]
 
 if A[beg] ≤ x ≤ A[end] holds in current
-call
-then also in the next
+call, then also in the next
 Attention at the beginning:
 A[0] ≤ x ≤ A[n − 1] need not hold!
 Institute for Theoretical Computer Science, Scalable Algorithms
@@ -596,8 +595,8 @@ from M and let x ∈ M. Binary search finds the index i with A[i − 1] < x ≤ 
 Θ(log n) comparisons.
 (Convention: A[−1] = −∞, A[n] = ∞)
 Consequences: Range queries
-for a; b ∈ M we can find out in Θ(log n) how many elements A contains from [a; b]
-A contains k elements from [a; b] → we can enumerate them in Θ(log n + k)
+for a, b ∈ M we can find out in Θ(log n) how many elements A contains from [a, b]
+A contains k elements from [a, b] → we can enumerate them in Θ(log n + k)
 Simple idea, with pitfalls in implementation
 abstract idea: compare with middle element in each step → halve search space
 implementation: you have to be careful with edge cases
@@ -616,8 +615,8 @@ You cannot search in o(log n).
 Very abbreviated presentation!
 
 Theorem
-There is no data structure that can be computed for every ordered set M and every subset M ′ ⊆ M
-with n := |M ′ | that tests for every x ∈ M in o(log n) time whether x ∈ M ′ .
+There is no data structure that can be computed for every ordered set M and every subset M′ ⊆ M
+with n := |M′| that tests for every x ∈ M in o(log n) (strictly sub-logarithmic) time whether x ∈ M′.
 Why is this so cumbersome?
 Doesn't the simpler formulation say the same thing!?!
 here important: we only know about M that it is an ordered set
@@ -634,8 +633,8 @@ Institute for Theoretical Computer Science, Scalable Algorithms
 
  It Can't Be Done Faster
 Theorem
-There is no data structure that can be computed for every ordered set M and every subset M ′ ⊆ M
-with n := |M ′ | that tests for every x ∈ M in o(log n) time whether x ∈ M ′ .
+There is no data structure that can be computed for every ordered set M and every subset M′ ⊆ M
+with n := |M′| that tests for every x ∈ M in o(log n) (strictly sub-logarithmic) time whether x ∈ M′.
 Proof
 Execution of search depends only on comparisons between x and elements in M ′
 Set of all executions: decision tree
@@ -655,7 +654,7 @@ one execution: path from root to leaf
 < = >
 at "=" terminates, since x found < = >
 → blue leaf
-each x ∈ M ′ is found at a different blue leaf
+each x ∈ M′ is found at a different blue leaf
 k−1
 P i
 2 = 2k − 1 different blue leaves
@@ -674,7 +673,7 @@ Institute for Theoretical Computer Science, Scalable Algorithms
 Lists
 pointer-based data structure for storing a sequence
 flexibly modifiable: e.g. fast insertion, deletion, splice
-no random access using index
+no random access (direct indexing)
 Binary search
 Abstraction level
 Prerequisite: sorted sequence and we have random access
@@ -683,7 +682,7 @@ high
 (idea finding,
 runtime estimation)
 → halves search space → Θ(log n) comparisons
-Correctness of detail implementation via invariant
+Correctness of detailed implementation via invariant
 low
 (formalization, path to implementation)
 
