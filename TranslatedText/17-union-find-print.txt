@@ -1,0 +1,987 @@
+Algorithms 1
+Union-Find
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ Motivation: Union–Find
+Last lecture: Kruskal's algorithm
+choose minimal edge in each step
+among all edges that don't form a cycle with already chosen edges
+u
+
+v
+
+skip
+What do we want to achieve?
+quickly test whether {u; v } closes a cycle
+equivalent: u and v lie in the same component
+inserting an edge unites two components
+v
+u
+select
+desired operations
+union(u; v ): unite components of u and v
+find(v ): component* of v
+test whether u and v lie in the same component: find(u) = find(v )
+
+v
+
+u
+
+u
+
+v
+
+*implementation: determine a unique representative for each component and return this
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Union–Find
+Somewhat more formal (and without the application in mind)
+Starting situation: finite set of disjoint single-element sets
+Example: {{a}; {b}; {c}; {d}; {e}; {f }; {g }}
+union(x; y ): unite the sets that contain x and y
+find(x): return a unique representative of the set that contains x
+Example
+b
+a
+
+c
+f
+
+d
+e
+
+Set
+3
+
+Thomas Bläsius – Algorithms 1
+
+Representative
+
+union(a; f )
+union(c; d)
+find(a) → a
+find(f ) → a
+find(c) → c
+union(b; d)
+find(c) → b
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Preliminary consideration: maximal order
+Focus on find: What would we like?
+optimal: each element knows the representative of its own set
+Pointer-based structure
+each element is a node
+each node has a pointer to the representative of the set
+find: only follow one pointer → Θ(1)
+
+b
+a
+
+c
+e
+
+d
+
+b
+a
+
+c
+
+d
+
+e
+
+Problem for union
+all elements from one of the two sets must be re-hung → Θ(n)
+maintaining maximal order is expensive
+Solution: allow some disorder
+re-hang fewer pointers → fast union
+no direct pointer to representative → slower find
+Goal: enough order so that find remains fast
+4
+
+Thomas Bläsius – Algorithms 1
+
+Reminder: Operations
+union(x; y ): unite the sets that contain x and y
+find(x): return a unique
+representative of the set that contains x
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Faster union: allow some disorder
+Plan for fast union
+Situation: unite X and Y with representatives x ∈ X and y ∈ Y
+choose x as new representative of X ∪ Y
+new pointer: y → x
+for all other y ′ ∈ Y : keep pointer to y
+
+y
+
+x
+a
+
+c
+
+b
+
+|
+
+e
+
+d
+
+{z
+
+}
+
+x
+
+More effort for find
+possibly follow multiple pointers to find the representative
+Hope: the paths of pointers don't become so long
+a
+
+b
+
+y
+
+c
+
+d
+
+e
+
+Worst-case costs and tree height
+resulting tree has height h → costs O(h) per operation
+Plan: choose new representative so that height is as small as possible
+5
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ What exactly do we do now?
+Representation of the set as rooted forest
+each tree belongs to a set
+root of each tree is the representative of the set
+find(x): follow pointer to parent up to root
+
+Forest representation
+
+Sets
+
+b
+a
+
+union(x; y )
+first find roots: wx = find(x) and wy = find(y )
+let hx and hy be the heights of the trees
+w.l.o.g. hx ≤ hy → insert wx as child of wy
+
+c
+d
+
+f
+e
+
+a
+
+b
+
+f
+
+d
+
+e
+
+c
+
+wx
+x
+
+wy
+y
+
+union(x; y )
+
+wy
+wx
+x
+
+y
+
+Notes
+store height of tree at root → possibly update during union
+runtime: dominated by height during find
+6
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Height of the tree
+union(x; y )
+first find roots: wx = find(x) and wy = find(y )
+let hx and hy be the heights of the trees
+w.l.o.g. hx ≤ hy → insert wx as child of wy
+
+wx
+x
+
+wy
+
+union(x; y )
+
+wy
+wx
+x
+
+y
+
+y
+
+Lemma
+Such a tree of height h contains at least 2h nodes. Thus h ∈ O(log n).
+Proof: Induction over h
+Beginning: h = 0 ⇒ 1 = 20 nodes
+Height h + 1 only arises through union of two trees of height h
+by induction hypothesis: at least 2 · 2h = 2h+1 nodes
+
+7
+
+Thomas Bläsius – Algorithms 1
+
+Height:
+
+0
+
+1
+
+2
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Can we do better?
+Theorem
+There exists a Union–Find data structure where union and find each require O(log n) time.
+Idea
+reduce height through occasional cleanup
+optimal: all nodes are direct children of the root
+cleanup ≡ hang nodes directly on the root
+w
+
+find(x) with path compression
+let ı be the path from x to root w
+hang each node on ı directly on w
+asymptotically no additional costs for find(x)
+but: later calls to find possibly faster
+
+8
+
+Thomas Bläsius – Algorithms 1
+
+find(x) = w
+w
+x
+x
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Union by Rank
+Problem
+path compression possibly reduces the height of the tree
+without us noticing
+union uses the height to decide which tree
+is hung under which
+
+wx
+x
+
+wy
+
+Thomas Bläsius – Algorithms 1
+
+wy
+wx
+x
+
+y
+
+Not a problem at all
+4
+x
+call the stored number not height, but rank r
+everything as before with height:
+initial: rank r = 0 for sets of size 1
+union: small rank under large rank
+4
+x
+with equal rank: increase one by 1
+still: subtree under root with rank r has ≥ 2r nodes
+additionally: subtree under a node with rank r has height ≤ r
+9
+
+union(x; y )
+
+y
+
+2
+
+x
+
+y
+
+4
+
+y
+
+4
+
+y
+
+4
+
+union by rank
+
+x
+y
+
+2
+
+5
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Example
+a
+
+b
+
+0
+
+c
+
+0
+
+d
+
+1
+
+3
+
+e
+
+0
+
+f
+g
+
+2
+
+0
+
+h
+
+i
+
+1
+
+0
+
+Tiebreaker
+union two roots with same rank
+choose alphabetically smaller node as root
+10
+
+Thomas Bläsius – Algorithms 1
+
+Operations
+union(a; b)
+union(b; c)
+union(d; e)
+union(f ; g )
+union(h; i)
+union(a; d)
+union(f ; h)
+find(e)
+union(a; f )
+find(h)
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Runtime analysis: Basic invariants
+Lemma
+Each node has a larger rank than any of its children.
+
+x
+
+y
+
+2
+
+x
+
+4
+
+y
+
+4
+
+y
+
+4
+
+union by rank
+
+Lemma
+There are at most n=2r nodes with rank equal to r .
+
+x
+
+4
+
+x
+y
+
+Lemma
+There are at most n=2r nodes with rank greater than r .
+Proof
+form sum over all larger ranks:
+P n
+n
+n
+≤
+2
+·
+=
+r
++1
+i
+2
+2r
+2
+
+4
+
+2
+
+5
+
+w
+path compression
+
+w
+
+i>r
+
+v
+v
+
+11
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Runtime analysis: new operation link
+The three steps of union(x; y )
+wx = find(x)
+wy = find(y )
+hang wx under wy or vice versa
+New operation: link
+just like union, but only for roots
+the two find operations then fall away
+
+wx
+x
+
+wy
+
+union(x; y )
+
+wx
+x
+
+y
+
+a
+
+b
+
+wy
+y
+
+link(a; b)
+
+b
+a
+
+Why do we do this?
+Plan: analyze costs for union and find separately from each other
+Problem: can hardly be separated when each union executes find twice
+Solution: replace sequence of n union and m find with n link and 2n + m find
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Runtime analysis: new operation compress
+The two steps of find(v )
+finding the root w
+compression of the path from v to w → denote this step with compress(v ; w )
+w
+
+compress(v ; w )
+v
+
+w
+v
+
+Basic approach
+Goal: Analyze runtime of algorithm A
+analyze a different algorithm B instead
+show: runtime of A is not larger than that of B
+thus: runtime of B gives bound on runtime of A
+
+Consider compress instead of find
+replace in sequence of link and find operations each find with appropriate compress
+note: resulting sequence delivers the same data structure at any time
+moreover: asymptotic runtime remains the same
+same: sort compress to the back
+13
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Runtime analysis: Reordering operations
+Swap compress to the back
+Result and runtime are not changed by the swap
+we can assume: first all link and then all compress operations
+w
+
+u
+
+w
+
+u
+
+u
+
+v
+
+w
+
+compress(v ; w )
+
+link(u; w )
+
+v
+
+v
+
+w
+
+u
+
+u
+
+u
+
+w
+
+w
+
+link(u; w )
+
+compress(v ; w )
+
+v
+
+v
+v
+
+14
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Restructuring the sequence of operations
+actually: n union and m find in arbitrary order
+instead: n link followed by 2n + m compress
+
+| {z }
+
+Runtime analysis: Intermediate state
+do very different things,
+but: same asymptotic runtime
+
+actual sequence: union(c; e), find(f )
+a
+
+a
+
+d
+
+a
+a
+
+d
+
+find(c)
+b
+
+e
+
+f
+
+a
+
+d
+
+find(e)
+b
+
+c
+
+e
+
+f
+
+link(a; d)
+b
+
+c
+
+e
+
+b
+
+c
+
+d
+
+f
+
+b
+e
+
+c
+
+g
+
+g
+
+find(f )
+c
+
+d
+
+f
+
+e
+
+g
+
+f
+
+g
+g
+
+15
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Restructuring the sequence of operations
+actually: n union and m find in arbitrary order
+instead: n link followed by 2n + m compress
+
+| {z }
+
+Runtime analysis: Intermediate state
+do very different things,
+but: same asymptotic runtime
+
+The n link operations
+link runs in constant time → Θ(n)
+Result: forest with at most N = 2n non-isolated nodes
+What we still need to do
+analyze M = 2n + m compress operations
+on a forest with N nodes
+
+w
+
+compress(v ; w )
+
+w
+v
+
+v
+
+Invariants for the ranks of nodes
+Lemma
+Each node has a larger rank than any of its children.
+15
+
+Thomas Bläsius – Algorithms 1
+
+Lemma
+There are at most N=2r nodes with rank greater than r .
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Runtime analysis: Division into rank groups
+
+How often do we re-hang Type 1 nodes?
+consider arbitrary node v
+v is re-hung → new parent has larger rank
+small range of ranks per group
+→ v cannot often be Type 1 before v becomes Type 2
+16
+
+Thomas Bläsius – Algorithms 1
+
+9
+
+Rank ≥ 8
+Rank ∈ [2; 4] Rank ∈ [5; 7]
+
+How often do we re-hang Type 2 nodes?
+at most k Type 2 nodes per compress
+M times compress → O(kM) time total
+
+Rank ≤ 1
+
+Groups of ranks
+group nodes by their rank into k groups
+two types of nodes in a compress path
+Type 1: parent is in the same group
+Type 2: parent is in a higher group
+
+8
+
+7
+5
+
+6
+5
+
+3
+2
+
+2
+
+1
+
+1
+
+1
+0
+
+0
+
+0
+
+0
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Runtime analysis: Type 1 operations
+r0
+
+v is re-hung → new parent has larger rank
+each node in group i is at most ri−1 times Type 1
+Lemma
+There are at most N=2r nodes with rank greater than r .
+
+each node in group i has rank greater than ri
+there are at most N=2ri of these
+17
+
+Thomas Bläsius – Algorithms 1
+
+Group 1
+Group 2
+
+Lemma
+Each node has a larger rank than any of its children.
+
+8
+
+7
+5
+
+6
+5
+
+r2
+Group 3
+
+Proof
+
+9
+
+r1
+
+3
+2
+
+2
+
+r3
+Group 4
+
+Lemma
+Let group i be the set of all nodes with rank in (ri ; ri−1 ]
+for r0 > r1 > · · · > rk . In any sequence of compress
+operations, at most N · r2i−1
+ri nodes from group i
+are re-hung as Type 1.
+
+1
+
+1
+
+1
+0
+
+0
+
+0
+
+0
+
+r4
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Runtime analysis: Choice of groups
+R
+
+Lemma
+Only O(kM) Type 2 nodes are re-hung in total.
+(M: number of compress operations, k: number of groups)
+
+Group 1
+Group 4
+
+Group 3
+
+log log R
+Choose: r0 = R (maximal rank) and ri = log ri −1
+then: costs for Type 1 in group i in O(N)
+Type 1 total: O(kN)
+log log log R
+How many groups do we get then?
+After how many log is the result ≤ 1?
+this number is called iterated logarithm log∗ R
+note: R ∈ O(log N)
+log log log log R
+18
+
+Thomas Bläsius – Algorithms 1
+
+9
+8
+
+log R
+Group 2
+
+Lemma
+At most N· r2i−1
+ri nodes from group i are re-hung as Type 1.
+(N: number of nodes)
+
+7
+5
+
+6
+5
+
+3
+2
+
+2
+
+1
+
+1
+
+1
+0
+
+0
+
+0
+
+0
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Runtime analysis
+Corollary
+A sequence of M compress operations in a forest with N nodes requires only
+O((N + M) log∗ N) re-hanging operations.
+Back to union and find
+what we wanted to analyze: n union and m find operations
+what we analyzed:
+n link → delivers forest with at most N = 2n nodes in Θ(n) time
+M = 2n + m compress on forest with N nodes in O((N + M) log∗ N)
+we know: union, find sequence has same runtime as link, compress sequence
+Theorem
+An arbitrary sequence of n union and m find operations with Union-by-Rank and path compression requires O((n + m) log∗ n) time. So amortized O(log∗ n) per operation.
+19
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ How cool is that?
+Theorem
+An arbitrary sequence of n union and m find operations with Union-by-Rank and path compression requires O((n + m) log∗ n) time. So amortized O(log∗ n) per operation.
+How fast does log∗ (n) grow?
+·2
+··
+consider power tower of height k: n = 22
+then: log∗ n = k
+as k grows larger n grows extremely fast
+→ as n grows larger log∗ n grows extremely slowly
+For comparison
+for n ∈ (65 536; 265 536 ] holds log∗ n = 5 and log n ∈ (16; 65 536]
+265 536 > 1019 728
+the observable universe has between 1078 and 1082 atoms
+20
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Summary
+Union–Find
+very useful data structure
+not part of the standard in many programming languages (e.g. C++, Java)
+but: not so hard to implement yourself (analysis complicated, algorithm itself easy)
+Runtime analysis
+exciting technique: rebuild the algorithm for the purpose of analysis
+the analyzed algorithm possibly doesn't do the desired thing at all or is not implementable
+but: the analysis of the other algorithm still provides a bound for the actual algorithm
+Preview: There's still room for improvement
+can be improved to amortized runtime Θ(¸(n)) per operation (this is tight)
+¸(n): inverse Ackermann function
+¸(n) grows even slower than log∗ n
+21
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

@@ -1,0 +1,801 @@
+Algorithms 1
+(2; 3)-Trees – Implementation
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ Last time
+Search tree for managing sorted sequences
+pointer-based structure → good for insertion/deletion
+tree structure → simulates binary search
+(2; 3)-tree
+almost binary: each inner node has 2 or 3 children
+balanced: each leaf has the same depth
+Preserving structure during insertion and deletion
+insertion possibly creates nodes with 4 children → split
+deletion possibly creates nodes with only 1 child
+→ merge or rebalance
+shifts the problem step by step upward
+O(log n) height → O(log n) runtime
+2
+
+Thomas Bläsius – Algorithms 1
+
+5
+1
+
+9
+
+0
+0
+
+4
+1
+
+4
+
+7
+5
+
+7
+
+13
+9
+
+13
+
+17
+
+split
+
+merge
+
+rebalance
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Today
+Working out the details
+What exactly do we store at each node?
+How do we handle special cases (e.g. empty tree)?
+How do we need to update the keys?
+How do we implement the data structure in pseudocode?
+Notes
+there is usually not only one answer to the questions
+goals when we have multiple ways to implement something:
+as simple as possible
+as few special treatments as possible
+correctness + correct asymptotic runtime
+Learning goal: implementing an algorithm at high abstraction level in pseudocode
+not the learning goal: memorizing pseudocode of (2; 3)-trees
+3
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ What do we store at each node?
+Tree structure
+each node has pointers to up to 4 children
+each node has a pointer to the parent
+
+parent
+child[0]
+
+Navigation according to the keys
+last time
+each node knows multiple keys
+' − 1 keys for ' children
+somewhat simpler
+each node a knows only one key a:key
+a:key = largest key in the subtree under a
+Decision for the right child when searching:
+according to the keys of the children
+4
+
+Thomas Bläsius – Algorithms 1
+
+class N ODE
+Node parent
+Array⟨Node; 4⟩ child
+Key key
+
+child[1]
+
+k3
+k1
+
+k2
+
+k3
+
+(−∞; k1 ]
+
+(k1 ; k2 ]
+
+(k2 ; k3 ]
+
+Invariant that we restore after
+each operation
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Search – Preliminary consideration & Initialization
+What exactly are we searching for?
+Input: a key k
+if k in the sequence → return corresponding leaf
+k not in the sequence → leaf with next larger key
+∞-trick
+What if k is larger than all existing keys?
+insert a dummy leaf with key ∞
+avoids the special case when k is too large
+avoids the special case for an empty tree
+Initialization of the (2; 3)-tree
+root node with one child with key ∞
+key of the root: also ∞
+5
+
+Thomas Bläsius – Algorithms 1
+
+root
+∞
+?
+∞
+?
+
+a
+
+0
+
+1
+find(1)
+
+5
+
+7
+
+9
+
+13
+
+17
+
+find(6)
+
+∞
+?
+
+find(19)
+
+class (2, 3)-T REE
+Node root
+init()
+Node a
+a:key := ∞
+a:parent := root
+root:child[0] := a
+root:key := ∞
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Search
+Reminder
+Goal: find first leaf with key ≥ k
+Invariant: a:key = largest key in the subtree under a
+
+find(Key k)
+Node a := root
+while a is not a leaf do
+i := min{i | k ≤ a:child[i]:key}
+a := a:child[i]
+return a
+
+∞
+∞
+
+7
+1
+0
+
+7
+1
+
+4
+
+5
+
+13
+7
+
+find(6)
+
+6
+
+Thomas Bläsius – Algorithms 1
+
+9
+
+∞
+
+28
+13
+
+17
+
+28
+
+32
+
+∞
+
+find(28)
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Insertion – What exactly do we want?
+Option 1: insert(k)
+searchable set of keys
+skip duplicates when inserting
+Option 2: set(k; v )
+mapping from keys to values
+additionally store a value at each leaf
+leaf with key doesn't exist → new leaf
+leaf exists → overwrite value
+Today
+we consider option 1 here
+option 2 can be implemented analogously
+
+7
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Insertion – Preliminary consideration
+Reminder: Insert new leaf
+Step 1: insert new leaf at the right place
+Step 2: split nodes with 4 children
+
+28
+13
+9
+
+13
+
+15
+
+13
+
+17
+
+?
+
+Thomas Bläsius – Algorithms 1
+
+28
+
+28
+17
+
+13
+28
+
+Note
+actually doesn't matter: hanging on the parent of the predecessor would also work
+but the parent of the successor has a few advantages
+find(k) directly delivers the successor
+successor always exists, thanks to the ∞-node → no special case
+keys of inner nodes remain correct → no update needed
+8
+
+28
+
+15
+
+Step 1: Where exactly do we insert the new key k?
+on the parent of the successor
+28
+so: new leaf is hung on find(k):parent
+13
+9
+
+28
+
+9
+
+28
+13
+
+15
+
+17
+
+28
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Insertion
+Reminder: Insert new leaf
+Step 1: insert new leaf at the right place
+Step 2: split nodes with 4 children
+∞
+
+insert(Key k)
+if find(k):key = k then return
+Node a := find(k):parent
+Node b := {key :k; parent :a} // new leaf
+insert b into a:child // keeping it sorted
+// invariant: keys are correct (largest key in subtree)
+if a has four children then
+split(a)
+9
+
+Thomas Bläsius – Algorithms 1
+
+13
+9
+
+28
+13
+
+17
+
+28
+
+15
+
+∞
+13
+9
+
+28
+13
+
+15
+
+17
+
+28
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Split: Node with 4 children
+split(Node b)
+if b = root then
+Special case root
+a
+Node a := {key : ∞; parent : ⊥; child : ⟨b⟩}
+b
+b
+b:parent := a
+c0 c1 c2 c3
+c0 c1 c2 c3
+:
+root = a
+a := b:parent
+ci := b:child[i] (for i ∈ {0; 1})
+a
+a
+Node b ′ := {key : c1 :key; parent : a; child : ⟨c0 ; c1 ⟩}
+insert b ′ into a:child
+b
+b
+b′
+c0 :parent; c1 :parent := b ′
+c0 c1 c2 c3
+c0 c1 c2 c3
+remove c0 and c1 from b:child
+// invariant: keys are correct (largest key in subtree)
+if a has four children then
+possibly recursive split
+split(a)
+10
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Can this be done more nicely?
+Node b ′ := {key : c1 :key; parent : a; child : ⟨c0 ; c1 ⟩}
+insert b ′ into a:child
+c0 :parent; c1 :parent := b ′
+remove c0 and c1 from b:child
+Actually we do three things
+create node b ′
+move children c0 ; c1 from b to b ′
+add b ′ as child to a
+create Node b ′
+move children c0 and c1 from b to b ′
+add b ′ as child to a
+11
+
+Thomas Bläsius – Algorithms 1
+
+Problems
+hard to parse
+error-prone
+reusability
+
+a
+
+a
+b′
+
+b
+c0
+
+c1
+
+c2
+
+c3
+
+c0
+
+b
+c1
+
+c2
+
+c3
+
+Better
+outsource basic operations to
+subroutines
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Basic subroutines
+Insert b as child of a
+insert b at the right position of a:child
+set b:parent to a
+set a:key to b:key if b is the rightmost child
+
+a
+
+Delete child b from a
+remove b from a:child
+set b:parent to ⊥
+update a:key if b was the rightmost child
+
+a
+
+Move child b from parent a to a ′: delete + insert
+
+a
+
+b
+
+b
+
+a
+
+b
+
+a
+
+a′
+
+b
+
+a′
+
+a
+b
+
+b
+
+Note: Update of the key
+we do this only locally here → in particular not passed on to the parent of a
+therefore: always execute subroutines bottom-up
+possibly update remaining path to root at the end (we'll see this during deletion soon)
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Deletion – Preliminary consideration
+Reminder
+Step 1: simply delete the
+corresponding leaf
+Step 2: clean up nodes with only one child
+
+fuse
+
+rebalance
+
+(Merge or rebalance)
+
+Recursive calls
+after merging: parent possibly has only one child left → recursively clean up
+problem is propagated step by step further upward
+stop at rebalancing or when parent had three children before merging
+Update of keys
+use operations from before → keys are updated on the way up
+doesn't hold for the remaining path to root when recursion stops
+we ignore this for now and fix it later
+13
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Remove existing leaf
+Reminder
+Step 1: simply delete the
+corresponding leaf
+Step 2: clean up nodes with only one child
+
+(Merge or rebalance)
+
+remove(Key k)
+b := find(k)
+if b:key ̸= k then return
+a := b:parent
+remove b as child from a
+if a has only one child then
+fuseOrRebalance(a)
+
+14
+
+Thomas Bläsius – Algorithms 1
+
+fuseOrRebalance(Node b)
+if b = root then
+b
+root := b:child[0]
+remove child root from b
+return
+Node a := b:parent
+Node b ′ = successor or predecessor of b in a:child
+a
+a
+if b ′ has two children then
+fuse
+′
+fuse(b; b ′ )
+b
+b
+else // b ′ has three children
+rebalance(b; b ′ )
+a
+b
+
+a
+b′
+
+rebalance
+b
+
+b′
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ fuse and rebalance
+a
+b
+
+a
+b′
+
+fuse
+b
+
+fuse(Node b; Node b ′ )
+a := b:parent
+for Node c ∈ b ′ :child do
+move child c from b ′ to b
+remove b ′ as child from a
+if a has only one child then
+fuseOrRebalance(a)
+
+15
+
+a
+
+Thomas Bläsius – Algorithms 1
+
+b
+
+a
+b′
+
+rebalance
+b
+
+b′
+
+rebalance(Node b; Node b ′ )
+a := b:parent
+' := arg minx∈{b;b′ } x:key
+r := arg maxx∈{b;b′ } x:key
+if ' has three children do
+move child ':child[2] from ' to r
+else
+move child r:child[0] from r to '
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ fixKeysOnPathToRoot
+fixKeysOnPathToRoot(Node a)
+// only ancestors of a have incorrect keys
+while a ̸= root do
+a := a:parent
+a:key := key of right-most child
+// all keys are correct
+
+∞
+∞
+
+48
+28
+17
+
+16
+
+48
+28
+
+32
+
+Thomas Bläsius – Algorithms 1
+
+37
+
+∞
+
+82
+48
+
+76
+
+82
+
+89
+
+remove(Key k)
+// all keys are correct
+b := find(k)
+if b:key ̸= k then return
+a := b:parent
+remove b as child from a
+// only ancestors of a have incorrect keys
+if a has only one child then
+fuseOrRebalance(a)
+else
+fixKeysOnPathToRoot(a)
+
+∞
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ fixKeysOnPathToRoot
+fixKeysOnPathToRoot(Node a)
+// only ancestors of a have incorrect keys
+while a ̸= root do
+a := a:parent
+a:key := key of right-most child
+// all keys are correct
+∞
+32
+5
+
+32
+
+1
+0
+
+16
+
+5
+1
+
+4
+
+9
+5
+
+7
+
+Thomas Bläsius – Algorithms 1
+
+17
+9
+
+13
+
+fuse(Node b; Node b ′ )
+// only ancestors of b have incorrect keys
+a := b:parent
+for Node c ∈ b ′ :child do
+move child c from b ′ to b
+remove b ′ as child from a
+// only ancestors of a have incorrect keys
+if a has only one child then
+fuseOrRebalance(a)
+else
+fixKeysOnPathToRoot(a)
+
+28
+32
+17
+
+28
+
+32
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ fixKeysOnPathToRoot
+fixKeysOnPathToRoot(Node a)
+// only ancestors of a have incorrect keys
+while a ̸= root do
+a := a:parent
+a:key := key of right-most child
+// all keys are correct
+∞
+28
+5
+
+28
+
+1
+0
+
+16
+
+5
+1
+
+4
+
+13
+5
+
+7
+
+Thomas Bläsius – Algorithms 1
+
+9
+
+remove(Key k)
+// all keys are correct
+b := find(k)
+if b:key ̸= k then return
+a := b:parent
+remove b as child from a
+// only ancestors of a have incorrect keys
+if a has only one child then
+fuseOrRebalance(a)
+else
+fixKeysOnPathToRoot(a)
+
+28
+17
+13
+
+17 17 28
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Implementation (2; 3)-trees
+(2; 3)-trees
+working out the details
+in particular management and updating of keys
+end result: pseudocode
+The journey is the destination
+unimportant: our end result – the pseudocode itself
+important: the process that brought us there
+avoid special cases (∞-node)
+goal: readability, reusability, low error-proneness
+don't shy away from rebuilding if it gets too fiddly
+Learning goal: from algorithm idea to pseudocode
+given the algorithmic idea
+work out details → build correct pseudocode
+17
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

@@ -1,0 +1,428 @@
+Algorithms 1
+Depth-First Search on directed graphs
+Topological sorting
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ In what order should I get dressed?
+Observe dependencies!
+
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Topological sorting
+Definition
+Let G = (V; E) be a directed graph. A topological sorting is a total order of the nodes V such that each edge points from a smaller to a larger node.
+
+3
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Topological sorting
+Definition
+Let G = (V; E) be a directed graph. A topological sorting is a total order of the nodes V such that each edge points from a smaller to a larger node.
+a
+b
+
+c
+e
+
+d
+
+Counting orderings
+a is the first node in every topological sorting
+f is the last node in every topological sorting
+after a comes b or c → the two cases are symmetric
+three topological sortings for each of the cases
+
+f
+Note
+exists if and only if G
+is acyclic
+DAG – directed acyclic graph
+4
+
+Thomas Bläsius – Algorithms 1
+
+a b d c
+
+e f
+
+a c
+
+e b d f
+
+a b c d e f
+
+a c b e d f
+
+a b c
+
+a c b d e f
+
+e d f
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ DFS on directed graphs
+Basic goal on undirected graphs
+start at a node s
+visit all nodes reachable from s
+so all nodes in the connected component of s
+Basic goal on directed graphs
+start at a node s
+visit all nodes reachable from s
+use edges only in the right direction
+
+0
+
+a
+back edge
+
+2 d
+
+b 1
+
+c 4
+
+forward edge
+
+e 5
+
+Observations
+3 f
+one possibly doesn't find all nodes in the component (e.g.: s = c)
+back edge is an inappropriate term for some non-tree edges
+forward edges: non-tree edge to a descendant in the same subtree
+cross edges: edge to a previously processed subtree
+5
+
+Thomas Bläsius – Algorithms 1
+
+cross edge
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Recognition of different edge types
+Types of non-tree edges
+back edge: edge to a predecessor in the DFS tree
+forward edges: edge to a descendant in the same subtree
+cross edges: edge to a previously processed subtree
+Distinction based on DFS number
+forward edges go from small to large DFS number
+back edges and cross edges from large to small
+
+Thomas Bläsius – Algorithms 1
+
+a
+back edge
+
+b 1
+
+2
+d
+1
+
+c 4
+
+4
+forward edge e 5
+3
+2
+
+Difference between back and cross edges
+back edges: start is finished before target node
+cross edge: start is finished after target node
+additionally store a finish number: FIN number
+
+6
+
+0 5
+
+cross edge
+
+3 f
+0
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ How does DFS help find a topological sorting?
+Observations
+back edges create a cycle → cannot exist in DAG
+FIN number on the remaining edges:
+always goes from large to small
+order nodes with decreasing FIN number
+⇒ edges all go from front to back
+5
+
+4
+
+3
+
+2
+
+1
+
+0
+
+a
+
+c
+
+e
+
+b
+
+d
+
+f
+
+Open question
+possibly not all nodes are
+reachable from start
+What do we do then?
+7
+
+Thomas Bläsius – Algorithms 1
+
+0 5
+
+a
+back edge
+
+b 1
+
+4
+forward edge e 5
+3
+2
+
+2
+d
+1
+
+c 4
+
+cross edge
+
+3 f
+0
+
+forward edge
+back edge
+cross edge
+tree edge
+
+DFS number
+small → large
+large → small
+large → small
+small → large
+
+FIN number
+large → small
+small → large
+large → small
+large → small
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Processing all nodes
+First DFS
+start DFS at any node s
+let Vs be the set of nodes reachable from s
+FIN numbers provide topological sorting for Vs
+
+V̄s
+Vs 3 s
+
+Not yet reached nodes
+let V̄s = V \ Vs be the remaining nodes
+no edge from Vs to V̄s (DFS would have found them otherwise)
+it's ok if all nodes from V̄s come before Vs
+
+2
+1
+0
+
+Further DFSs
+as long as there are still unvisited nodes: DFS from unvisited node
+continue counting FIN numbers up
+FIN numbers provide topological sorting for all nodes
+8
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Algorithm → Pseudocode
+topoSort(Graph G = (V; E))
+FIN := Array of size n initialized with ∞
+curr := 0
+for Node v in V do
+if v is uncolored then
+DFS(G; v )
+return V sorted by decreasing FIN
+
+DFS(Graph G; Node v )
+color v
+for Node u in N(v ) do
+if u is uncolored then
+DFS(G; u)
+FIN[v ] := curr
+curr := curr + 1
+
+curr = 6
+
+b FIN[b] = 5
+
+topoSort(G)
+DFS(G; a)
+DFS(G; f )
+
+FIN[c] = 3 c
+DFS(G; b)
+DFS(G; c)
+DFS(G; d)
+
+9
+
+Thomas Bläsius – Algorithms 1
+
+e FIN[e] = 4
+
+DFS(G; e)
+
+FIN[d] = 2 d
+
+a FIN[a] = 1
+
+FIN[f ] = 0 f
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Runtime and correctness
+Theorem
+For a DAG G = (V; E), topoSort computes a topological sorting in Θ(n + m).
+Runtime
+basically: DFS is only called for uncolored nodes
+node is colored at the beginning of DFS
+therefore: DFS is called once for each node → Θ(n) calls
+cost of the DFS calls themselves:
+DFS(G; v ) iterates over all outgoing edges from v
+this considers each edge once in total → Θ(m)
+additionally: topoSort iterates once over all nodes → Θ(n)
+
+10
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Runtime and correctness
+Theorem
+For a DAG G = (V; E), topoSort computes a topological sorting in Θ(n + m).
+Correctness basically already follows from the derivation with edge types
+
+from before. But here now again for completeness a formal
+Correctness
+proof with the final knowledge of what the algorithm does.
+for an edge (u; v ) ∈ E, show: FIN[u] > FIN[v ]
+u
+Case 1: DFS(G; u) is called before DFS(G; v )
+DFS(G; v ) is called before DFS(G; u) finishes v
+DFS(G; v ) finishes before DFS(G; u) finishes
+DFS(Graph G; Node v )
+therefore: FIN[u] > FIN[v ]
+color v
+u
+for Node u in N(v ) do
+Case 2: DFS(G; v ) is called before DFS(G; u)
+if u is uncolored then
+G is a DAG ⇒ u not reachable from v
+v
+DFS(G; u)
+DFS(G; v ) finishes before DFS(G; u) is called
+FIN[v ] := curr
+therefore: FIN[u] > FIN[v ]
+curr := curr + 1
+10
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Notes
+What happens if the graph is not a DAG?
+the correct FIN numbers are still computed in Θ(n + m)
+resulting order: back edges go in the wrong direction
+
+0 5
+
+a
+b 1
+2
+
+Conclusion
+we can thus also use topoSort to test whether G is a DAG
+simply run topoSort and see if there are back edges
+if cyclic, then one even finds a cycle: back edge + path
+from tree edges
+DFS number
+small → large
+forward edge
+large → small
+back edge
+large → small
+cross edge
+small → large
+tree edge
+11
+
+Thomas Bläsius – Algorithms 1
+
+2
+d
+1
+
+c 4
+
+4
+
+e 5
+3
+3 f
+0
+
+FIN number
+large → small
+small → large
+large → small
+large → small
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Depth-first search on directed graphs
+DFS – Depth-first search
+fundamental algorithm: basis of many other algorithms
+four edge types in directed graphs
+recursive implementation
+Preview: foundation for strongly connected components
+A bit of graph theory
+topological sorting and DAGs
+structural insight → efficient algorithm
+
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

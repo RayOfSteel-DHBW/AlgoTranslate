@@ -1,0 +1,883 @@
+Algorithms 1
+Sorting: Mergesort, Quicksort, Lower Bound
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ Note: Lower Runtime Bounds
+The algorithm requires Ω(n 2 ) steps – What does that mean?
+Interpretation 1: on all inputs the runtime is at least quadratic
+Interpretation 2: there exist inputs such that the runtime is at least quadratic
+What applies to the lecture?
+unless explicitly stated we always talk about the worst case
+so: Interpretation 2
+Why do we do it this way?
+Interpretation 1 considers the best case → that is rarely relevant
+Interpretation 2 useful in various situations:
+"every algo has runtime Ω(n2 )" → there is no sub-quadratic algo
+"a concrete algo has runtime Ω(n2 ) and O(n3 )" → the runtime is in worst case
+between quadratic and cubic
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Sorting
+7
+
+48 1
+9 82 4
+
+13
+5
+17 0 89
+76 28 32 63
+
+37
+
+Given
+n elements from an ordered set (e.g. numbers)
+Wanted
+sorted sequence of these elements (e.g. as array or list)
+⟨0; 1; 4; 5; 7; 9; 13; 17; 28; 32; 37; 48; 63; 76; 82; 89⟩
+
+Insertion Sort
+insert elements one by one
+keep sequence sorted
+Processing the ith element:
+search in sequence of length i − 1
+insert in sequence of length i − 1
+
+previously sorted subsequence:
+⟨0; 5; 13; 17; 28; 76⟩
+for arrays (random access)
+binary search: O(log n)
+insert:
+O(1)
+for lists
+
+O(log n) per element
+⇒ O(n log n) total
+
+Problem
+we don't yet know a data structure with which we can search and insert quickly
+3
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Sorting
+7
+
+48 1
+9 82 4
+
+13
+5
+17 0 89
+76 28 32 63
+
+37
+
+Given
+n elements from an ordered set (e.g. numbers)
+Wanted
+sorted sequence of these elements (e.g. as array or list)
+⟨0; 1; 4; 5; 7; 9; 13; 17; 28; 32; 37; 48; 63; 76; 82; 89⟩
+
+previously sorted subsequence:
+Insertion Sort
+insert elements one by one
+⟨0; 5; 13; 17; 28; 76⟩
+keep sequence sorted
+List
+Array
+Processing the ith element:
+Θ(i)
+Θ(log i)
+search in sequence of length i − 1
+Θ(1)
+Θ(i)
+insert in sequence of length i − 1
+Θ(i)
+Θ(i)
+n
+Cost
+in
+step
+i:
+P
+Θ(i) = Θ(n2 )
+Runtime:
+today: two other algorithms with Θ(n log n) runtime
+i=1
+3
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Sorting using Divide and Conquer
+Decompose instance
+
+Solve parts
+
+⟨ ; ; ; ; ⟩
+
+combine
+
+⟨ ; ; ; ; ; ; ; ; ; ⟩
+⟨ ; ; ; ; ⟩
+Mergesort: work when combining
+48 63
+5
+13 82
+0
+32 7 89 28
+
+48 63
+5
+13 82
+0
+32 7 89 28
+
+˙
+
+7; 13; 32; 48; 82
+
+¸
+˙
+
+˙
+
+¸
+0; 5; 28; 63; 89
+Two open questions
+How do you implement this in detail?
+What runtime does this deliver?
+
+Quicksort: work when decomposing
+48 63
+5
+13 82
+0
+32 7 89 28
+4
+
+Thomas Bläsius – Algorithms 1
+
+48 63
+5
+13 82
+0
+32 7 89 28
+
+¸
+0; 5; 7; 13; 28; 32; 48; 63; 82; 89
+
+˙
+
+¸
+0; 5; 7; 13; 28
+˙
+
+˙
+
+32; 48; 63; 82; 89
+
+¸
+0; 5; 7; 13; 28; 32; 48; 63; 82; 89
+
+¸
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Mergesort in Detail
+mergesort(Array A)
+13 48 82 7 32 63 89 0 28 5 Correctness
+Induction over A:size()
+// base case: small array
+Start: fits for A:size() ≤ 1
+if A:size() ≤ 1 then return A
+Induction step:
+// partition instance
+B:size() < A:size()
+13 48 82 7 32
+B := first half of A
+Induction hypothesis ⇒
+C := second half of A
+63 89 0 28 5
+mergesort(B) sorts B
+// solve parts
+analogously:
+7 13 32 48 82
+B := mergesort(B)
+mergesort(C) sorts C
+0 5 28 63 89
+C := mergesort(C)
+therefore: merge(B; C) delivers A
+// combine solutions
+in sorted form
+return merge(B; C)
+(provided merge is correct)
+0 5 7 13 28 32 48 63 82 89
+merge(Array B; Array C)
+// input: sorted arrays B and C; output: B ⊔ C in sorted order
+5
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ How does merge work?
+Plan
+create new array A for the result
+iteratively insert the smallest not yet inserted element into A
+for B; C: know positions iB ; iC from which the
+not yet inserted elements come
+
+B:
+
+0 1 2 3 4
+7 13 32 48 82
+
+C:
+
+0 1 2 3 4
+0 5 28 63 89
+
+iB
+
+A:
+
+iC
+
+0 1 2 3 4 5 6 7 8 9
+0 5 7 13 28 32
+
+Invariant (after each insertion)
+exactly the elements before iB from B and before iC from C were already inserted into A
+all inserted elements are smaller than the non-inserted elements
+elements inserted into A so far are sorted
+(note: it holds at the beginning)
+Does the invariant remain in each step?
+B and C sorted ⇒ smallest non-inserted element is B[iB ] or C[iC ]
+thus: insert min{B[iB ]; C[iC ]} into A (and increase iB or iC ) maintains invariant
+6
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Merge in Detail
+nB = nC = 5
+0 1 2 3 4
+0 1 2 3 4
+merge(Array B; Array C)
+B: 7 13 32 48 82 C: 0 5 28 63 89
+iB ; iC ; nB ; nC := 0; 0; B:size(); C:size()
+iB
+iC
+A := Array of size nB + nC
+// result
+// iterate over B and C simultaneously
+0 1 2 3 4 5 6 7 8 9
+while iB < nB or iC < nC do
+A: 0 5 7 13 28 32 48 63 82 89
+// next element comes from B
+iB +iC
+if iC = nC or (iB ̸= nB and B[iB ] ≤ C[iC ]) then
+A[iB + iC ] := B[iB ]
+iB := iB + 1
+Runtime analysis
+// next element comes from C
+iB +iC increases by exactly 1 in each
+else
+loop iteration
+A[iB + iC ] := C[iC ]
+therefore: nB + nC loop iterations
+iC := iC + 1
+Runtime: Θ(nB + nC ) = Θ(A:size())
+return A
+7
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Runtime Mergesort
+mergesort(Array A)
+// base case: small array
+if A:size() ≤ 1 then return A
+// partition instance
+B := first half of A
+C := second half of A
+// solve parts
+B := mergesort(B)
+C := mergesort(C)
+// combine solutions
+return merge(B; C)
+
+8
+
+Thomas Bläsius – Algorithms 1
+
+T (n)
+Θ(1)
+Θ(n)
+T ( n2 )
+T ( n2 )
+Θ(n)
+
+(n = A:size())
+Runtime
+Recurrence: T (n) = 2 · T ( n2 ) + Θ(n)
+Master theorem ⇒ T (n) ∈ Θ(n log n)
+
+Master theorem?
+Totally exhausting!
+Do I have to memorize this?
+Derivation for Θ(n log n) in this case
+Recursion tree: binary tree of depth log2 n
+Effort on level i:
+2i nodes with n · 2−i elements
+Θ(n) costs for n elem. ⇒ Θ(n) per level
+total: Θ(n log n)
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Sorting using Divide and Conquer
+Decompose instance
+
+Solve parts
+
+⟨ ; ; ; ; ⟩
+
+combine
+
+⟨ ; ; ; ; ; ; ; ; ; ⟩
+⟨ ; ; ; ; ⟩
+Mergesort: work when combining
+48 63
+5
+13 82
+0
+32 7 89 28
+
+48 63
+5
+13 82
+0
+32 7 89 28
+
+˙
+
+7; 13; 32; 48; 82
+
+¸
+˙
+
+˙
+
+¸
+0; 5; 28; 63; 89
+Two open questions
+How do you implement this in detail?
+What runtime does this deliver?
+
+Quicksort: work when decomposing
+48 63
+5
+13 82
+0
+32 7 89 28
+9
+
+Thomas Bläsius – Algorithms 1
+
+48 63
+5
+13 82
+0
+32 7 89 28
+
+¸
+0; 5; 7; 13; 28; 32; 48; 63; 82; 89
+
+˙
+
+¸
+0; 5; 7; 13; 28
+˙
+
+˙
+
+32; 48; 63; 82; 89
+
+¸
+0; 5; 7; 13; 28; 32; 48; 63; 82; 89
+
+¸
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Quicksort: working when decomposing
+Decomposition into large and small elements
+choose an element as pivot element
+two subarrays: elements that are smaller/larger
+than the pivot
+Best case
+the two subarrays are about equally large
+Θ(log n) levels, Θ(n) comparisons per level
+Total cost: Θ(n log n)
+48 82 32 63 89
+Worst case
+Pivot is smallest or largest element
+Comparison between every pair of elements
+Total cost: Θ(n2 )
+
+13 48 82 7 32 63 89 0 28 5
+13 7 0 5
+0 5
+
+13
+5
+
+Thomas Bläsius – Algorithms 1
+
+48 32 63
+32
+
+89
+
+63
+
+48 82 63 89
+82 63 89
+82 89
+
+Hope: with randomly chosen pivot you are close to best case
+10
+
+48 82 32 63 89
+
+89
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Expected Runtime with Random Pivots
+Use linearity of expectation
+–
+»n
+n
+P
+P
+E [Xi ] ∈ O(n log n)
+Xi =
+E [X] = E
+i=1
+
+i=1
+
+Goal: estimate E [Xi ] for arbitrary but fixed i
+Comparisons of the i -th element ei
+bad comparison
+ei
+
+good comparison
+ei
+
+ei
+uneven split
+
+ei
+even split
+
+Goal: choose precise definition such that
+ˆ −˜
+ˆ +˜
+not worse than good: E Xi ≤ E Xi
+few good comparisons:
+11
+
+Thomas Bläsius – Algorithms 1
+
+Xi+ ∈ O(log n)
+
+Random variables
+X: number of comparisons total
+Xi : number of comparisons of i-th
+element ei with a pivot
+Xi− : number of bad comparisons of ei with a pivot
+Xi+ : number of good comparisons of
+ei with a pivot
+
+ˆ −
+˜
++
+E [Xi ] = E Xi + Xi
+ˆ −˜
+ˆ +˜
+= E Xi + E Xi
+ˆ +˜
+≤ 2E Xi ∈ O(log n)
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Good and Bad Comparisons in Detail
+When do we call the comparison with a pivot good?
+k
+k: size of current
+array
+good comparison:
+¨ 3 ˝both
+subarrays ≤ 4 k
+¨3 ˝
+≤ 4k
+
+Random variables
+Xi− : number of bad comparisons of ei with a pivot
+Xi+ : number of good comparisons of
+ei with a pivot
+
+¨3 ˝
+≤ 4k
+
+Few good comparisons: Xi+ ∈ O(log n)
+subarray of ei shrinks by factor 34 with each good comparison
+this can only happen O(log n) times
+ˆ +˜
+ˆ −˜
+More good than bad comparisons: E Xi ≥ E Xi
+half of possible pivots lead to good comparison
+therefore: Pr [good comparison] ≥ 12 ≥ Pr [bad comparison]
+12
+
+Thomas Bläsius – Algorithms 1
+
+¨k ˝
+
+˚k ˇ
+
+4
+
+2
+
+good pivots
+
+¨k ˝
+4
+
+(sorted subarray)
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Quicksort: Result
+Theorem
+On every input of length n, Quicksort with random pivots requires in expectation
+O(n log n) comparisons.
+Notes
+thus the expected runtime is also in O(n log n)
+we also speak of the average case here
+the expectation refers only to the random decisions of the algorithm
+for the input the worst case is still considered
+Bonus at the end of the slides: alternative analysis
+provides alternative perspective
+gives more precise result
+13
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Lower Bound: Can it be done faster?
+Theorem
+Every comparison-based sorting algorithm requires Ω(n log n) comparisons to sort a sequence
+of n elements.
+Proof
+<
+>
+similar to binary search:
+k comparisons
+<
+>
+<
+>
+binary decision per comparison
+< >
+< >
+< >
+< >
+k comparisons → 2k different executions
+different executions:
+2k executions
+consider two permutations of the input
+elements must be reordered differently
+B ADC
+A C BD
+each permutation leads to different execution
+every correct algo needs n! different executions A B C D
+AB C D
+(n! leaves in decision tree)
+to show: log(n!) ∈ Θ(n log n)
+min. n! executions ⇒ min. log(n!) comparisons
+14
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Side calculation: log(n!) ∈ Θ(n log n)
+Possibility 1: Stirling formula
+√
+` n ´n
+`√ ` n ´ n ´
+Stirling's formula says: n! ≈ 2ın e ∈ Θ n e
+` `√ ` n ´n ´´
+therefore: log(n!) ∈ Θ log n e
+` `√ ´
+´
+= Θ log n + n · (log n − log e) = Θ(n log n)
+
+Logarithm laws
+log(a · b) = log(a) + log (b)
+log( ba ) = log(a) − log (b)
+log(ab ) = b · log(a)
+
+Possibility 2: by hand
+n summands, each ≤ log n
+n! = n · (n − 1) · (n − 2) · · · · · 1
+log(n!) = log(n) + log(n − 1) + log(n − 2) + · · · + log(1) ∈ O(n log n)
+first n2 summands ≥ log( n2 )
+
+so: log(n!) ≥ n2 · log( n2 ) = n2 log n − n2 log 2 ∈ Ω(n log n)
+⇒ log(n!) ∈ Θ(n log n)
+15
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Comparison-based Sorting
+Seen today
+divide and conquer for sorting sequences
+Mergesort: work when combining partial solutions
+Quicksort: work when decomposing into subproblems
+What's the point? Wouldn't one Θ(n log n) algorithm have been enough?
+Mergesort: conceptually simpler, deterministic
+Quicksort: works in-place (without additional memory), faster in practice
+Job interview: possibly expected that you know both
+Analysis techniques
+analysis of expected runtime of a randomized algorithm
+decision tree for lower bound
+16
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Bonus: Alternative Analysis
+Sum of individual comparisons
+let e1 ≤ e2 ≤ · · · ≤ en be the sorted elements
+Xij = 1 when ei and ej are compared, Xij = 0 otherwise
+2
+E [X] = E 4
+
+n X
+n
+X
+
+3
+Xij 5 =
+
+i=1 j=i+1
+
+n X
+n
+X
+
+E [Xij ]
+
+i=1 j=i+1
+
+n n−i+1
+n X
+n
+X
+X 2
+X
+2
+2
+=
+≤
+=
+j −i +1
+k
+k
+i=1 k=2
+i=1 k=2
+i=1 j=i+1
+n X
+n
+X
+
+= 2n ·
+
+n
+X
+1
+
+k
+k=2
+
+Probability for Xi j = 1
+Xij = 1 ⇔ the first pivot from
+{ei ; ei+1 ; : : : ; ej−1 ; ej } is ei or ej
+Xi j = 0
+ei
+
+ej
+
+ei
+
+ej
+
+≤ 2n ln n
+
+Theorem
+On every input of length n, Quicksort
+with random pivots expects ≤ 2n ln n comparisons.
+17
+
+Random variables
+X: number of comparisons total
+Xij : indicator variable for comparison between ei and ej
+
+Thomas Bläsius – Algorithms 1
+
+Xi j = 1
+ej
+ei
+or
+ej
+ei
+
+2
+E [Xij ] = Pr [Xij = 1] = j−i+1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Bonus: Side note on harmonic sum
+Harmonic number Hn
+n
+P
+1
+Hn =
+k
+
+1
+1=2
+1=3
+
+k=1
+
+useful to know: Hn ∈ Θ(log n)
+Proof and more precise estimation
+Zn
+n
+n
+X
+X
+1
+1
+1
+Hn − 1 =
+≤
+dx ≤
+= Hn
+k
+x
+k
+k=2
+
+Zn
+
+1
+
+k=1
+
+ˆ
+˜n
+1
+dx = ln x 1 = ln n
+x
+
+1
+
+0
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+1
+x
+
+1
+1=2
+1=3
+0
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+1
+1=2
+1=3
+0
+
+18
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

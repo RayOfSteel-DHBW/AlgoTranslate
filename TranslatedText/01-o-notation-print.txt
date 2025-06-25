@@ -1,0 +1,675 @@
+Algorithms 1
+Introduction
+Written Multiplication and Landau Notation
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ Schedule
+Generally applies: more details also again on the homepage
+https://scale.iti.kit.edu/teaching/2024ss/algo1/start
+
+2
+
+Rhythm
+two appointments per week
+Exercise every two weeks (usually Wednesdays)
+additionally: weekly tutorials
+
+Materials
+on the homepage
+Lecture recording in Ilias
+
+Exercise sheets & tutorials
+Exercise sheets always on Wednesdays
+Submission in teams of 2
+very important for learning success
+Exam bonus
+Registration until Friday 12:00 PM
+
+Exercise
+by Marcus, Wendy and Jean-Pierre
+deepens the lecture material
+more about this next Wednesday
+
+Thomas Bläsius – Algorithms 1
+
+Questions → Discord (link in Ilias)
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ pwa.klicker.uzh.ch/join/algo1
+
+Tech test
+How formal should it be?
+
+3
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Algorithm? Can you eat that?
+al-Khwarizmi
+Persian mathematician and astronomer
+lived ca. 780–840 in Baghdad
+Latinized name: Algorismi
+Origin of the term "algorithm"
+Modern definition (Wikipedia)
+An algorithm is an unambiguous specification for solving a problem or a class of problems.
+Algorithms consist of finitely many, well-defined individual steps.
+Thus they can be implemented for execution in a computer program, but also formulated in
+human language.
+In problem solving, a specific input is transformed into a specific output.
+4
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ What do we learn here?
+Know, understand, apply
+Vocabulary of technical terms
+algorithmic building blocks
+algorithmic techniques
+
+What is an amortized analysis?
+What does divide and conquer do?
+
+What is a recurrence and how do you solve it?
+
+What is a heap? What is a search tree? What can I do with it?
+What is a dynamic program?
+
+What is a greedy algorithm?
+
+Is the algorithm fast enough?
+Analyze, evaluate, create
+Runtime analysis
+How can I efficiently solve a given problem?
+Development of own algorithms
+Which data structure should I use?
+Selection of suitable techniques and building blocks Which algorithmic idea could work?
+Switch between abstraction levels
+Is my idea really feasible?
+Building mental shortcuts
+Is my algorithm correct?
+
+5
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Abstraction level? Mental shortcuts?
+high
+
+natural language / images
+high-level idea
+intuitive arguments
+
+formal
+proof
+
+Pseudocode
+
+Programming language
+low
+6
+
+Thomas Bläsius – Algorithms 1
+
+Choice of the right abstraction level
+when programming you don't want to have to think about transistors
+the programming language abstracts from hardware
+Algorithm design
+when thinking up the algorithm you initially don't want
+to think about programming
+we need additional abstraction levels
+Problem & solution
+many high-level ideas break when concretized
+Concretization often not so simple
+mental shortcuts: intuition what works and what doesn't
+you only get this with lots of training
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ To warm up: written multiplication
+How does that work again?
+a
+b
+calculate a · bi for each digit bi of b = (bn−1 : : : b0 )
+·
+5678 1234
+shift result i places to the left
+5678
+113
+15
+16
+add results
+17
+20
+23
+24
++
+
+223
+73
+12
+7006652
+
+How many steps does this take when a and b each have n digits?
+Calculation of a · bi for one i
+→ 2n − 1 operations
+total (all i): 2n2 − n
+n multiplications
+additionally: carry → n − 1 additions (or 2n − 2?)
+n − 1 steps → (n − 1)(2n + 1)
+written addition at the end
+per step: add one line to previous result → n + 1 additions
+additionally: carry → n additions
+note: previous result doesn't have too many digits
+7
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ The more precise the better?
+Why is this so complicated?
+And who cares about it in such detail anyway?
+Too precise a perspective...
+complicates the analysis
+brings little relevant insight
+blocks the view of what's essential when searching for a better algorithm
+How imprecise may it be?
+depends partly on the situation
+almost always applies:
+Lower order terms don't matter
+(4n2 − 2n − 1 → 4n2 )
+(4n2 → n2 )
+constant factors don't matter
+formal tool: Landau symbols (O-notation)
+8
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Which algorithm is faster?
+Alice and Bob have developed an algorithm
+their runtime depends on problem size n
+Bob's algorithm requires f (n) = n2 + 2 steps
+Alice's algorithm requires g (n) = 4n + 1 steps
+And if Bob's computer is faster?
+60
+
+vs.
+
+Even faster?
+
+50
+
+1
+f (n)
+2
+
+40
+30
+
+f (n)
+
+20
+1
+f (n)
+4
+
+g (n)
+
+10
+0
+0
+9
+
+2
+
+Thomas Bläsius – Algorithms 1
+
+4
+
+6
+
+8
+
+10
+
+12
+
+14
+
+16
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Landau notation: Comparison of runtimes
+Asymptotic comparison
+f (n) grows faster than g (n)
+
+Notation
+f (n) ∈ !(g (n))
+
+Formal definition
+∀c ∃n0 ∀n > n0 f (n) > c · g (n)
+
+(no matter how much faster the computer for f (n), for sufficiently large n, f (n) is greater than g (n))
+
+f (n) ∈ Ω(g (n))
+
+f (n) grows at least as fast as g (n)
+
+∃c ∃n0 ∀n > n0 c · f (n) ≥ g (n)
+
+(if the computer for f (n) is slow enough and n is large enough, then f (n) is greater than g (n))
+
+f (n) ∈ Θ(g (n))
+
+f (n) and g (n) grow equally fast
+
+f (n) ∈ O(g (n)) ∧ f (n) ∈ Ω(g (n))
+
+(it depends on the computer which runtime grows faster for large n)
+
+f (n) ∈ O(g (n))
+
+f (n) grows at most as fast as g (n)
+
+∃c ∃n0 ∀n > n0 f (n) ≤ c · g (n)
+
+(if the computer for f (n) is fast enough and n is large enough, then f (n) is smaller than g (n))
+
+f (n) ∈ o(g (n))
+
+f (n) grows slower than g (n)
+
+∀c ∃n0 ∀n > n0 c · f (n) < g (n)
+
+(no matter how much slower the computer for f (n), for sufficiently large n, f (n) is smaller than g (n))
+
+Note
+growing asymptotically equally fast is an equivalence relation
+Θ(g (n)) is the equivalence class
+10
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Landau notation: Order on functions
+small functions
+slowly growing
+fast runtime
+
+√
+
+O( n)
+
+√
+
+o( n)
+
+2 log2 (n)
+√
+3
+
+11
+
+Thomas Bläsius – Algorithms 1
+
+123
+
+1
+log5 (n2 )
+
+log10 (n) + 4
+√
+3
+
+3 n
+
+√
+3
+
+√
+3 n+2
+
+√√
+Θ(n n)
+
+3n − 2
+
+n
++ 20
+4
+
+n2
+
+large functions
+fast growing
+slow runtime
+
+4
+
+9
+
+√
+
+n
+
+10n − 6
+
+n
+4n2 − 2n − 1
+
+3n2 − n + 2
+
+2n + n4 − 10
+3n
+
+n + log(n)
+
+2n
+
+2n − n10
+
+√
+
+3n + 2n
+
+3n − log(n) +
+
+n
+
+√
+!( n)
+
+√
+
+Ω( n)
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Landau notation: Why so complicated?
+Why is this so complicated?
+Didn't we want to make life easier?
+Note
+working with the formal definition is tedious
+what we need are simple calculation rules
+and some practice
+Constant factors
+a · f (n) ∈ Θ(f (n))
+Monomials
+a ≤ b ⇒ na ∈ O(nb )
+na ∈ Θ(nb ) ⇔ a = b
+
+Transitivity
+f1 (n) ∈ O(f2 (n)) ∧ f2 (n) ∈ O(f3 (n)) ⇒ f1 (n) ∈ O(f3 (n))
+Sums
+f1 (n) ∈ O(f3 (n)) ∧ f2 (n) ∈ O(f3 (n)) ⇒ f1 (n) + f2 (n) ∈ O(f3 (n))
+Products
+f1 (n) ∈ O(g1 (n)) ∧ f2 (n) ∈ O(g2 (n)) ⇒ f1 (n)·f2 (n) ∈ O(g1 (n)·g2 (n))
+
+(very similar rules also apply to the other symbols)
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ pwa.klicker.uzh.ch/join/algo1
+
+Landau notation: Clicking
+small
+
+Which of the statements is correct?
+Constant factors
+a · f (n) ∈ Θ(f (n))
+Monomials
+a ≤ b ⇒ na ∈ O(nb )
+
+O
+
+o
+
+na ∈ Θ(nb ) ⇔ a = b
+Θ
+
+Transitivity
+f1 (n) ∈ O(f2 (n)) ∧ f2 (n) ∈ O(f3 (n)) ⇒ f1 (n) ∈ O(f3 (n))
+Sums
+f1 (n) ∈ O(f3 (n)) ∧ f2 (n) ∈ O(f3 (n)) ⇒ f1 (n) + f2 (n) ∈ O(f3 (n))
+Products
+f1 (n) ∈ O(g1 (n)) ∧ f2 (n) ∈ O(g2 (n)) ⇒ f1 (n)·f2 (n) ∈ O(g1 (n)·g2 (n))
+13
+
+Thomas Bläsius – Algorithms 1
+
+!
+
+Ω
+
+large
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ pwa.klicker.uzh.ch/join/algo1
+
+Landau notation: alternative definition
+(Assumptions: limit exists, f (n) and g (n) positive)
+
+Consider limit ' = lim gf (n)
+n→∞ (n)
+f (n) ∈
+
+'=0
+o(g (n))
+
+'<∞
+O(g (n))
+
+0<'<∞
+Θ(g (n))
+
+'=∞
+!(g (n))
+
+0<'
+Ω(g (n))
+
+Which perspective should I use now?
+Which of the statements is correct?
+always the one that is most convenient at the moment
+mental shortcut: over time you know Θ-classes of important elementary functions
+the calculation rules from before are then sufficient
+when the mental shortcut is missing: limit consideration
+A few elementary functions
+√
+√
+2
+∗
+3
+1 log n log n log n
+n
+n
+
+14
+
+Thomas Bläsius – Algorithms 1
+
+n
+
+n
+
+2
+
+n
+
+3
+
+n
+
+log n
+
+√
+
+2
+
+n
+
+n
+
+2
+
+n
+
+3
+
+n
+
+4
+
+n!
+
+n2
+
+2
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Asymptotics and actual runtimes
+Thought experiment
+Algorithm needs f (n) steps
+Assumption: about 10 M steps per second
+How large may the input be so that the algorithm is finished after 10 s?
+n
+100 M
+4n
+
+25 M
+
+n log10 n
+
+14 M
+
+√
+
+15
+
+n n
+
+215 k
+
+n2
+
+10 k
+
+2n
+
+27
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Back to written multiplication
+How does that work again?
+a
+b
+calculate a · bi for each digit bi of b = bn : : : b1
+·
+5678 1234
+shift result i − 1 places to the left
+5678
+113
+15
+16
+add results
+17
+20
+23
+24
++
+
+223
+73
+12
+7006652
+
+How many steps does this take when a and b each have n digits?
+Calculation of a · bi for one i → Θ(n) operations
+total (all i): Θ(n2 )
+total: Θ(n2 )
+written addition at the end
+add two numbers with Θ(n) digits in each step
+after Θ(n) steps you have the result
+
+⇒ Θ(n2 )
+16
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Landau notation: additional notes
+Notation with =
+O(g (n)) is a set of functions
+` 0:98 √ ´
+` 0:98 ´
+therefore we write: 4n
+− n ∈O n
+⊆ O(n)
+` 0:98 √ ´
+` 0:98 ´
+often you also see: 4n
+− n =O n
+= O(n)
+O in the formula
+sometimes you see e.g.: 2Θ(n)
+this means the set of functions of the form 2f (n) for f (n) ∈ Θ(n)
+i.e.: set of exponential functions
+(f (n) ∈ 2Θ(n) when c1n < f (n) < c2n for constants c1 , c2 )
+this allows even coarser estimation of runtimes
+(Θ(2n ) ̸= Θ(3n ) but 2Θ(n) = 3Θ(n) )
+Shrinking functions
+sometimes you also consider functions shrinking in n
+`1´
+e.g.: Probability 1 − O n goes to 1 for n → ∞
+`1´
+the O n indicates the convergence speed
+17
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Summary
+Asymptotic perspective on runtimes
+simplifies runtime analysis by omitting unimportant information
+prevents distraction from the essential in algorithm design
+usually provides very good prediction for practice
+(Θ(n) is (almost) always better than Θ(n2 ))
+great tool for lazy programmers:
+directly exclude asymptotically slower algorithms
+less work in implementing and testing
+Tool for this perspective: Landau notation
+mental shortcuts: simple calculation rules + classification of elementary functions
+formal definition(s) for cases where shortcuts are not sufficient
+Written multiplication
+asymptotic runtime Θ(n2 )
+next lecture: faster algorithm
+18
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

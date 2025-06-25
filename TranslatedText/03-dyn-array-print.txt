@@ -1,0 +1,535 @@
+Algorithms 1
+Dynamic Arrays & Amortized Analysis
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Data Structures
+What is that actually?
+Algorithm: Sequence of steps. Each step...
+reads (few) data from memory
+processes the read data
+writes data to memory
+Access to memory via memory addresses
+Data structure: Abstraction layer over memory
+hides how data is exactly stored in memory
+provides interface with convenient operations
+
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Two Types of Data Storage
+Arrays (Fields)
+Set of consecutive memory cells
+Access with address or index at any position in Θ(1)
+very close to hardware
+today: comfort functions
+Pointer-based Structures
+many small pieces of memory (nodes)
+a node stores:
+data that actually interests us
+memory addresses of other nodes (pointers)
+Access through navigation along pointers
+abstracts more strongly from hardware
+next time: lists as simple example
+3
+
+Thomas Bläsius – Algorithms 1
+
+Index: 0 1 2 3 4 5 6 7 8 9 10 11
+Address: 30 31 32 33 34 35 36 37 38 39 40 41
+Data: 4 48 89 1 0 9 13 7 32 76 17 5
+
+3 4 5
+4 48 17
+
+17 18 19
+42 ⊥ ⊥
+48 49 50
+7 23 17
+23 24 25
+15 ⊥ ⊥
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Bounded and Unbounded Arrays
+Index: 0 1 2 3 4 5 6 7 8 9 10 11
+Bounded Arrays
+Address: 30 31 32 33 34 35 36 37 38 39 40 41
+when creating the array I must determine
+Data: 4 48 89 1 0 9 13 7 32 76 17 5
+how much memory I need
+subsequent enlargement difficult: following memory cells possibly already occupied
+Problem: required memory is possibly conditioned by external factors (user input)
+
+I wish for: unbounded arrays
+Behavior like arrays (direct access via index)
+additional functions:
+4 48 89 1 0 :pushBack(9)
+4 48 89 1 0 9
+4 48 89 1 0 :popBack()
+4 48 89 1
+4 48 89 1 0 :size()
+5
+One can wish for a lot, but how do we implement this?
+
+4
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Unbounded Arrays: naive approach
+Implementation of pushBack(x)
+create new array that is 1 larger
+copy data from old to new array
+write x in the free cell at the end
+delete old array
+
+Index: 0 1 2 3 4
+Address: 30 31 32 33 34
+Data: 4 48 89 1 0
+
+0 1 2 3 4 5
+82 83 84 85 86 87
+4 48 89 1 0 x
+
+Costs for inserting elements
+Inserting ith element: costs Θ(i)
+„ «
+n
+n
+P
+P
+i = Θ(n2 )
+Θ(i) = Θ
+Inserting n elements:
+i=1
+
+i=1
+
+on average: costs Θ(n) per operation → much too expensive
+Do we really have to copy every time?
+allocate generously somewhat more memory
+only copy when allocated memory is full
+5
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Unbounded Arrays: better approach
+Size vs. Capacity
+Index: 0 1 2 3
+Capacity: memory allocated for the array
+Address: 30 31 32 33
+Size: actually used memory cells
+Data: 4 48 89 1
+externally visible: size (via size())
+
+0 1 2 3 4 5 6 7
+82 83 84 85 86 87 88 89
+4 48 89 1 0
+
+Example:
+
+Implementation of pushBack(x)
+pushBack(89) pushBack(1) pushBack(0)
+if capacity > size: simply insert
+otherwise: create new array with double capacity and proceed as before
+Costs for inserting elements
+Costs for ith element, when i = 2j + 1: Θ(i) = Θ(2j )
+otherwise: Θ(1)
+log
+n
+P
+P2 n
+Θ(1) +
+Θ(2j ) = Θ(n) + Θ(2log2 n ) = Θ(n)
+Inserting n elements:
+i=1
+
+j=0
+
+on average: costs Θ(1) per operation → can't get better
+6
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Unbounded Arrays: Notes
+Memory waste
+we allocate more memory than we actually need
+but: at most a factor of 2 too much
+What do we do with popBack()?
+here one can pursue different strategies
+e.g.: simply reduce the size of the array but maintain capacity → Θ(1)
+Worst Case vs. Average
+in the worst case a single operation requires Θ(n) time (n = array size)
+but: on average each operation requires only Θ(1) time
+we say: pushBack() has amortized constant runtime
+(we will learn about this later)
+Distinction from Average Case
+Average Case: average over all possible inputs/executions
+amortized: average over all operations for arbitrary (worst case) input
+7
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Amortization: What does that mean exactly?
+Theorem
+An arbitrary sequence of n operations (pushBack or popBack) on an initially
+empty array requires Θ(n) time.
+Conclusion
+Let A be an algorithm that uses an array. Let Θ(f (n)) be the runtime of A, which one
+obtains under the assumption that each array operation (pushBack, popBack) requires Θ(1) time.
+Then the actual runtime of A is also Θ(f (n)).
+Note
+we say that the runtime of each operation is amortized Θ(1)
+sometimes individual operations are more expensive
+we can treat the algorithm analysis as if that were not the case
+
+8
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Unbounded Arrays in the Wild
+C++
+
+9
+
+Thomas Bläsius – Algorithms 1
+
+https://en.cppreference.com/w/cpp/container/vector
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Unbounded Arrays in the Wild
+Java
+
+9
+
+Thomas Bläsius – Algorithms 1
+
+https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ArrayList.html
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Unbounded Arrays: Summary
+Efficient operations ((amortized) constant)
+Access at any position
+insert at back
+delete at back
+Slow operations (linear)
+insert at any position
+delete at any position
+concatenate two arrays
+delete subarray
+
+10
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Excursion: Amortized Analysis
+Situation
+Sequence of many operations
+some are expensive, most are cheap → cheap on average
+Amortized Analysis
+Worst case over all possible sequences of operations
+Guarantee: total runtime behaves as if each operation were cheap
+Now: different techniques for analysis
+Aggregation
+Charging
+Account
+Potential
+each using the example of n pushBack operations
+11
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Amortized Analysis: Aggregation
+General approach
+sum the costs for all operations
+divide total costs by number of operations
+Using the pushBack example
+log
+n
+P
+P2 n
+Θ(1) +
+Θ(2j ) = Θ(n)
+Costs for inserting n elements:
+i=1
+
+j=0
+
+average costs per operation: Θ(1)
+Notes
+nicely simple and direct
+sometimes impractical, especially with multiple operations of different types
+
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Amortized Analysis: Charging
+General approach
+distribute cost tokens from expensive to cheap operations (charging)
+show: each operation has only few tokens at the end
+Using the pushBack example
+ith operation has i tokens, if i = 2j + 1, otherwise 1 token
+i: 6
+7
+8
+9 10 11 12 13 14 15 16
+
+17
+
+18
+
+19
+
+Tokens:
+
+shift from 2j + 1 two tokens each to each of the 2j−1 − 1 operations in (2j−1 + 1; 2j ]
+if i = 2j + 1: operation gets rid of 2j − 2 = i − 3 tokens → 3 tokens remain
+otherwise: operation receives at most two additional tokens → maximum 3 tokens
+Note
+locally: high costs occur → charge them retroactively to previous operations
+globally: be careful that no operation gets too many tokens
+13
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Amortized Analysis: Account
+General approach
+cheap operation: pays more than it actually costs → deposit into account
+expensive operation: pays actual costs partly with credit from account
+Using the pushBack example
+cheap operation (i ∈ (2j−1 + 1; 2j ]): costs 1, pay 3 → deposit 2 into account
+credit after operation 2j amounts to at least 2 · (2j − (2j−1 + 1)) = 2j − 2
+expensive operation (i = 2j + 1): costs i, pay 3 → withdraw i − 3 = 2j − 2 from account
+each operation pays only 3 and account is never negative ⇒ amortized Θ(1)
+Note
+locally: cheap operations pay ahead for costs of later operations
+globally: be careful that never more is withdrawn than already deposited
+very similar to charging, but slightly different perspective
+14
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Amortized Analysis: Potential
+General approach
+with the account method:
+define how much each operation pays (amortized)
+from this results: change in account balance
+with the potential method:
+define account balance depending on state of data structure → potential function
+from this results: the amortized costs of each operation
+more precisely:
+Potential function Φ(A): maps the state of array A to a number ≥ 0
+Abefore and Aafter : the states before and after an operation
+amortized costs = actual costs + Φ(Aafter ) − Φ(Abefore )
+Correctness: follows from correctness of account method
+
+15
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Amortized Analysis: Potential
+Using the pushBack example
+Potential function: Φ(A) = 2 · A:size() − A:capacity()
+note: Φ(A) ≥ 0
+cheap operation:
+size grows by 1; capacity remains the same
+Φ(Aafter ) − Φ(Abefore ) = 2
+amortized costs = actual costs + 2 ∈ Θ(1)
+expensive operation (i = 2j + 1):
+size grows by 1; capacity grows by 2j
+Φ(Aafter ) − Φ(Abefore ) = 2 − 2j
+amortized costs = actual costs + 2 − 2j ∈ Θ(1)
+
+n
+2
+
+n
+2
+
+Φ
+
+`
+
+´
+
+=0
+
+Φ
+
+`
+
+´
+
+=n
+
+n
+
+Reminder: amortized costs = actual costs + Φ(Aafter ) − Φ(Abefore )
+16
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Amortized Analysis: Potential – Notes
+How does one come up with the potential function?
+that's the crux; once you have it, the rest is simple
+Interpretation 1: measure of how close one is to an expensive operation
+low: coming operations are cheap
+Reminder: Φ for pushBack()
+high: soon comes probably an expensive operation
+Φ(A) = 2 · A:size() − A:capacity()
+n
+n
+Interpretation 2: measure of disorder of the data structure
+2
+2
+`
+´
+low: tidy; close to ideal state
+Φ
+=0
+`
+´
+high: messy; far from ideal state
+Φ
+=n
+Advantages and disadvantages
+Proof often quite compact
+Potential function sometimes intuitively hard to understand
+
+n
+
+(one can verify the result, but doesn't really know what one is calculating)
+
+17
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Amortized Analysis
+Amortized costs
+Charging method
+consider arbitrary sequence instead of single operation
+charge costs of expensive operations retroactively to
+previous cheap operations
+show: sum of costs is small
+direct proof: aggregation method
+amortized
+actual
+Operation 1
+
+Operation 2
+
+Operation 3
+
+Account method
+cheap operations pay
+ahead into account
+expensive operations withdraw
+show: account ≥ 0
+
+Operation 2
+
+Account
+
+Φ
+amortized
+
+actual
+
+actual
+
+Thomas Bläsius – Algorithms 1
+
+Operation 3
+
+Potential method
+like account, but: define account balance Φ
+Account
+amort. = actual + Φafter − Φbefore
+
+amortized
+
+Operation 1
+18
+
+Operation 1
+
+Operation 2
+
+Operation 3
+
+Operation 1
+
+Operation 2
+
+Operation 3
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Arrays, Data Structures, Amortized Analysis
+Bounded Arrays
+a piece of memory (consecutive memory cells) that one accesses via address
+other ways to store data are always based on this basic building block
+Unbounded Arrays
+interface for dynamically growing array → abstracts from a piece of memory
+efficient implementation via sensible size-change strategy
+Three perspectives on a data structure
+Mathematics: abstract object (here: sequence of numbers ⟨4; 48; 89; 1; 0; 9; 13; 7; 32; 76; 17; 5⟩)
+Software Engineering: functionality (here: access with index, pushBack, popBack, size)
+Algorithmics: representation and efficient implementation
+Amortized Analysis
+important technique for algorithm analysis
+19
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+Student Organizations
+What is that?
+student-organized groups
+large thematic range: from social engagement to building race cars
+Member recruitment
+many groups seek new members
+some information events in the coming weeks
+see also: link on the homepage
+
+20
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms

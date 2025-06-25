@@ -1,0 +1,699 @@
+Algorithms 1
+Lists and Binary Search
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ Review: Two Types of Data Storage
+Index: 0 1 2 3 4 5 6 7 8 9 10 11
+Arrays (Fields)
+Address: 30 31 32 33 34 35 36 37 38 39 40 41
+Set of consecutive memory cells
+Data: 4 48 89 1 0 9 13 7 32 76 17 5
+Access with address or index at any position in Θ(1)
+very close to hardware
+last time: comfort functions for dynamic growth
+3 4 5
+Pointer-based Structures
+17 18 19
+4 48 17
+many small pieces of memory (nodes)
+42 ⊥ ⊥
+a node stores:
+48 49 50
+data that actually interests us
+7 23 17
+memory addresses of other nodes (pointers)
+Access through navigation along pointers
+23 24 25
+15 ⊥ ⊥
+abstracts more strongly from hardware
+today: lists as simple example
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Doubly Linked List
+Goals
+store a sequence of numbers ⟨4; 48; 89; 1⟩
+flexible insert and delete operations
+
+(abstract object, mathematics)
+(functionality, software engineering)
+
+Representation and Efficient Implementation
+(algorithmics)
+each node of the data structure stores:
+next
+next
+next
+front
+one of the numbers in the sequence value
+48
+89
+1 ⊥
+⊥ 4
+pointer to next node next
+back
+pointer to previous node prev
+prev
+prev
+prev
+Entry points: front, back
+17
+Example: ⟨4; 48; 89; 1⟩
+Insert and delete operations
+next
+next
+next
+next
+front
+changes are only local
+48
+17
+89
+1 ⊥
+⊥ 4
+rearrange constantly many pointers
+→ constant runtime (Θ(1))
+back
+prev
+prev
+prev
+prev
+3
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Where do we stand?
+Just seen
+basic functionality of a list
+high-level understanding of why flexible insertion and deletion works efficiently
+→ high abstraction level
+Open detail questions
+Are there special cases to consider?
+How do I handle the ⊥-pointers?
+Goal: Elegant implementation that reduces special cases
+What other useful operations are possible?
+front
+
+next
+
+⊥ 4
+
+Thomas Bläsius – Algorithms 1
+
+next
+
+48
+prev
+
+4
+
+17
+Example: ⟨4; 48; 89; 1⟩
+next
+
+17
+prev
+
+next
+
+1 ⊥
+
+89
+prev
+
+prev
+
+back
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Implementation Details
+Dummy node ⊥ for the head
+no more null pointers for first
+and last list element
+simpler, thanks to reduction of
+special cases
+
+head
+
+next
+next
+
+⊥
+
+next
+
+4
+prev
+
+next
+
+48
+prev
+
+next
+
+89
+prev
+
+1
+prev
+
+prev
+
+insertAfter(Node a; Node x)
+// insert node x after node a
+b := a:next
+a
+x:prev := a
+x:next := b
+a:next := x
+b:prev := x
+
+next
+
+x
+
+prev
+
+a
+
+b
+
+next
+
+prev
+
+x
+
+next
+
+prev
+
+b
+
+Note: also works when
+a = ⊥ or a:next = ⊥
+5
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ More Powerful Operations
+Operation: Splice (connect, merge)
+given: two lists L1 and L2 with nodes a; b ∈ L1 and c ∈ L2
+goal: move ⟨a; : : : ; b⟩ from L1 to L2 behind c
+a′
+
+a
+1
+
+L1 :
+
+4
+
+48
+
+89
+
+L2 :
+
+76
+
+17
+
+5
+
+c
+
+c′
+
+0
+
+9
+
+Result:
+L1 :
+
+4
+
+48
+
+b
+
+b′
+
+13
+
+7
+
+32
+
+a′
+
+b′
+
+89
+
+7
+
+32
+
+a
+
+Runtime: Θ(1)
+
+L2 :
+
+76
+
+17
+c
+
+6
+
+Thomas Bläsius – Algorithms 1
+
+1
+
+splice(a; b; c)
+// cut out ⟨a; : : : ; b⟩
+a′ := a:prev
+b ′ := b:next
+a′ :next := b ′
+b ′ :prev := a′
+// insert after c
+c ′ := c:next
+a:prev := c
+b:next := c ′
+c:next := a
+c ′ :prev := b
+
+b
+0
+
+9
+
+13
+
+5
+c′
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ List or Array?
+Strengths of the list: flexibly modifiable in Θ(1)
+89
+⟨4; 48; 1; 0; 9⟩ ⟨4; 48; 89; 1; 0; 9⟩ ⟨4; 89; 1; 0; 9⟩
+Insert, delete, move
+⟨4; 48; 89; 1⟩ + ⟨0; 9; 13⟩ → ⟨4; 48; 89; 1; 0; 9; 13⟩
+Concatenation of two lists
+⟨4; 48; 89; 1; 0; 9; 13; 7⟩ ⟨32; 76; 17; 5⟩
+Moving entire ranges
+⟨4; 48; 89; 1; 0; 9; 13; 7; 32; 76; 17; 5⟩
+Deleting entire ranges
+Weaknesses of the list
+no random access
+you must always already have the relevant nodes
+in hand
+in practice: worse constant factors
+(memory overhead, cache effects)
+
+7
+
+Thomas Bläsius – Algorithms 1
+
+Side note
+Θ(1) for deleting a range is possibly
+a somewhat naive perspective
+What happens to the reserved memory?
+Do we free it? Who pays for that?
+Or do we accept a memory leak?
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ List Variants
+More than just one list
+List is more a concept than a single data structure
+different applications require different implementations in detail
+Example 1: List size
+useful information: size of the list (number of nodes)
+solution: store this info and update it on changes
+problem: splice becomes more expensive because we have to count the moved elements
+Example 2: Singly linked list
+store only next but not prev
+less storage space, often faster
+but: less flexible, weird user interface (e.g. removeAfter)
+
+8
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Lists in the Wild
+C++
+
+9
+
+Thomas Bläsius – Algorithms 1
+
+https://en.cppreference.com/w/cpp/container/list
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Lists in the Wild
+Java
+
+9
+
+Thomas Bläsius – Algorithms 1
+
+https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/LinkedList.html
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Stacks and Queues
+Stack
+Operations: pushBack, popBack
+Implementation: e.g. using array
+LIFO: Last In – First Out
+Queue
+Operations: pushBack, popFront
+Implementation: e.g. using list
+FIFO: First In – First Out
+Deque – Double-ended Queue
+Operations: pushBack, popBack,
+pushFront, popFront
+Implementation: e.g. using list
+10
+
+Thomas Bläsius – Algorithms 1
+
+pushBack
+popBack
+
+popFront
+
+pushFront
+popFront
+
+pushBack
+
+pushBack
+popBack
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Searching
+Problem statement
+given: sequence of n numbers A (as array or list) and a number x
+goal: find x in sequence A (e.g. first/every occurrence)
+?
+
+45 ∈ ⟨4; 48; 89; 1; 0; 9; 13; 7; 32; 76; 17; 5; 37; 28; 82; 63⟩
+Linear search
+look at every element from A
+linear runtime: Θ(n)
+Can we do better?
+only some elements considered → x can hide among the unexamined ones
+we must at least read the input completely once ⇒ Ω(n)
+so: better than Θ(n) is not possible, unless we require additional properties for A
+
+11
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Searching in Sorted Sequences
+Problem statement
+given: sorted sequence of n numbers A and a number x
+goal: find x in sequence A (e.g. first occurrence or predecessor)
+?
+
+45 ∈ ⟨0; 1; 4; 5; 7; 9; 13; 17; 28; 32; 37; 48; 63; 76; 82; 89⟩
+Binary search
+through one comparison: decide whether x lies in the left or right half of A
+search recursively in the relevant half of A
+termination: sequence to be searched is only constantly large (here: 2)
+Number of comparisons
+per comparison the size of A halves → only Θ(log n) halvings
+Implementation
+per step: access to middle element in currently considered range
+random access → array
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Abstraction level: Idea → Implementation
+binSearchRec(A; x; beg = 0; end = n − 1)
+// find x in ⟨A[beg]; : : : ; A[end]⟩
+if end − beg = 1 then
+// base case: range has size 2
+if x = A[beg] then return beg
+if x = A[end] then return end
+return between beg and end
+// general case: half the range
+mid := ⌈(beg + end)=2⌉
+if x < A[mid] then
+return binSearchRec(A; x; beg; mid)
+else
+return binSearchRec(A; x; mid; end)
+13
+
+Thomas Bläsius – Algorithms 1
+
+What must we prove?
+output result is correct
+termination after runtime Θ(log n)
+Correctness proof using invariants
+show that we always search in the right subrange: A[beg] ≤ x ≤ A[end]
+A:
+
+Range of current call
+beg
+mid
+end
+new range for x < A[mid]
+new range for x ≥ A[mid]
+
+if A[beg] ≤ x ≤ A[end] holds in current
+call
+then also in the next
+Attention at the beginning:
+A[0] ≤ x ≤ A[n − 1] need not hold!
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Implementation: Second Attempt
+What exactly do we want?
+binSearchRec(A; x; beg = 0; end = n)
+Index i, such that: A[i] = x
+(if x ∈ A) // find i ∈ [beg; end] with this property
+or A[i − 1] < x < A[i]
+(if x ̸∈ A) if beg = end then return beg
+(Convention: A[−1] = −∞, A[n] = ∞)
+
+Invariant for this index i: i ∈ [beg; end]
+Proof of invariant
+holds at the beginning with beg = 0 and end = n
+for maintaining the invariant, check 4 cases:
+Case 1.1: x ∈ A and x ≤ A[mid]
+Case 1.2: x ∈ A and x > A[mid]
+Case 2.1: x ̸∈ A and x ≤ A[mid]
+Case 2.2: x ̸∈ A and x > A[mid]
+
+// general case: half the range
+mid := ⌊(beg + end)=2⌋
+if x ≤ A[mid] then
+return binSearchRec(A; x; beg; mid)
+else
+return binSearchRec(A; x; mid + 1; end)
+Range of current call
+beg
+mid
+end
+new range for x ≤ A[mid] new range for x > A[mid]
+
+Base case: very simple with the invariant
+14
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Implementation: Second Attempt
+What exactly do we want?
+binSearchRec(A; x; beg = 0; end = n)
+Index i, such that: A[i] = x
+(if x ∈ A) // find i ∈ [beg; end] with this property
+or A[i − 1] < x < A[i]
+(if x ̸∈ A) if beg = end then return beg
+(Convention: A[−1] = −∞, A[n] = ∞)
+
+Invariant for this index i: i ∈ [beg; end]
+Proof of runtime
+end − beg is at least halved:
+j
+k
+mid − beg = beg+end
+− beg
+2
+beg+end
+end−beg
+−
+beg
+=
+2
+"j
+k2
+"
+end − (mid + 1) = end − beg+end
++1
+2
+≤ end − beg+end
+2
+end−beg
+=
+2
+
+≤
+
+14
+
+Thomas Bläsius – Algorithms 1
+
+// general case: half the range
+mid := ⌊(beg + end)=2⌋
+if x ≤ A[mid] then
+return binSearchRec(A; x; beg; mid)
+else
+return binSearchRec(A; x; mid + 1; end)
+Range of current call
+beg
+mid
+end
+new range for x ≤ A[mid] new range for x > A[mid]
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Binary Search
+Theorem
+Let M be an ordered set (e.g. Z). Let A be a sorted array of length n with values
+from M and let x ∈ M. Binary search finds the index i with A[i − 1] < x ≤ A[i] in
+Θ(log n) comparisons.
+(Convention: A[−1] = −∞, A[n] = ∞)
+Consequences: Range queries
+for a; b ∈ M we can find out in Θ(log n) how many elements A contains from [a; b]
+A contains k elements from [a; b] → we can enumerate them in Θ(log n + k)
+Simple idea, with pitfalls in implementation
+abstract idea: compare with middle element in each step → halve search space
+implementation: you have to be careful with edge cases
+helpful technique: correctness proof using invariant
+
+15
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ It Can't Be Done Faster
+Theorem
+You cannot search in o(log n).
+
+Very abbreviated presentation!
+
+Theorem
+There is no data structure that can be computed for every ordered set M and every subset M ′ ⊆ M
+with n := |M ′ | that tests for every x ∈ M in o(log n) time whether x ∈ M ′ .
+Why is this so cumbersome?
+Doesn't the simpler formulation say the same thing!?!
+here important: we only know about M that it is an ordered set
+the only thing we can do with elements from M: check ordering relation
+→ every decision is based on a comparison
+we also say: comparison-based searching doesn't work in o(log n)
+for some sets M you can actually search in o(log n)
+(later on exercise sheet)
+16
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ It Can't Be Done Faster
+Theorem
+There is no data structure that can be computed for every ordered set M and every subset M ′ ⊆ M
+with n := |M ′ | that tests for every x ∈ M in o(log n) time whether x ∈ M ′ .
+Proof
+Execution of search depends only on comparisons between x and elements in M ′
+Set of all executions: decision tree
+<
+>
+=
+one execution: path from root to leaf
+<
+>
+<
+>
+=
+=
+→ path length = number of comparisons
+< = >
+< = >
+< = >
+at "=" terminates, since x found < = >
+→ blue leaf
+each x ∈ M ′ is found at a different blue leaf
+k−1
+P i
+2 = 2k − 1 different blue leaves
+at most k comparisons ⇒ at most
+i=0
+′
+
+for k < log2 n cannot get the right result for every x ∈ M
+17
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Summary
+Lists
+pointer-based data structure for storing a sequence
+flexibly modifiable: e.g. fast insertion, deletion, splice
+no random access using index
+Binary search
+Abstraction level
+Prerequisite: sorted sequence and we have random access
+Comparison with middle element of current search space
+high
+(idea finding,
+runtime estimation)
+→ halves search space → Θ(log n) comparisons
+Correctness of detail implementation via invariant
+low
+(formalization, path to implementation)
+
+Lower bound
+better than Θ(log n) is not possible
+unless we make assumptions about what kind of data we search on
+18
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

@@ -1,0 +1,1028 @@
+Algorithms 1
+Shortest Paths: negative edges and APSP
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ Shortest Paths with negative edge lengths
+Problem: Single-Source Shortest Path (SSSP)
+Given a directed graph G = (V; E), edge lengths len : E → Z and s ∈ V ,
+compute dist(s; t) for all t ∈ V .
+Negative cycles
+Path can run multiple times in a cycle
+arbitrarily small length possible (distances −∞?)
+
+2
+
+3
+
+1
+
+2
+
+s
+−1
+
+−5
+3
+
+2
+
+Option 1
+allow only simple paths that don't visit nodes multiple times
+Hamilton path problem as special case
+(probably no polynomial algorithm possible, see TGI next semester)
+
+Option 2
+detect negative cycles
+abort when negative cycle found
+2
+
+Thomas Bläsius – Algorithms 1
+
+we consider this variant in the following
+(hence also directed graphs)
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Reminder: Dijkstra's Algorithm
+Basic approach
+store d[v ] for each node v : length of the shortest known sv-path
+Relaxation of edge (u; v ): if d[v ] > d[u] + len(u; v ), set d[v ] = d[u] + len(u; v )
+3
+
+3
+s
+
+Order of relaxations in Dijkstra
+Explore node u: relax all outgoing edges from u
+explore nodes in ascending order of d[u]
+Correctness: when exploring, d[u] = dist(s; u) holds
+
+0
+
+u
+
+2
+
+8
+
+8
+
+5
+
+v
+5
+
+0
+
+5
+
+s
+3
+
+−3
+∞
+1
+
+3
+With negative edge lengths
+Problem: d[u] could later become smaller due to negative path
+Hope: simply continue relaxing until nothing changes leads to the goal
+3
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Bellman-Ford Algorithm
+Rough plan
+Relaxation of edge (u; v )
+relax each edge once
+3
+3
+u
+8
+iterate until none of the d[v ] change anymore
+s
+2
+5
+8
+−4
+∞
+∞
+4
+0
+0
+Problem case negative cycles
+v
+Paths become shorter and shorter
+if d[v ] > d[u] + len(u; v )
+1
+5
+the longer you run in the cycle
+set d[v ] = d[u] + len(u; v )
+does not terminate
+∞
+−2
+0
+1
+−3
+Without negative cycles
+in each iteration the total sum of d[v ] becomes smaller by at least 1
+the total sum of the final solution is bounded from below (̸= −∞)
+so: termination after finitely many iterations
+Goal in the following
+prove upper bound for the number of iterations
+detection of negative cycles
+4
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ How many iterations are needed?
+Consider a shortest st-path
+Best case: we relax from front to back
+are finished after one iteration
+s
+
+3
+
+v1 −2 v2 1
+
+v3 2
+
+Algorithm
+relax each edge once
+iterate until no d[v ] changes
+
+t
+Relaxation of edge (u; v )
+
+∞
+3
+
+0
+
+∞
+1
+
+∞
+2
+
+∞
+4
+
+3
+
+Problem: we don't know beforehand which order is good
+Worst case: we relax from back to front
+s
+0
+
+3
+
+v1 −2 v2 1
+
+v3 2
+
+t
+
+∞
+3
+
+∞
+2
+
+∞
+4
+
+∞
+1
+
+s
+0
+
+8
+
+3
+
+u
+
+2
+
+8
+
+5
+
+v
+
+if d[v ] > d[u] + len(u; v )
+set d[v ] = d[u] + len(u; v )
+
+after i iterations: correct distance up to vi
+shortest st-path consists of k edges ⇒ at most k iterations
+⇒ n − 1 iterations should suffice
+(we will prove this formally in the following)
+5
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Proof: n − 1 iterations suffice
+Observation
+Subpaths of shortest paths are shortest paths.
+
+shortest sv-path
+
+u
+
+s
+
+v
+
+shortest su-path shortest uv-path
+Justification
+if there were a shorter su-path
+then this together with the uv-path would also be a shorter sv-path
+
+Attention: the converse doesn't hold
+shortest su- and uv-paths together don't necessarily form a shortest sv-path
+this only holds if u also lies on the shortest sv-path
+u
+4
+
+3
+s
+
+6
+
+Thomas Bläsius – Algorithms 1
+
+5
+
+v
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Proof: n − 1 iterations suffice
+Observation
+Subpaths of shortest paths are shortest paths.
+
+shortest sv-path
+
+u
+
+s
+shortest su-path
+
+Lemma
+If there exists a shortest sv-path consisting of k edges,
+then d[v ] = dist(s; v ) after k iterations.
+
+v
+shortest uv-path
+
+Algorithm
+relax each edge once
+iterate until no d[v ] changes
+
+Relaxation of edge (u; v )
+Proof: Induction over k
+3
+3
+k = 1: Edge (s; v ) is shortest path ⇒ one iteration suffices
+u
+8
+s
+2
+5
+k > 1: consider predecessor u of v on shortest sv-path
+8
+0
+v
+there exists shortest su-path with k − 1 edges
+if d[v ] > d[u] + len(u; v )
+I.H. ⇒ d[u] = dist(s; u) after k − 1 iterations
+set d[v ] = d[u] + len(u; v )
+Relaxation of (u; v ) in kth iteration sets d[v ] = dist(s; v )
+
+6
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Proof: n − 1 iterations suffice
+Observation
+Subpaths of shortest paths are shortest paths.
+
+shortest sv-path
+
+u
+
+s
+shortest su-path
+
+shortest uv-path
+
+Lemma
+If there exists a shortest sv-path consisting of k edges,
+then d[v ] = dist(s; v ) after k iterations.
+
+Algorithm
+relax each edge once
+iterate until no d[v ] changes
+
+Note
+shortest path has at most n nodes and n − 1 edges
+(provided we have no negative cycles)
+
+Relaxation of edge (u; v )
+3
+s
+0
+
+Theorem
+If the graph has no negative cycles, then after
+n − 1 iterations for all nodes v , d[v ] = dist(s; v ) holds.
+6
+
+v
+
+Thomas Bläsius – Algorithms 1
+
+8
+
+3
+
+u
+
+2
+
+8
+
+5
+
+v
+
+if d[v ] > d[u] + len(u; v )
+set d[v ] = d[u] + len(u; v )
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Detection of negative cycles
+Theorem
+If the graph has no negative cycles, then after n − 1 iterations for all nodes
+v , d[v ] = dist(s; v ) holds.
+Situation: after n − 1 iterations
+
+Algorithm
+relax each edge once
+iterate until no d[v ] changes
+
+If there is no negative cycle
+further relaxations change nothing more
+for each edge (u; v ) ∈ E holds: d[v ] ≤ d[u] + len(u; v )
+∞
+4
+If there is a negative cycle
+one can always find shorter paths
+5
+Relaxations continue to have effect
+there exists (u; v ) ∈ E with: d[v ] > d[u] + len(u; v ) −2
+0
+
+Relaxation of edge (u; v )
+−4
+
+∞
+0
+
+s
+0
+
+1
+−3
+
+3
+
+∞
+1
+
+3
+
+u
+
+2
+
+8
+
+8
+
+5
+
+v
+
+if d[v ] > d[u] + len(u; v )
+set d[v ] = d[u] + len(u; v )
+
+Test for negative cycle: check if d[v ] ≤ d[u] + len(u; v ) for all (u; v ) ∈ E
+7
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Pseudocode and Runtime
+BellmanFord(Graph G; Node s)
+d := Array of size n initialized with ∞
+d[s] := 0
+for n − 1 iterations do
+for Edge (u; v ) ∈ E do
+if d[v ] > d[u] + len(u; v ) then
+d[v ] := d[u] + len(u; v )
+// test for negative cycle
+for Edge (u; v ) ∈ E do
+if d[v ] > d[u] + len(u; v ) then
+return negative cycle
+return d
+
+Runtime
+iterate n times over all edges
+thus: Θ(n · m)
+Abort if all d [v ] remain the same
+makes sense in practice
+doesn't help asymptotically in worst case
+Clever choice of edge order
+can save constant factors
+doesn't help asymptotically in worst case
+Further notes on runtime
+no asymptotically better algorithm known
+very slow compared to Θ(n log n + m)
+(Dijkstra's algorithm for non-negative edge lengths)
+
+8
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ All Pair Shortest Path
+Problem: All-Pair Shortest Path (APSP)
+Given a directed graph G = (V; E) with edge lengths len : E → Z. Compute
+dist(s; t) for all node pairs s; t ∈ V .
+Notes
+Distance matrix as output
+Output is already quadratically large
+we assume for now that there are no
+negative cycles
+Intermediate nodes
+Path ⟨v1 ; v2 ; : : : ; vk ⟩
+v1 is start node, vk end node
+all others are intermediate nodes
+9
+
+Thomas Bläsius – Algorithms 1
+
+1
+A
+
+A 0
+
+5
+
+7
+
+8 10 9
+
+B 1
+
+0
+
+2
+
+3
+
+C 2
+
+7
+
+0 10 12 11
+
+D
+
+D 1
+
+6 −1 0
+
+2
+
+E −1 4 −3 7
+
+E
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+
+B
+
+5 3
+
+2
+C
+
+3
+
+6
+
+−3
+
+A
+Start node
+
+B
+
+F
+
+−1
+D
+
+E
+
+Intermediate nodes
+
+5
+
+2
+
+4
+
+1
+
+0 −1
+
+C
+End node
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Restricted set of intermediate nodes
+without intermediate nodes
+
+1
+A
+
+B
+
+5 3
+
+2
+C
+
+6
+D
+
+3
+
+2
+
+−3
+
+E
+
+−1
+
+F
+
+Intermediate nodes: {A, B, C}
+
+Intermediate nodes: {A, B}
+
+A 0
+
+5 ∞ ∞ ∞ ∞
+
+A 0
+
+5 ∞ ∞ ∞ ∞
+
+A 0
+
+5 ∞ 8 ∞ ∞
+
+B 1
+
+0 ∞ 3 ∞ ∞
+
+B 1
+
+0 ∞ 3 ∞ ∞
+
+B 1
+
+0 ∞ 3 ∞ ∞
+
+C 2 ∞ 0 ∞ ∞ ∞
+
+C 2
+
+7
+
+0 ∞ ∞ ∞
+
+C 2
+
+7
+
+0 10 ∞ ∞
+
+D ∞ 6
+
+D ∞ 6
+
+2 ∞
+
+D 7
+
+6
+
+3
+
+3
+
+0
+
+2 ∞
+
+3
+
+0
+
+0
+
+2 ∞
+
+E ∞ ∞ −3 ∞ 0 −1
+
+E ∞ ∞ −3 ∞ 0 −1
+
+E ∞ ∞ −3 ∞ 0 −1
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+
+Intermediate nodes: {A, B, C, D}
+
+Intermediate nodes: {A, B, C, D, E}
+
+all intermediate nodes
+
+A 0
+
+5 ∞ 8 ∞ ∞
+
+A 0
+
+5 11 8 10 ∞
+
+A 0
+
+5
+
+7
+
+8 10 9
+
+A 0
+
+5
+
+7
+
+8 10 9
+
+B 1
+
+0 ∞ 3 ∞ ∞
+
+B 1
+
+0
+
+6
+
+5 ∞
+
+B 1
+
+0
+
+2
+
+3
+
+4
+
+B 1
+
+0
+
+2
+
+3
+
+C 2
+
+7
+
+0 10 ∞ ∞
+
+C 2
+
+7
+
+0 10 12 ∞
+
+C 2
+
+7
+
+0 10 12 11
+
+C 2
+
+7
+
+0 10 12 11
+
+D 5
+
+6
+
+3
+
+0
+
+2 ∞
+
+D 5
+
+6
+
+3
+
+0
+
+2 ∞
+
+D 1
+
+6 −1 0
+
+D 1
+
+6 −1 0
+
+E −1 4 −3 7
+
+0 −1
+
+E −1 4 −3 7
+
+0 −1
+
+E −1 4 −3 7
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+10
+
+Intermediate nodes: {A}
+
+Thomas Bläsius – Algorithms 1
+
+3
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+
+5
+
+2
+
+1
+
+0 −1
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+
+E −1 4 −3 7
+
+5
+
+2
+
+4
+
+1
+
+0 −1
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Implementation as algorithm
+Partial solutions for the distances
+order node set V = {v1 ; : : : ; vn }
+Di : distance matrix regarding intermediate nodes from Vi = {v1 ; : : : ; vi } → final result Dn
+Di [u][v ]: length of a shortest uv-path that only uses intermediate nodes from Vi
+u
+Floyd-Warshall algorithm
+Di−1 v
+D0 is easy to compute: basically the adjacency matrix
+vi
+compute Di iteratively from Di−1
+u v vi
+u
+v
+vi is new allowed intermediate node
+Fall 1: shortest uv-path contains vi
+u
+⇒ Di [u][v ] = Di−1 [u][vi ] + Di−1 [vi ][v ]
+vi
+Di v
+vi
+Fall 2: shortest uv-path doesn't contain vi
+u v vi
+⇒ Di [u][v ] = Di−1 [u][v ]
+Decision for the right case: test if Di−1 [u][vi ] + Di−1 [vi ][v ] < Di−1 [u][v ]
+11
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Notes and Pseudocode
+Note
+Correctness follows directly inductively
+(with the case distinction of the previous slide)
+
+Changes in iteration i don't break
+anything for this iteration
+→ one matrix for all Di suffices
+Considering all pairs: for u = v ,
+u = vi or vi = v nothing happens
+(Exception: there is negative cycle → detected this way)
+
+Runtime
+n iterations
+n2 node pairs per iteration
+Θ(n3 )
+12
+
+Thomas Bläsius – Algorithms 1
+
+FloydWarshall(Graph G)
+D := n × n Matrix initialized with ∞
+for (u; v ) ∈ E do D[u][v ] := len(u; v )
+for v ∈ V do D[v ][v ] := 0
+for i := 1; : : : ; n do
+// compute Di from Di−1
+for all pairs of nodes (u; v ) ∈ V × V do
+D[u][v ] := min(D[u][v ]; D[u][vi ] + D[vi ][v ])
+return D
+u
+
+v
+
+vi
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Dynamic Programming (DP)
+Algorithmic technique
+define partial solutions
+computation of larger from small partial solutions
+reuse of computed partial solutions
+Note
+computation is usually a recurrence
+correctness usually follows inductively
+recursive implementation: very expensive (usually exponential), since no reuse of partial solutions
+
+Example: Floyd-Warshall
+Di [u][v ]: distance regarding intermediate nodes
+from Vi = {v1 ; : : : ; vi }
+Di [u][v ] = min(Di−1 [u][v ];
+Di−1 [u][vi ] + Di−1 [vi ][v ])
+Di [u][w ] = min(Di−1 [u][w ];
+Di−1 [u][vi ]+Di−1 [vi ][w ])
+u
+
+v
+w
+
+vi
+
+Main difficulty: definition of suitable partial solutions
+What information is essential for a partial solution?
+Xi from Xi−1 computing is difficult, but it works if I additionally know Yi−1
+now I also have to compute Yi (from Xi−1 and Yi−1 )
+13
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Dynamic Programming (DP) – Notes
+Comparison with divide and conquer
+(typically disjoint subproblems)
+similar: here too partial solutions are combined
+(subproblems not disjoint)
+Special feature of DP: reuse of partial results
+Common mistake: focus on recurrence instead of definition of partial solutions
+Key point: suitable definition of partial solutions
+Description of a DP: should always begin with definition of partial solutions
+recurrence is then often more or less obvious
+Build partial solutions iteratively
+usually something is enlarged step by step
+Floyd-Warshall: set of intermediate nodes Vi
+(as one speaks of an induction over i)
+Terminology: DP over set of intermediate nodes
+Mental shortcut: When familiar with DPs, this amounts
+to a complete description of the Floyd–Warshall algorithm.
+14
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ SSSP, APSP, DP
+SSSP with negative edges
+Bellman–Ford: Θ(nm)
+detection of negative cycles
+is basically a DP over the number of edges on the shortest path
+APSP
+Floyd–Warshall: Θ(n3 )
+DP over the set of intermediate nodes Vi = {v1 ; : : : ; vi }
+Dynamic Programming (DP)
+important algorithmic technique
+we will learn more DPs later
+
+15
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Preview: APSP – Can we do better than Θ(n 3 )?
+(Possibly) better algorithms
+n times Dijkstra → Θ(n2 log n + nm)
+Pettie, Ramachandran: Θ(nm log ¸(m; n))
+
+Note
+m ∈ O(n2 )
+
+non-negative edge lengths
+
+sparse graphs: m ≪ n2
+
+(¸(m; n): very slowly growing inverse Ackermann function)
+
+Thorup: Θ(nm)
+3
+
+√
+Ω( log n)
+
+Williams: n =2
+
+natural edge lengths
+
+Johnson: Bellman–Ford + length adjustment + n times Dijkstra → Θ(n2 log n + nm)
+(Keyword: Fine-Grained Complexity)
+substantially better than n3 or nm is probably not possible
+Why do we only learn the slow Floyd-Warshall here?
+nicely simple
+algorithm of choice for dense graphs
+algorithmic technique: dynamic programming
+16
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

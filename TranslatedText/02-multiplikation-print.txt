@@ -1,0 +1,664 @@
+Algorithms 1
+Divide and Conquer
+Karatsuba's Algorithm and Master Theorem
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ Multiplication: Idea → Code
+How does that work again?
+a
+b
+5678 · 1234
+5678
+113
+15
+16
+17
+20
+23
+24
++
+223
+73
+12
+7006652
+
+calculate a · bi for each digit bi of b = (bn−1 : : : b0 )
+shift result i places to the left
+add results
+High abstraction level
+easy to understand
+difficult to implement
+2
+
+Thomas Bläsius – Algorithms 1
+
+Concretization using pseudocode
+mult(a; b)
+// Θ(n2 )
+// Θ(1)
+total := 0
+// Θ(n2 )
+for i from 0 to n − 1 do
+// Θ(n)
+prod := a · bi · 10i
+// Θ(n)
+total := total + prod
+// Θ(n)
+return total
+a · bi
+carry := 0
+for j from 0 to n − 1 do
+(carry; cj ) := aj · bi + carry
+cn := carry
+return (cn ; : : : ; c0 )
+
+// Θ(n)
+// Θ(1)
+// Θ(n)
+// Θ(1)
+// Θ(1)
+// Θ(n)
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Interlude: Pseudocode
+Benefits
+interpolates between high and low abstraction level
+many powerful operations → high abstraction level → idea communication
+only primitive operations → low abstraction level → actual implementation
+can help getting from high-level idea to an implementation
+can help with analysis (runtime and correctness)
+Rules
+in the lecture: syntax is always explained on-the-fly
+more flexible than with real programming language (e.g. mathematical formulas)
+one can also be somewhat creative, but should keep it consistent
+Main goals:
+well readable (for humans)
+right abstraction level
+3
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ How fast does a computer multiply numbers?
+Typical assumption
+Θ(1) for multiplying two numbers
+usually fits reality well
+makes analysis pleasant
+Why do we learn about multiplication algorithms here then?
+Why do we only allow ourselves to multiply digits per step?
+nice example for runtime analysis
+nice example for recursion
+nice example for divide and conquer
+stupid example, because then you think multiplying numbers is expensive
+So: The following algorithm is not relevant, unless you multiply very very large numbers. In
+the lecture otherwise always applies: multiply in Θ(1).
+4
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Divide and Conquer
+Written multiplication
+5678 · 1234 = 5678 · (1 · 103 + 2 · 102 + 3 · 101 + 4 · 100 )
+
++
+5678 · 1 · 103
+
+5678 · 2 · 102
+
+5678 · 3 · 101
+
+5678 · 4 · 100
+
++
+5 · 103 · 2 · 102
+
+6 · 102 · 2 · 102
+
+7 · 101 · 2 · 102
+
+8 · 100 · 2 · 102
+
+Core idea
+split difficult problem into several easier problems
+repeat that until the instance is trivial
+here: problem itself becomes substantially easier (number → digit)
+general: problem stays the same, but instance becomes easier (e.g. smaller n)
+5
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Divide and Conquer
+Multiplication with different decomposition
+5678 · 1234 = (56 · 102 + 78) · (12 · 102 + 34)
+
++
+
+ab cd
+56 · 12 · 104
+
+56 · 34 · 102
+
+78 · 12 · 102
+
+78 · 34 · 100
+
++
+
++
+
++
+
++
+
+mult(x; y )
+// assumption: n = |x| = |y | = 2k for k ∈ N
+if n = 1 return x · y
+a; b := first and second half of x
+c; d := first and second half of y
+return mult(a; c) · 10n + mult(b; d)
++(mult(a; d) + mult(c; b)) · 10n=2
+
+Size of the recursion tree
+each node has 4 children → layer i has 4i nodes
+n is halved with each layer → log2 (n) layers
+logP
+2 (n)
+` log (n) ´
+` 2´
+i
+2
+Total nodes:
+4 ∈Θ 4
+=Θ n
+i=0
+
+` 2´
+Attention: this doesn't mean that the runtime is also Θ n (but it's true in this case)
+6
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Interlude: Exponential sums & geometric series
+Exponentially growing layers
+Layer i
+0
+1
+2
+
+Sum of nodes
+Number of nodes
+40 = n2 · 1=4k
+41 = n2 · 1=4k−1
+42 = n2 · 1=4k−2
+
+k −1
+4k−1 = n2 · 1=41
+k = log2 (n)
+4k = n2 · 1=40
+
+small → large
+k
+P
+4i
+i=0
+
+large → small
+k ` ´
+k
+` 1 ´i
+P
+2 P 1 i
+2
+n · 4 =n ·
+4
+i=0
+
+i=0
+
+geometric sum ∈ Θ(1)
+
+∈ Θ(n2 )
+
+Mental shortcut: Sums that shrink/grow exponentially
+P i
+i c is asymptotically dominated by the largest summand
+b
+` a
+´
+P
+(c ∈ (0; 1) ∪ (1; ∞) constant)
+i
+b
+c ∈Θ c +c
+so:
+(a; b > 0 can depend on n)
+i=a
+
+7
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Goal: fewer recursive calls
+Previously
+xy = (a · 10n=2 + b) · (c · 10n=2 + d)
+= ac · 10n + (ad + bc) · 10n=2 + bd
+four recursive multiplications
+
+mult(x; y )
+// assumption: n = |x| = |y | = 2k for k ∈ N
+if n = 1 return x · y
+a; b := first and second half of x
+c; d := first and second half of y
+return mult(a; c) · 10n + mult(b; d)
++(mult(a; d) + mult(c; b)) · 10n=2
+
+Idea for improvement
+ignore the powers of 10 for now
+(a + b) · (c + d) = ac + ad + bc + bd
+if we know (a + b) · (c + d), ac and bd, we can obtain ad + bc from them
+calculate (a + b) · (c + d), ac and bd
+then calculate (ad + bc) = (a + b) · (c + d) − ac − bd
+only three recursive multiplications
+but somewhat more additions
+8
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Karatsuba's Algorithm
+mult(x; y )
+// assumption: n = |x| = |y | = 2k for k ∈ N
+if n = 1 return x · y
+a; b := first and second half of x
+c; d := first and second half of y
+ac := mult(a; c)
+bd := mult(b; d)
+sum := mult((a + b); (c + d)) − ac − bd
+return ac · 10n + sum · 10n=2 + bd
+
+Reminder
+xy = ac · 10n + (ad + bc) · 10n=2 + bd
+(ad + bc) = (a + b) · (c + d) − ac − bd
+Number of nodes in the recursion tree
+3 children → 3i nodes on layer i
+n is always halved → log2 (n) layers
+log2 (n)
+"
+"
+"
+"
+X
+3i ∈ Θ 3log2 (n) = Θ nlog2 (3)
+i=0
+` 1;585 ´
+⊆O n
+
+Open questions
+How much work do you do in each node? Are the additional additions bad?
+Can we assume that n is a power of two? Couldn't |a + b| > n2 ?
+9
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Karatsuba's Algorithm – Runtime Analysis
+Work per node
+linear in`the size
+of the numbers
+´
+so: Θ n · 21i for a node on layer i
+
+·
+·
+
+·
+
+·
+
+Work per layer
+3i nodes on layer i
+" ` ´"
+`
+´
+1
+3 i
+i
+Total work for layer i: 3 · Θ n · 2i = Θ n · 2
+Total work
+exponential sum → dominated by last layer i = log2 (n)
+" ` ´
+"
+" " log (3) ""
+` log (3) ´
+log
+(n)
+2
+3
+n 2
+so: Θ n · 2
+=Θ n·
+=Θ n 2
+n
+Sanity check: last layer has nlog2 (3) nodes and constant effort per node
+10
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Rounding errors?
+Assumption: n = |x| = |y | is a power of two
+mult(x; y )
+···
+Problem: a + b possibly has n2 + 1 digits
+a; b := first, second half of x
+so: no longer a power of two in the recursive call
+···
+Handling odd n
+sum := mult((a + b); (: : : )) : : :
+n odd ⇒ |a| = ⌈ n2 ⌉ = n2 + 12
+thus a + b has up to n2 + 32 digits
+
+Side calculation
+n0 = n
+
+What changes in the analysis?
+ni = #digits on layer i (n0 = n)
+previously: ni = 2ni
+now: ni+1 ≤ n2i + 32 ≤ 2ni + 3
+
+n1 = n2 + 32
+
+n2 = 2n2 + 232 + 32
+
+Attention: Termination of recursion would need to be looked at more carefully here.
+Possibility 1: Show that it terminates after constant time for constantly many digits.
+Possibility 2: Don't break recursion only at n = 1, but somewhat earlier.
+Thomas Bläsius – Algorithms 1
+
+· 12 + 32
+
+n3 = 2n3 + 233 + 232 + 32
+
+` log (3) ´
+no asymptotic difference → runtime Θ n 2
+
+11
+
+· 12 + 32
+
+ni = 2ni
+
++3·
+
+i
+P
+1
+j=1
+
+2j
+
+· 12 + 32
+
+≤ 2ni + 3
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Karatsuba's Algorithm
+Theorem
+Karatsuba's `algorithm multiplies
+two
+n-digit
+´
+`
+´
+numbers in Θ nlog2 (3) ⊆ O n1;585 time.
+Analysis via recursion tree
+How many nodes are on layer i?
+How large is n on layer i?
+How much time does a node cost in layer i?
+
+mult(x; y )
+if n = 1 return x · y
+a; b := first and second half of x
+c; d := first and second half of y
+ac := mult(a; c)
+bd := mult(b; d)
+sum := mult((a + b); (c + d)) − ac − bd
+return ac · 10n + sum · 10n=2 + bd
+
+Why is this so much work?
+Do I have to analyze every recursive algorithm like this?
+Can't you somehow take shortcuts?
+
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Recurrences
+Runtime as formula
+Runtime
+ȷ for base case → costs in the leaves
+Θ(1) ` ´
+when n = 1,
+T (n) =
+3 · T n2 + Θ(n) when n > 1.
+Number of recursive calls
+Runtime for the call itself
+→ Number of children in tree
+→ Costs for one node
+new instance sizes
+→ Change of n between layers
+
+` log (3) ´
+⇒ T (n) ∈ Θ n 2
+Can we generalize this?
+ȷ
+Θ(1)` ´
+when n = 1,
+T (n) =
+a · T bn + Θ(nc ) when n > 1.
+
+⇒ T (n) ∈ Θ (??)
+13
+
+Thomas Bläsius – Algorithms 1
+
+mult(x; y )
+if n = 1 return x · y
+a; b := first and second half of x
+c; d := first and second half of y
+ac := mult(a; c)
+bd := mult(b; d)
+sum := mult((a + b); (c + d)) − ac − bd
+return ac · 10n + sum · 10n=2 + bd
+Analysis via recursion tree
+How many nodes are on layer i?
+How large is n on layer i?
+How much time does a node cost in layer i?
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Solving general recurrences
+Can we generalize this?
+ȷ
+Θ(1)` ´
+when n = 1,
+T (n) =
+a · T bn + Θ(nc ) when n > 1.
+Situation for layer i
+#Nodes:
+Instance size:
+Costs per node:
+
+14
+
+Analysis via recursion tree
+How many nodes are on layer i?
+How large is n on layer i?
+How much time does a node cost in layer i?
+
+Total costs for layer i Total costs for the tree
+
+a
+
+i
+
+n
+bi
+nc
+b ci
+
+a
+
+i
+
+nc
+· bci
+
+=
+
+` a ´i
+bc
+
+·n
+
+c
+
+Number of layers
+
+logb (n)
+
+P ` a ´i
+
+· nc
+
+bc
+exponential sum
+→ dominated by largest summand
+i
+
+(except when a=b c = 1)
+
+a < bc
+
+a = bc
+
+T (n) ∈ Θ (nc )
+
+T (n) ∈ Θ (nc log n)
+
+a > bc
+` log (a) ´
+T (n) ∈ Θ n b
+
+(Costs of root dominate)
+
+(Costs on each of the logb (n) layers equal)
+
+(Costs of the nlogb (a) leaves dominate)
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Master Theorem
+Theorem
+Let T (n) = a · T ( bn ) + f (n) with f (n) ∈ Θ(nc ) and T (1) ∈ Θ(1). Then
+8
+when a < b c ;
+<Θ (nc )
+c
+T (n) ∈ Θ `(nc log n)
+when
+a
+=
+b
+;
+´
+:
+Θ nlogb (a)
+when a > b c :
+One name, many theorems
+there are many variants of the Master Theorem
+Restriction f (n) ∈ Θ(nc ) can be relaxed
+asymmetric branching: e.g. T (n) = T ( n2 ) + 2T ( n4 )
+Rounding to integers
+current paper on the topic:
+William Kuszmaul, Charles E. Leiserson
+Floors and Ceilings in Divide-and-Conquer Recurrences
+Symposium on Simplicity in Algorithms (SOSA 2021)
+15
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Summary
+[Karatsuba; 1962]
+Karatsuba's algorithm
+algorithmic technique: divide and conquer
+` log (3) ´
+` 1;585 ´
+Multiplication of two n-digit numbers in Θ n 2
+⊆O n
+time
+even` faster:
+´
+` 1;465 ´
+log3 (5)
+[Toom, Cook; 1963–1966]
+Θ n
+⊆O n
+[Schönhage, Strassen; 1971]
+O (n · log n · log log n)
+`
+´
+O(log∗ n)
+[Fürer; 2007]
+O n · log n · 2
+
+Resolution of recurrences
+Analysis of recursion tree + exponential sums → Master Theorem
+Master Theorem doesn't always work (e.g. T (n) = 2T (n − 1))
+further techniques: branching vector, complete induction
+useful: WolframAlpha
+Pseudocode
+16
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Reminder
+
+register for tutorials by Friday 12 PM
+(info on homepage)
+
+join the Discord server
+(link in Ilias)
+
+17
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

@@ -1,0 +1,672 @@
+Algorithms 1
+Hashing
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ Phone Number Directory
+Situation
+Key
+Value
+given: pairs of (phone number; name)
+goal: fast answering of queries of the form
+Who owns the phone number 0721 1234567?
+Solution 1: Sorting + Searching
+Preprocessing: sort by key → O(n log n)
+Query: binary search → O(log n)
+Problem: changes (insert/delete) are expensive
+
+Number
+0721 3453180
+0721 7968745
+0721 7652872
+0721 1234567
+0721 2738459
+
+Name
+Peter Jobless
+Martyn CEO
+Henryk Engineer
+Kiki Unknown
+The Old One
+
+People from: QualityLand, Marc-Uwe Kling
+
+Reminder
+Arrays
+fast searching
+slow insertion and deletion
+Lists
+fast insertion and deletion
+slow searching
+
+Solution 2: Lookup table
+Observation: keys are numbers → can be used for addressing
+so: array A with A[k] = v for each (key; value)-pair (k; v )
+great: queries, insertion, deletion all work in O(1)
+Problem: key size ≫ #pairs ⇒ many empty memory cells in A
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Hashing: Core Idea
+Lookup table
+0
+1
+1234567
+
+Kiki Unknown
+
+2738459
+
+The Old One
+
+3453180
+
+Peter Jobless
+
+7652872
+
+Henryk Engineer
+
+7968745
+
+Martyn CEO
+
+107
+
+3
+
+Thomas Bläsius – Algorithms 1
+
+Idea: Memory reduction through key shrinking
+define hash function h, e.g.: h(x) = x mod 10
+array A with A[h(k)] = v for each (key; value)-pair (k; v )
+Advantage: h(x) has small range ⇒ array A is small
+Hash table
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+Peter Jobless
+Henryk Engineer
+or Julia Nun?
+Martyn CEO
+Kiki Unknown
+The Old One
+
+h(key) key
+0
+3453180
+5
+7968745
+2
+7652872
+7
+1234567
+9
+2738459
+2
+5872662
+
+value
+Peter Jobless
+Martyn CEO
+Henryk Engineer
+Kiki Unknown
+The Old One
+Julia Nun
+
+People from: QualityLand, Marc-Uwe Kling
+
+Problem: Hash collisions
+it can hold that h(x) = h(y ) although x ̸= y
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Dealing with Collisions
+Approach 1: Avoid collisions
+choose good hash function
+choose memory large enough
+Hope: no collisions (or extremely unlikely)
+Insight
+Collisions cannot be avoided even when the hash function is optimal
+and the input is benign.
+Approach 2: Collision resolution
+accept that (few) collisions occur
+adapt data structure accordingly so it can handle them
+Insight
+Under certain assumptions about the input we achieve O(1) per operation.
+4
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ How bad is the worst case?
+Universe U
+3453180 2738459
+1234567 5684325 7968745
+7652872
+
+...
+
+8564735
+
+Hash function h
+
+Hash table
+m buckets
+
+Notation
+U: universe of possible keys
+m: number of buckets in hash table
+Assumption: |U| ≫ m
+
+Theorem: no hash function is good in the worst case
+For every hash function there exists an input where |U|
+(key; value)-pairs land in the same
+m
+bucket.
+Proof
+on average |U|=m keys land in each bucket
+there exists a bucket in which at least |U|=m keys land
+choose these |U|=m keys as input
+Adversary argument: No matter how you build the algorithm, an adversary can always choose
+an input that is bad for this algorithm.
+5
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Great Hash Function and Benign Input
+Situation
+Hashing is completely useless in the worst case
+in practice: hashing works excellently
+(few collisions)
+
+Notation
+U: universe of possible keys
+m: number of buckets in hash table
+Assumption: |U| ≫ m
+h : U → [0; m): hash function
+
+Simple Uniform Hashing Assumption
+Assumption: we have a hypothetical hash function h with the following property
+each key from U lands in each of the m buckets with the same probability
+independent of previously inserted keys
+very optimistic assumption, but good for now to get rid of the worst case
+Plan in the following
+(except when we waste a lot of memory)
+there are very likely still collisions
+in expectation efficient handling of collisions under this assumption
+Relaxing the assumption: outsmarting the adversary through random decisions
+6
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Birthday Collisions
+Situation: n + 1 people, 365 possible birthdays, each equally likely
+Collision: there exist people with the same birthday
+Pr [Collision] = 1 − Pr [no collision] ≥ 1 − e
+
+−n2 =(2·365)
+
+Person 3 has no collision with persons 1 or 2
+last person has no collision with previous persons
+
+Person 2 has no collision with person 1
+
+„
+
+«„
+
+«
+
+"
+1
+2
+n "
+Pr [no collision] = 1 −
+1−
+··· 1 −
+365
+365
+365
+« Y
+n
+n „
+Y
+i
+great approximation
+≤
+e −i=365
+=
+1−
+for small x
+365
+i=1
+i=1
+!
+„
+«
+„
+«
+n
+2
+X
+n · (n + 1)
+n
+i
+e −x
+= exp −
+≤ exp −
+= exp −
+365
+2 · 365
+2 · 365
+i=1
+
+1
+0;75
+0;5
+0;25
+
+1−x
+
+0
+0
+7
+
+0;25
+
+0;5
+
+0;75
+
+Thomas Bläsius – Algorithms 1
+
+1
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Birthday Collisions
+Situation: n + 1 people, 365 possible birthdays, each equally likely
+Collision: there exist people with the same birthday
+Pr [Collision] = 1 − Pr [no collision] ≥ 1 − e
+
+−n2 =(2·365)
+1
+
+What does this mean now?
+for n = 23 the probability is already more than 50%
+0;75
+with a hash table with 365 buckets there is already with 24
+(key; value)-pairs a 50% probability of collision
+0;5
+
+2
+
+1 − e −n =(2·365)
+
+(even with the Simple Uniform Hashing Assumption)
+0;25
+
+Generally: Balls into Bins
+0
+throw n balls randomly uniformly into one of m buckets
+0
+12
+24
+36
+48
+√
+√
+2
+Pr [Collision] ≈ 1 − e −n =(2·m) = 0;5 ⇔ n = 2m ln 2 ≈ 1;18 m
+for n (key; value)-pairs you need m ∈ Ω(n2 ) much memory to push the probability
+for a collision below 50%
+7
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Interim Status: Dealing with Collisions
+Approach 1: Avoid collisions
+choose good hash function
+choose memory large enough
+Hope: no collisions (or extremely unlikely)
+Insight
+Collisions cannot be avoided even when the hash function is optimal
+and the input is benign.
+Approach 2: Collision resolution
+accept that (few) collisions occur
+adapt data structure accordingly so it can handle them
+Insight
+Under certain assumptions about the input we achieve O(1) per operation.
+8
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Collision Resolution using Chaining
+Procedure
+instead of one object per bucket: sequence of objects
+implementation e.g. using list or dynamic array
+search for key k: linear search on sequence A[h(k)]
+delete entry with key k: delete in sequence A[h(k)]
+insert (k; v ): append (k; v ) to sequence A[h(k)]
+(or replace previous entry with key k in A[h(k)])
+Runtime for one operation with key k
+Θ(|A[h(k)]|)
+Worst case: all entries land in the Notation
+(k; v ): (key; value)-pair
+same bucket → Θ(n)
+A: array of hash table
+Hope: constantly many collisions
+h: hash function
+per key → Θ(1)
+n: number of pairs
+9
+
+Thomas Bläsius – Algorithms 1
+
+Before
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+Peter Jobless
+Henryk Engineer
+or Julia Nun?
+Martyn CEO
+Kiki Unknown
+The Old One
+
+Now
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+⟨Peter Jobless⟩
+⟨Henryk Engineer, Julia Nun⟩
+⟨Martyn CEO⟩
+⟨Kiki Unknown⟩
+⟨The Old One⟩
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Chaining: Expected Runtime
+Rough estimate
+n
+each bucket contains on average m
+entries
+n
+expectation for |A[h(k)]| is m
+constant, when m ∈ Θ(n)
+great: Θ(n) memory and operations in Θ(1)
+
+Simple Uniform Hashing Assumption
+each key lands in each bucket
+with the same probability
+independent of previously inserted keys
+Notation
+A: array of hash table
+h: hash function
+n: number of inserted pairs
+
+Formal: expectation for the length of A[h(k)]
+m: number of buckets
+k: considered key
+keys in hash table: k1 ; : : : ; kn
+ȷ
+1; if h(k) = h(ki )
+Indicator variables Xi =
+0; otherwise
+ȷn
+–
+»n
+n
+P
+P
+;
+if k ∈
+= {k1 ; : : : ; kn }
+m
+E [Xi ] =
+Xi =
+thus holds: E [|A[h(k)]|] = E
+n−1
+1
++
+; if k ∈ {k1 ; : : : ; kn }
+i=1
+i=1
+m
+so: m ∈ Θ(n) ⇒ E [|A[h(k)]|] ∈ Θ(1)
+10
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Dynamically Growing Hash Table
+Theorem
+Given the Simple Uniform Hashing Assumption, a hash table can perform the operations
+insert, search and delete in expected constant time, when the number of buckets m is linear
+in the number of (key; value)-pairs n.
+How do we choose m when we don't know n?
+Simple Uniform Hashing Assumption
+start with some small constant for m
+each key lands in each bucket
+with the same probability
+n too large (e.g. n > m) → double m
+independent of previously inserted keys
+create new array of size 2m → 2m buckets
+new hash function that maps keys to [0; 2m) (instead of previously to [0; m))
+insert all elements from old into new table and delete old table
+like with dynamic arrays:
+worst case cost of an operation (when just enlarged): Θ(n)
+amortized over all operations: Θ(1) per operation
+11
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Interim Status
+Worst case
+for every hash function there exists an input with many collisions
+Adversary argument: there is no algorithm that is good for all inputs
+in practice it works well → worst case too pessimistic
+Simple Uniform Hashing Assumption
+strong assumption about hash function and input
+expected constant runtimes
+very optimistic assumption → weak guarantee
+
+Simple Uniform Hashing Assumption
+each key lands in each bucket
+with the same probability
+independent of previously inserted keys
+
+Idea: Outsmart adversary with random decisions
+choose a random hash function when creating/enlarging the hash table
+oblivious adversary: adversary knows the algorithm (including probability distribution), but not the result of random decisions
+worst case: input with maximum expected runtime
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Universal Hashing
+Definition
+Let H be a set of hash functions. H is a universal family when for all
+k1 ; k2 ∈ U with k1 ̸= k2 and a random h ∈ H holds that Pr [h(k1 ) = h(k2 )] ≤ m1 .
+What do we get with this?
+random choice of h ∈ H ⇒ any two keys collide with probability at most m1
+it follows: E [Xi ] ≤ m1
+expected runtime: Θ(1) per operation
+(Proof: exactly like before with the Simple Uniform Hashing Assumption)
+
+Notation
+U: universe of keys
+m: number of buckets
+h : U → [0; m): hash function
+
+Worst case vs. average case
+worst case over all possible inputs
+expectation over the choice h ∈ H
+
+k1 ; : : : ; kn : previous keys
+
+Does such a universal family H even exist?
+13
+
+Thomas Bläsius – Algorithms 1
+
+k: current key
+ȷ
+1; if h(k) = h(ki )
+Xi =
+0; otherwise
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ A Universal Family
+Universal but not very useful
+let H be the set of all functions of the form h : U → [0; m)
+random h ∈ H → maps each key to random value ⇒ Pr [h(k1 ) = h(k2 )] ≤ m1
+Problem: How do we manage h without explicitly storing h(k) for each k ∈ U?
+Universal and useful
+Notation
+U: universe of keys
+Assumption: U = {0; : : : ; |U| − 1} and let p ≥ |U| be a prime
+m: number of buckets
+ha;b (k) = ((a · k + b) mod p) mod m
+h : U → [0; m): hash function
+k1 ; k2 ∈ U, k1 ̸= k2
+H = {ha;b (k) | a; b ∈ [0; p) integer and a ̸= 0}
+without proof: H is universal, so Pr [h(k1 ) = h(k2 )] ≤ m1 for random h ∈ H
+practical: to choose h ∈ H randomly, simply choose a and b randomly
+Theorem
+A hash table can perform the operations insert (key + value), search (by key) and
+delete (by key) in expected and amortized constant time.
+14
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Other Key Types
+So far
+Universe U consists of natural numbers
+Hash function → natural numbers in smaller interval
+thus: direct addressing in Θ(1) without too much memory consumption
+Hashing opens up completely new possibilities
+the keys don't have to be integers
+Examples: strings, images
+you only need suitable hash functions
+Recommendations when choosing hash function
+if possible don't choose your own hash function
+use existing proven implementations instead
+15
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Hash Tables in the Wild
+C++
+
+16
+
+Thomas Bläsius – Algorithms 1
+
+https://en.cppreference.com/w/cpp/container/unordered_map
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Hash Tables in the Wild
+Java
+
+16
+
+Thomas Bläsius – Algorithms 1
+
+https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Hash Tables in the Wild
+Python
+
+16
+
+Thomas Bläsius – Algorithms 1
+
+https://docs.python.org/3/tutorial/datastructures.html#dictionaries
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Hash Tables in the Wild
+Javascript
+
+16
+
+https://www.w3schools.com/js/js_arrays.asp
+
+Thomas Bläsius – Algorithms 1
+
+https://www.w3schools.com/js/js_object_maps.asp
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Hash Tables
+What can it do?
+stores (key; value)-pairs
+insert, delete and search in expected Θ(1)
+Comparison to sorted array + binary search in Θ(log n)
+hash table is dynamic: we can insert and delete
+search in hash table is faster (expected)
+hash table ignores order on keys
+binary search can find predecessor if searched key itself is not present
+Analysis techniques
+analysis of expected runtime: 1 − x ≤ e −x and sum over indicator variables
+adversary argument and solution using random decisions (oblivious adversary)
+
+17
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

@@ -1,0 +1,796 @@
+Algorithms 1
+Dynamic Programming
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ Fibonacci numbers
+Definition: F (1) = F (2) = 1; F (n) = F (n − 1) + F (n − 2) for n ≥ 3
+Fib(Number n)
+F := Array of size n + 1
+F [1] := 1
+F [2] := 1
+for i ∈ {3; : : : ; n} do
+F [i] := F [i − 1] + F [i − 2]
+return F [n]
+
+F(Number n)
+if n = 1 or n = 2 then
+return 1
+return F(n − 1) + F(n − 2)
+Recursion tree:
+
+Runtime
+iterative: Θ(n)
+√
+1+ 5
+n
+recursive: Θ(' ) with ' = 2 ≈ 1;6181
+Thomas Bläsius – Algorithms 1
+
+F(6)
+
+F(5)
+F(4)
+F(3)
+
+2
+
+(1; 1; 2; 3; 5; 8; 13; 21; : : : )
+
+F(2)
+
+F(4)
+F(3)
+
+F(3)
+
+F(2) F(1)
+
+F(2) F(1)
+
+F(2)
+
+F(2) F(1)
+
+(Solving recurrence (not here): T (n) = T (n − 1) + T (n − 2) + Θ(1))
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ What happened here?
+Recursively defined problem
+reduces overall problem to smaller subproblems
+Overall problem: compute F (n); subproblems: compute F (n − 1) and F (n − 2)
+Subproblems overlap
+for F (n − 1) one must compute F (n − 2) again
+recursive solution: considers same subproblem multiple times
+
+3
+
+Iterative solution
+build up larger partial solutions step by step
+store partial solutions → no multiple computation
+
+usually quite simple
+
+And what if the problem isn't recursively defined at all?
+find an equivalent recursive definition
+
+this is the difficult part
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Problem statement: Splittability
+Definition
+A string S of length n is a sequence of letters ⟨S[0]; : : : ; S[n − 1]⟩. We also denote the subsequence
+⟨S[a]; : : : ; S[b]⟩ with S[a; b] = S[a; b + 1) = S(a − 1; b] = S(a − 1; b + 1).
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9 10 11 12 13 14 15 16
+
+E i n B e i s p i e l S t r i n g
+
+S[3; 11)
+Problem: Splittability
+Given a string S, are there split points 0 = s0 < · · · < sk = n such that S[si−1 ; si ) is
+a valid word for all i ∈ [1; k]? We then say that S is splittable.
+m o n k e y e a r t h a i r
+
+s0
+4
+
+Thomas Bläsius – Algorithms 1
+
+s1
+
+s2
+
+s3
+
+s4
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Subproblems and recursive definition
+Problem: Splittability
+Given a string S, are there split points 0 = s0 < · · · < sk = n such that S[si−1 ; si ) is
+a valid word for all i ∈ [1; k]? We then say that S is splittable.
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9 10 11 12 13
+
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9 10 11 12 13
+
+Subproblems
+m o n k e y e a r t h a i r
+for i ∈ [0; n]: Is S[0; i) splittable?
+Example: S[0; 9) is splittable
+note: overall problem asks whether S[0; n) is splittable
+
+Recursive definition based on subproblems
+m o n k e y e a r t h a i r
+splittable(0) = true
+Example:
+splittable(i) = ∃j ∈ [0; i) splittable(j)∧isWord(S[j; i)) splittable(7) ∧ isWord(S[7; 10)) = true
+⇒ splittable(10) = true
+5
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Correctness
+Theorem
+The substring S[0; i) is splittable if and only if splitable(i) = true.
+Proof: Induction over i
+Base case: the empty string is splittable and splitable(0) = true
+Forward direction: S[0; i) splittable ⇒ splittable(i) = true
+consider solution 0 = s0 < · · · < sk = i
+then S[0; sk−1 ) is splittable and S[sk−1 ; i) is a word
+by I.H. then splittable(sk−1 ) = true (and isWord(sk−1 ; i) = true holds)
+sk−1
+
+s0 = 0
+
+splittable
+⇒ splittable(sk−1 )
+6
+
+Thomas Bläsius – Algorithms 1
+
+sk = i
+
+valid word
+⇒ isWord(S[sk−1 ; i))
+
+Reminder: Recursive definition of splittable
+splittable(0) = true
+splittable(i) = ∃j ∈ [0; i) splittable(j)∧isWord(S[j; i))
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Correctness
+Theorem
+The substring S[0; i) is splittable if and only if splitable(i) = true.
+Proof: Induction over i
+Base case: the empty string is splittable and splitable(0) = true
+Backward direction: S[0; i) splittable ⇐ splittable(i) = true
+there exists j such that splittable(j) and isWord(S[j; i)
+by I.H.: S[0; j) is splittable (moreover S[j; i) is a word)
+thus S[0; i) is also splittable
+j
+
+0
+
+splittable(j)
+⇒ splittable
+6
+
+Thomas Bläsius – Algorithms 1
+
+isWord(S[j; i))
+⇒ valid word
+
+i
+
+Reminder: Recursive definition of splittable
+splittable(0) = true
+splittable(i) = ∃j ∈ [0; i) splittable(j)∧isWord(S[j; i))
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Iterative implementation
+isSplittable(String S)
+s := Array of size n + 1
+s[0] := true
+for i ∈ {1; : : : ; n} do
+s[i] = false
+for j ∈ {0; : : : ; i − 1} do
+if s[j] and isWord(S[j; i)) then
+s[i] := true
+return s[n]
+
+Runtime
+Θ(n2 ) calls to isWord (so: polynomial)
+Do we also get a solution?
+store for each i because of which j we
+set s[i] := true
+follow these pointers backward from n
+m o n k e y e a r t h a i r
+
+s: t f f f t f t t f t t t f f t
+Reminder: Recursive definition of splittable
+splittable(0) = true
+splittable(i) = ∃j ∈ [0; i) splittable(j)∧isWord(S[j; i))
+7
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ In three steps to the dynamic program
+Step 1: Specification of subproblems
+What intermediate results do we want to compute?
+What does the induction go over?
+Example: Is S[0; i) splittable?
+
+8
+
+difficult
+requires creativity
+possibly right idea needed
+interacts with step 2
+
+Step 2: Setting up the recurrence for partial solutions
+How do we compute new from old intermediate results?
+Correctness: induction
+Example: solution for i thanks to solutions for 0; : : : ; i − 1
+
+not super difficult
+
+Step 3: Iterative computation of partial solutions
+How do we manage the intermediate results?
+How do the intermediate results depend on each other?
+In what order do we compute intermediate results?
+How do we get the actual solution?
+
+easy
+
+Thomas Bläsius – Algorithms 1
+
+(with some practice)
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Longest Common Subsequence
+Problem: LCS
+Given sequences ⟨a1 ; : : : ; an ⟩ and ⟨b1 ; : : : ; bm ⟩, what is the longest common subsequence?
+Step 1: Specification of subproblems
+A G C A T A
+How long is the LCS of ⟨a1 ; : : : ; ai ⟩ and ⟨b1 ; : : : ; bj ⟩?
+A C G A C
+i = n and j = m gives overall solution
+simplified view: only size of solution (we save computation of solution itself for step 3)
+Step 2: Setting up the recurrence
+Goal: LCS(i; j) denotes length of LCS of ⟨a1 ; : : : ; ai ⟩ and ⟨b1 ; : : : ; bj ⟩
+LCS(i; 0) = LCS(0; j) = 0
+ai
+ȷ
+::: A
+LCS(i − 1; j − 1) + 1
+if ai = bj
+LCS(i; j) =
+max {LCS(i; j − 1); LCS(i − 1; j)} if ai ̸= bj
+::: A
+Correctness: follows inductively
+bj
+9
+
+Thomas Bläsius – Algorithms 1
+
+:::
+
+ai
+C
+
+::: G
+bj
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Longest Common Subsequence: Step 3
+Recurrence
+LCS(i; 0) = LCS(0; j) = 0
+ȷ
+LCS(i − 1; j − 1) + 1
+if ai = bi
+LCS(i; j) =
+max {LCS(i; j − 1); LCS(i − 1; j)} if ai ̸= bi
+
+Step 3: Iterative computation of partial solutions
+How do we manage the intermediate results?
+How do the intermediate results depend on each other?
+In what order do we compute intermediate results?
+How do we get the actual solution?
+
+Answers to the questions from step 3
+store a number for each (i; j) ∈ [0; n] × [0; m]
+→ array of arrays
+Entry at (i; j) depends on entries at:
+(i − 1; j − 1), (i; j − 1) and (i − 1; j)
+fill from top left to bottom right (row by row)
+to reconstruct the solution:
+remember for each entry where it comes from
+backtracking these pointers → solution
+
+j
+
+0
+
+i
+
+2
+3
+4
+5
+
+2
+
+3
+
+4
+
+5
+
+6
+
+A G C A T A
+
+0
+1
+
+1
+
+A
+C
+G
+A
+C
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+1
+
+1
+
+1
+
+1
+
+1
+
+1
+
+0
+
+1
+
+1
+
+2
+
+2
+
+2
+
+2
+
+0
+
+1
+
+2
+
+2
+
+2
+
+2
+
+2
+
+0
+
+1
+
+2
+
+2
+
+3
+
+3
+
+3
+
+0
+
+1
+
+2
+
+3
+
+3
+
+3
+
+3
+
+(each diagonal step is common character)
+
+10
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Subset Sum
+Situation
+you need curry + fries (3.70 €)
+you want to pay exactly
+
+Problem: Subset Sum
+Given a multiset A = {a1 ; : : : ; an } of natural
+numbers and aPnatural number S. Is there a subset
+A′ ⊆ A such that a∈A′ a = S?
+Notes
+this is in some sense a hard problem
+more on this in TGI next semester
+but: S not too large → efficient solution with DP
+11
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Subset Sum: Subproblems and recurrence
+Problem: Subset Sum Problem
+Given a multiset A = {a1 ; : : : ; an } of
+natural numbers and a natural
+P
+number S. Is there a subset A′ ⊆ A such that a∈A′ a = S?
+Step 1: Specification of subproblems
+consider a pair (i; s) with i ≤ n and s ≤ S
+P
+Is there a subset A′ ⊆ {a1 ; : : : ; ai } such that a∈A′ a = s?
+i = n and s = S gives overall solution
+Step 2: Setting up the recurrence
+Goal: SSP(i; s) = true if and only if there is a solution for pair (i; s)
+SSP(0; s) = true ⇔ s = 0 (false otherwise) and SSP(i; s) = false for s < 0
+SSP(i; s) = SSP(i − 1; s) ∨ SSP(i − 1; s − ai )
+ai not chosen
+ai chosen
+(Correctness follows inductively)
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Subset Sum: Step 3
+Recurrence
+SSP(0; s) = true ⇔ s = 0
+
+Step 3: Iterative computation of partial solutions
+How do we manage the intermediate results?
+
+SSP(i; s) = false for s < 0
+
+How do the intermediate results depend on each other?
+
+SSP(i; s) = SSP(i − 1; s) ∨ SSP(i − 1; s − ai )
+
+In what order do we compute intermediate results?
+How do we get the actual solution?
+
+Answers to the questions from step 3
+SSP(i; s) = false for s < 0 we don't need to store explicitly
+a boolean value for each (i; s) ∈ [0; n] × [0; S] → array of arrays
+s − ai
+entries in row i depend on entries in row i − 1
+order: fill table row by row
+to reconstruct the solution:
+i −1
+remember for each entry where it comes from
+backtracking these pointers → solution
+i
+
+s
+
+(each diagonal step corresponds to selected element)
+
+13
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Alternative view for step 3: Path finding
+s − ai
+
+Recurrence
+SSP(0; s) = true ⇔ s = 0
+SSP(i; s) = false for s < 0
+
+s
+
+i −1
+
+SSP(i; s) = SSP(i − 1; s) ∨ SSP(i − 1; s − ai )
+
+i
+
+So far: Which entries must I look at to fill (i; s)?
+Now: Which entries can I set to true if I know that SSP(i; s) = true?
+s
+
+Path finding in a graph
+treat each pair (i; s) as a node
+edges: (i; s) → (i + 1; s) and (i; s) → (i + 1; s + ai+1 )
+yes-instance ⇔ there exists a path from (0; 0) to (n; S)
+note: graph only implicitly represented
+advantage: we visit only cells in the table that are true
+14
+
+Thomas Bläsius – Algorithms 1
+
+i
+
+t
+
+i +1
+
+t
+
+s + ai+1
+
+t
+
+(possibly much fewer than all cells)
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ In three steps to the dynamic program
+Step 1: Specification of subproblems
+What intermediate results do we want to compute?
+What does the induction go over?
+Induction over parameters or a tree structure
+
+difficult
+requires creativity
+possibly right idea needed
+interacts with step 2
+
+Step 2: Setting up the recurrence for partial solutions
+How do we compute new from old intermediate results?
+Correctness: complete or structural induction
+
+not super difficult
+(provided you have a good
+specification of partial results)
+
+Step 3: Iterative computation of partial solutions
+How do we manage the intermediate results?
+How do the intermediate results depend on each other?
+In what order do we compute intermediate results?
+How do we get the actual solution?
+15
+
+Thomas Bläsius – Algorithms 1
+
+easy
+(with some practice)
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Dynamic Programming
+We've seen DPs quite often already (without knowing it)
+Bellman–Ford
+DP over the number of edges from which the paths consist
+Iteration i: compute shortest paths among all paths consisting of ≤ i edges
+Sheet 11, Exercise 1 – Dijkstra's fear opponent
+compute shortest path in a DAG
+DP over topological sorting of nodes
+Learning goal
+you understand how DPs work → faster understanding of unknown DPs
+you can build at least simple DPs yourself
+(especially when the partial solutions are given)
+
+16
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Bonus: Longest path in tree
+Problem: Longest Path
+Given a (rooted) tree T . How long is the longest path in T ?
+Step 1: Specification of subproblems
+structural induction over tree structure
+Partial solution (Type 1) for v : longest path in Tv that doesn't end in v
+Partial solution (Type 2) for v : longest path in Tv that ends in v
+
+v
+u1
+
+u2
+
+Partial solutions (Type 2) for ui
+Step 2: Setting up the recurrence
+obtain solution for v from solution for children u1 ; : : : ; uk
+Goal: LPt (v ) represents partial solution of type t for v
+Partial solutions (Type 1) for ui
+If v is a leaf: LP1 (v ) = LP2 (v ) = 0
+LP2 (v ) = maxi {LP2 (ui ) + 1}
+h
+i
+LP1 (v ) = max maxi {max{LP1 (ui ); LP2 (ui )}}; maxi̸=j {LP2 (ui ) + LP2 (uj ) + 2}
+17
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Bonus: Longest path in tree: Correctness
+Recurrence
+If v is a leaf: LP1 (v ) = LP2 (v ) = 0
+LP2 (v ) = maxi {LP2 (ui ) + 1}
+h
+LP1 (v ) = max maxi {max{LP1 (ui ); LP2 (ui )}};
+i
+maxi̸=j {LP2 (ui ) + LP2 (uj ) + 2}
+
+What do we want to show?
+Goal: LPi (v ) represents partial solution of type i for v
+Type 1: longest path in subtree Tv under v
+Type 2: longest path in Tv that ends in v
+LP2 (v ) = maxi {LP2 (ui ) + 1}
+
+Correctness via structural induction
+correct for the leaves
+correct for v if correct for children u1 ; : : : ; uk
+Type 2: path leads via a child ui (+1 because of {v ; ui })
+Type 1, Case 1: longest path in Tv doesn't contain v
+maxi {LP1 (ui ); LP2 (ui )}
+Type 1, Case 2: longest path in Tv contains v
+v
+
+u1
+
+18
+
+Thomas Bläsius – Algorithms 1
+
+v
+u1
+
+v
+u2
+
+u1
+
+maxi̸=j {LP2 (ui ) + LP2 (uj ) + 2}
+
+v
+
+u2
+
+u1
+
+u2
+
+u2
+
+v
+or
+
+u1
+
+u2
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Bonus: Longest path in tree: Step 3
+Recurrence
+If v is a leaf: LP1 (v ) = LP2 (v ) = 0
+LP2 (v ) = maxi {LP2 (ui ) + 1}
+h
+LP1 (v ) = max maxi {max{LP1 (ui ); LP2 (ui )}};
+i
+maxi̸=j {LP2 (ui ) + LP2 (uj ) + 2}
+
+Step 3: Iterative computation of partial solutions
+How do we manage the intermediate results?
+How do the intermediate results depend on each other?
+In what order do we compute intermediate results?
+How do we get the actual solution?
+
+Answers to the questions from step 3
+store two values at each node v : LP1 (v ) and LP2 (v )
+parents depend on children → order: bottom-up (e.g. according to layers in BFS tree)
+compute actual solution: as with previous DPs
+Note
+partial solutions don't overlap: partial solution of each child ui only relevant for the one parent v
+recursive implementation in this case also ok (corresponds basically to a DFS)
+19
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

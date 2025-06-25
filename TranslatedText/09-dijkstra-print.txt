@@ -1,0 +1,699 @@
+Algorithms 1
+Shortest Paths in Weighted Graphs – Dijkstra's Algorithm
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ Problem Statement
+Given
+a graph G = (V; E) (undirected or directed)
+weight function len : E → Z, which assigns
+a length len(e) to each edge e ∈ E
+start node s
+Path lengths and distances
+Length of a path ⟨v0 ; : : : ; vk ⟩:
+
+2
+7
+
+s
+6
+
+2
+
+1
+
+5
+
+3
+
+1
+1
+3
+2
+
+k
+P
+
+len (vi−1 ; vi )
+
+Path of length 12
+3
+
+1
+
+2
+
+6
+9
+
+Distance dist(s; t): Length of the shortest st-path
+Problem: Single-Source Shortest Path (SSSP)
+Given a weighted graph G = (V; E) and
+a node s ∈ V , compute dist(s; t) for all t ∈ V .
+Thomas Bläsius – Algorithms 1
+
+1
+
+(Short form for len({vi−1 ; vi }))
+
+i=1
+
+2
+
+3
+
+0
+s
+
+7
+
+2
+
+7
+
+3 8
+
+1
+
+1
+
+1
+
+2 2
+1
+
+6
+3
+6
+
+3
+
+5
+
+9
+
+3
+3
+
+2
+
+6
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Reminder: BFS
+Approach
+process nodes layer by layer
+Exploring a node u from layer i − 1:
+consider all neighbors v of u
+v uncolored ⇒ v belongs to layer i
+Shortest paths: v in layer i ⇒ dist(s; v ) = i
+sv-path of length i (dist(s; v ) ≤ i)
+inductively: there exists a path of length i − 1 to u
+together with {u; v } ⇒ sv-path of length i
+no shorter path possible (dist(s; v ) ≥ i):
+if there were a shorter sv-path, then v would have
+a neighbor in a previous layer
+layer-wise processing ⇒ v would already be colored
+3
+
+Thomas Bläsius – Algorithms 1
+
+s
+
+3
+dist(s; u) = 6
+
+6
+1
+w
+
+u
+6
+7
+dist(s; v ) = 9
+
+2
+
+dist(s; w ) = 2
+
+5
+
+3
+v
+
+With edge lengths?
+store dist(s; v ) instead of layer
+dist(s; u) ≤ 6 ⇒ dist(s; v ) ≤ 9
+possibly find a shorter path to v later
+or even to u
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Core problem when dealing with edge lengths
+Plan for the general approach
+store d[v ] for each node v : length of the shortest
+known sv-path (Invariant: dist(s; v ) ≤ d[v ])
+Exploring a node u:
+consider all neighbors v of u
+if d[v ] > d[u] + len(u; v ), set d[v ] = d[u] + len(u; v )
+
+4
+
+s
+
+0
+3
+3
+
+8
+
+u
+
+v
+
+2
+
+8 5
+
+Different from BFS
+v found ̸⇒ shortest sv-path found
+d[v ] is possibly updated multiple times
+v already explored when d[v ] changes
+→ v must be explored again
+
+not bad: no additional costs compared to testing if v is already colored
+problematic: could happen more often
+and possibly cascade
+
+Goal in the following
+v explored ⇒ shortest sv-path found
+
+great: explore each node once
+costs Θ(m) in total (like BFS)
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Exploration order → Dijkstra's Algorithm
+Goal: v explored ⇒ shortest sv-path found
+Strategy: explore node u with minimal d[u]
+(among all not yet explored nodes)
+
+consider all neighbors v of u
+if d[v ] > d[u] + len(u; v ),
+set d[v ] = d[u] + len(u; v )
+
+Purposeful strategy
+Assumption: for all previously explored nodes v holds d[v ] = dist(s; v )
+show: for u also holds d[u] = dist(s; u)
+Intuition:
+su-path via v with d[v ] < d[u] already found (v explored)
+exploring node w with d[w ] > d[u] cannot reduce d[u] 3
+Attention: we assume non-negative edge lengths here
+
+6
+
+Soon
+Wrap-Up: Algorithm description, implementation in pseudocode, example
+formal correctness proof
+5
+
+Thomas Bläsius – Algorithms 1
+
+s
+
+Reminder: Exploring u
+8
+
+3
+
+v
+
+2
+
+u
+3
+
+8 5
+
+∞
+7
+
+0
+s
+6
+
+2
+
+∞
+
+7
+2
+
+1
+
+1
+
+2
+6
+
+1
+
+∞
+
+8
+1
+
+5
+
+3
+
+3
+
+4
+
+∞
+
+u
+
+x
+
+already explored
+not yet explored
+current value for d[·]
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Dijkstra's Algorithm
+Algorithm
+repeat until all nodes explored:
+choose unexplored node u with minimal d[u]
+explore u
+Initialization: d[v ] = ∞ for v ∈ V and d[s] = 0
+
+s
+
+Reminder: Exploring u
+consider all neighbors v of u
+if d[v ] > d[u] + len(u; v ),
+set d[v ] = d[u] + len(u; v )
+
+8
+
+3
+
+v
+
+2
+
+u
+3
+
+8 5
+
+Dijkstra(Graph G; Node s)
+already explored
+∞
+7 2
+d := Array of size n initialized with ∞
+0
+currently exploring (u)
+7
+s
+d[s] := 0
+1
+1
+unexplored
+∞
+6
+∞
+2 2
+9
+while there is an unexplored node do
+1
+6
+x d[·]
+∞
+8
+∞
+6
+3
+Node u := unexp. node with min. d[u]
+1
+5
+3
+4
+∞
+∞
+7
+6
+10
+9
+for Node v in N(u) do
+if d[v ] > d[u] + len(u; v ) then
+Construction of shortest paths (like BFS)
+d[v ] := d[u] + len(u; v )
+each node remembers its predecessor
+∞
+9
+3 ∞
+8
+
+6
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Preview: Priority Queue
+How do we find the unexplored node u with minimal d [u]?
+naive: look at all nodes once → Θ(n) per iteration → Θ(n2 ) in total
+Data structure: Priority Queue
+push(v ; 7): insert v with priority 7
+popMin(): extract element with smallest priority
+decPrio(v ; 4): decrease priority of v to 4
+How fast are the operations?
+different variants with different running times
+many fast variants: O(log n) per operation
+Fibonacci heap: Θ(log n) for popMin, Θ(1) for push and decPrio
+How does this work?
+clever management of elements in a tree structure
+we will learn about this in detail soon
+7
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Dijkstra's Algorithm with Priority Queue
+Dijkstra(Graph G; Node s)
+d := Array of size n initialized with ∞
+d[s] := 0
+PriorityQueue Q := empty priority queue
+for Node v in V do
+Q:push(v ; d[v ])
+while Q ̸= ∅ do
+u := Q:popMin()
+for Node v in N(u) do
+if d[v ] > d[u] + len(u; v ) then
+d[v ] := d[u] + len(u; v )
+Q:decPrio(v ; d[v ])
+
+8
+
+Thomas Bläsius – Algorithms 1
+
+Note
+one could also insert nodes into the queue
+only when first discovered
+then one must remember which ones
+are already inserted (similar to BFS)
+Runtime analysis
+n times push
+each node is removed from the queue only once ⇒ n times popMin
+each edge considered only twice (once from each side) ⇒ m times decPrio
+Θ(n log n + m), if decPrio in Θ(1)
+Θ((n + m) log n), if decPrio in Θ(log n)
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Correctness: Overview
+Theorem
+Given a graph G = (V; E), edge lengths len : E → N and s ∈ V , then Dijkstra's algorithm computes the distances dist(s; v ) for all v ∈ V in Θ(n log n + m) time.
+Note: the edge lengths are non-negative here
+Proof
+Runtime: just seen
+Correctness: show the following two lemmas
+(the algorithm doesn't claim to know paths that don't exist)
+Lemma
+If d[v ] < ∞, then there exists an sv-path of length d[v ]. That is, d[v ] ≥ dist(s; v )
+holds at any time.
+(the algorithm actually finds the shortest path)
+Lemma
+At the moment when u is removed from the queue and explored, d[u] = dist(s; u) holds.
+9
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Correctness: Algorithm only knows existing paths
+(the algorithm doesn't claim to know paths that don't exist)
+Lemma
+If d[v ] < ∞, then there exists an sv-path of length d[v ]. That is, d[v ] ≥ dist(s; v )
+holds at any time.
+
+More or less obvious
+Invariant holds at the beginning
+remains preserved when exploring a node
+
+s
+
+Reminder: Exploring u
+consider all neighbors v of u
+if d[v ] > d[u] + len(u; v ),
+set d[v ] = d[u] + len(u; v )
+
+8
+
+3
+
+v
+
+2
+
+u
+3
+
+8 5
+
+Detailed proof
+Invariant holds after initialization: d[s] = 0 and d[v ] = ∞ for all v ∈ V \ {s}
+d[v ] can only be changed by exploring a neighbor u
+since invariant held before: there exists su-path of length d[u]
+Invariant remains preserved: there exists sv-path of length d[u] + len(u; v )
+
+10
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Correctness: Algorithm finds shortest path
+(the algorithm actually finds the shortest path)
+Lemma
+At the moment when u is removed from the queue and explored, d[u] = dist(s; u) holds.
+
+Intuition
+Reminder: we always explore the unexplored node u with minimal d[u]
+∞
+su-path via v with d[v ] < d[u] already found (v explored)
+7 2
+0
+3 ∞
+exploring node w with d[w ] > d[u] cannot reduce d[u]
+7
+
+s
+
+Problem: this is not yet a proof
+just because we can't find a shorter path later
+doesn't mean we have the shortest path now
+
+6
+
+3
+6
+
+Thomas Bläsius – Algorithms 1
+
+6
+
+1
+
+∞
+
+8
+1
+
+5
+
+3
+
+Useful observation
+Nodes are explored in non-decreasing order
+so: if d[v ] < d[u] when exploring, then v is explored before u
+11
+
+2
+1
+
+1
+
+2
+
+4
+
+∞
+
+u
+
+x
+
+already explored
+not yet explored
+current value for d[·]
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Correctness: Algorithm finds shortest path
+(the algorithm actually finds the shortest path)
+Lemma
+At the moment when u is removed from the queue and explored, d[u] = dist(s; u) holds.
+
+Proof: assume it's not true
+choose counterexample u with d[u] > dist(s; u), such that u
+is the first such node on a shortest su-path
+
+Notation
+d[v ]: length of the shortest known
+path from s to v when exploring
+dist(s; v ): actual distance from s to v
+len(v ; u): length of edge {v ; u}
+
+Interlude: Proof technique
+obvious argument: u is counterexample ⇒ a neighbor of u is counterexample
+thus we move from counterexample to counterexample
+and must show: eventually this ends in a contradiction
+nicer: start with a minimal counterexample
+
+11
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Correctness: Algorithm finds shortest path
+(the algorithm actually finds the shortest path)
+Lemma
+At the moment when u is removed from the queue and explored, d[u] = dist(s; u) holds.
+
+Proof: assume it's not true
+choose counterexample u with d[u] > dist(s; u), such that u
+is the first such node on a shortest su-path
+let v be the predecessor of u on this path
+
+Notation
+d[v ]: length of the shortest known
+path from s to v when exploring
+dist(s; v ): actual distance from s to v
+len(v ; u): length of edge {v ; u}
+
+(so v is not a counterexample)
+dist(s; v )
+
+ı: s
+
+len(v ; u)
+
+v
+dist(s; u) = dist(s; v ) + len(v ; u)
+
+u
+
+Useful observation
+Nodes are explored in non-decreasing order
+so: if d[v ] < d[u] when exploring,
+then v is explored before u
+
+it holds: d[v ] = dist(s; v ) ≤ dist(s; u) < d[u]
+thus v is explored before u
+thereby d[u] is set to d[v ] + len(v ; u) = dist(s; v ) + len(v ; u) = dist(s; u)
+11
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Dijkstra's Algorithm: Summary and Notes
+Theorem
+Given a graph G = (V; E), edge lengths len : E → N and s ∈ V , then Dijkstra's algorithm computes the distances dist(s; v ) for all v ∈ V in Θ(n log n + m) time.
+Notes
+works for directed and undirected graphs
+we need non-negative edge lengths
+considering edge e = {u; v } when exploring u is also called relaxing e
+Next time
+Handling negative edge lengths: Bellman–Ford
+Computing distances between all pairs: Floyd–Warshall
+Later
+efficient priority queues
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Preview: Route Planning in Practice
+Shortest paths on road graphs
+Europe has about 18 M nodes and 42 M edges
+Dijkstra takes several seconds
+unsuitable for many applications
+Problem: can't get much better than O(n log n + m)
+Observation: the input graph is always the same
+Idea
+two phases:
+1. generate additional information about G
+2. accelerated query thanks to this information
+three criteria: acceleration, preprocessing time, storage space
+13
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Preview: Route Planning in Practice (Examples)
+Goal-directed routing (Arc-Flags)
+some roads in Karlsruhe are not relevant when you want to go to Berlin
+Preprocessing: compute for each edge whether it's relevant for a destination in Berlin
+Query: destination node lies in Berlin → Dijkstra, but ignore irrelevant edges
+Exploiting transit nodes
+Situation: we want to drive far away from Karlsruhe
+shortest path then always leads first to the highway
+there aren't that many highway on-ramps → few transit nodes
+precompute distances between all pairs of transit nodes
+Notes
+it pays off: up to 1,000,000 times faster than Dijkstra
+many of these algorithms were developed here in Karlsruhe
+more of this? → Lecture Algorithms for Route Planning (Master)
+14
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Shortest Paths – SSSP
+Dijkstra's Algorithm
+probably the most famous graph algorithm (perhaps after BFS and DFS)
+efficient computation of shortest paths
+Wish list: a fast priority queue
+Proof techniques
+Invariant
+Contradiction with minimal counterexample
+
+(Algorithm only knows paths that really exist)
+(Algorithm finds the shortest path)
+
+Preview Route Planning
+Algorithmic technique: preprocessing when many queries on the same data
+can accelerate queries significantly
+
+15
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

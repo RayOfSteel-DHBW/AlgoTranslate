@@ -1,0 +1,401 @@
+Algorithms 1
+Minimal Spanning Trees
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ MST Problem Statement
+Definition
+Let G = (V; E) be a graph. A tree on the same node set T = (V; ET ) with ET ⊆ E is called a spanning tree of G.
+Problem: Minimal Spanning Tree (MST)
+Let G = (V; E) be a graph with edge weights w : E → Z. Find a spanning tree
+T = (V; ET ) such that the sum of weights in ET is minimal.
+Simplifying assumption
+unique weights, so w (e1 ) ̸= w (e2 ) when e1 ̸= e2
+no real difference, but simplifies a few things
+
+2
+1
+
+4
+
+6
+
+7
+
+Plan in the following
+gain some structural insights about MSTs
+derive two algorithms from this
+2
+
+Thomas Bläsius – Algorithms 1
+
+5
+
+3
+8
+
+9
+
+Weight: 1 + 2 + 4 + 5 + 8 = 20
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Basic notes on trees and cuts
+Trees are characterized by
+they are cycle-free
+any two of the properties
+they are connected
+imply the third
+they have n − 1 edges
+Definition
+Let G = (V; E) be a graph. A cut is a decomposition of V into two non-empty subsets S and V \ S. An edge between a node from S and one from V \ S
+is called a cut edge.
+S
+
+3
+
+Thomas Bläsius – Algorithms 1
+
+V \S
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Provably essential edges
+Idea
+show that certain edges are contained in every MST
+find such edges iteratively and select them
+after n − 1 steps the n − 1 selected edges form the MST
+Almost at the goal: Which edge is essential?
+Assumption: already n − 2 edges selected (green)
+the two subtrees induce a cut
+Selection of the last edge (step n − 1):
+we must choose a cut edge
+every cut edge yields a tree
+⇒ minimal cut edge must be chosen
+
+7
+6
+2
+3
+
+5
+
+8
+4
+
+(Reminder: we assume that the minimum is unique)
+Lemma
+For every cut, the minimal cut edge is contained in every MST.
+4
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Minimal cut edges
+(Reminder: we assume that the minimum is unique)
+Lemma
+For every cut, the minimal cut edge is contained in every MST.
+
+u
+
+Proof
+consider cut with minimal cut edge {u; v }
+consider a spanning tree T without {u; v }
+
+v
+
+Goal: show that T is not an MST
+consider unique path from u to v in T
+at least one of the path edges {x; y } is also a cut edge
+new subgraph T ′ : delete {x; y } and add {u; v } to T
+Observation
+T ′ is a tree (cycle-free, n − 1 edges)
+T ′ has smaller weight than T (w ({u; v }) < w ({x; y }))
+5
+
+Thomas Bläsius – Algorithms 1
+
+x
+y
+
+⇒ T is not an MST
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ pwa.klicker.uzh.ch/join/algo1
+
+Structural insight → Prim's algorithm
+Idea
+show that certain edges are contained in every MST
+find such edges iteratively and select them
+after n − 1 steps the n − 1 selected edges form the MST
+Find essential edges
+consider cut between processed and non-processed nodes
+start with one processed node
+per step: mark endpoint of added edge as processed
+3
+
+5
+2
+
+2
+
+6
+
+2
+
+6
+3
+
+4
+6
+
+6
+
+5
+
+7
+
+4
+
+4
+
+What runtime does the algorithm have?
+
+Thomas Bläsius – Algorithms 1
+
+6
+5
+4
+6
+
+processed
+non-processed
+
+Lemma
+For every cut, the minimal
+cut edge is contained in every MST.
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Prim's algorithm – Efficient implementation
+What do we need to do in each of the n − 1 steps?
+(e.g. binary heap: Θ(log n) per operation)
+determine cut edge with minimal weight priority queue (heap)
+naive solution: look at each edge once
+push(x; p)
+insert element x with priority p
+popMin()
+→ Θ(m) → Θ(n · m) in total
+extract element with minimal priority
+decPrio(a; p)
+decrease priority of node a to p
+Idea: use a priority queue
+C++: priority_queue
+
+Java: PriorityQueue
+
+(priority changes might need to be built yourself: lazy evaluation)
+
+processed
+non-processed
+5
+2
+
+4
+
+4
+3
+
+3
+7
+
+6
+
+2
+
+4
+
+4
+6
+
+One possible implementation with priority queue Q
+Goal for the state of Q at any time
+5
+∞
+3
+3
+Q contains the not yet processed nodes
+priority: minimal edge to processed nodes
+2 5
+7
+6
+per step: process u = Q:popMin()
+5
+6
+consider every neighbor v ∈ N(u) of u
+∞
+7
+4 2
+possibly decrease the priority of v to w ({u; v })
+∞
+6
+
+∞
+6
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Prim's algorithm – Runtime & Notes
+One possible implementation with priority queue Q
+per step: process u = Q:popMin()
+consider every neighbor v ∈ N(u) of u
+possibly decrease the priority of v to w ({u; v })
+Initialization: insert each node into Q
+
+Θ(n) times popMin
+Θ(m) times decPrio
+Θ(n) times push
+
+⇒ Θ((n + m) · log n) with a binary and Θ(n log n + m) with a Fibonacci heap
+Note – Comparison to Dijkstra
+the algorithm has very great similarity to Dijkstra's algorithm (shortest paths)
+only the priorities are updated slightly differently
+Note – Greedy algorithm
+we choose in each step the minimal edge that enlarges the current subtree
+we also call such an approach a greedy algorithm
+8
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Evaluation
+
+https://onlineumfrage.kit.edu/evasys/online/online.php?p=A5Q8D
+9
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Alternative greedy strategy: Kruskal
+Greedy selection
+choose minimal edge in each step
+Prim: among all edges that enlarge the current subtree
+Kruskal: among all edges that don't form a cycle with already chosen edges
+u
+2
+
+v
+
+5
+
+2
+
+6
+
+2
+
+6
+3
+
+5
+
+7
+
+4
+
+4
+
+3
+
+4
+6
+
+6
+5
+4
+6
+
+Lemma
+For every cut, the minimal
+cut edge is contained in every MST.
+10
+
+Thomas Bläsius – Algorithms 1
+
+Correctness
+let {u; v } be smallest edge that doesn't close a cycle
+observe: there exists a cut such that
+{u; v } is cut edge
+no cut edge is already chosen
+observe: cut edges don't close a cycle
+therefore: {u; v } is minimal cut edge
+correctness follows from the lemma
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Kruskal's algorithm: Implementation
+Greedy selection
+choose minimal edge in each step
+among all edges that don't form a cycle with already chosen edges
+Algorithmic implementation
+sort edges in ascending order and iterate over them
+two options for each edge {u; v } considered this way:
+{u; v } closes cycle → skip {u; v }
+{u; v } doesn't close cycle → select {u; v }
+
+u
+
+v
+
+v
+
+u
+skip
+
+u
+
+v
+
+u
+
+v
+
+select
+
+How do we quickly test whether {u; v } closes a cycle?
+{u; v } closes cycle ⇔ u and v lie in the same component regarding chosen edges
+BFS or DFS each time is too expensive (Θ(m))
+next time: data structure for efficient management of components
+11
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Minimal spanning trees and greedy algorithms
+Greedy algorithms in general
+approach: make decisions iteratively that look best at the moment
+often not optimal (and possibly very bad in worst case), but good heuristic for practice
+if optimal: proof using exchange argument
+(for every solution without the greedily chosen element there exists one at least as good with the element)
+
+more theory on this: look up the keyword matroid
+Minimal spanning tree (MST)
+two greedy variants that deliver optimal solution (Prim, Kruskal)
+actually almost any greedy variant works correctly
+(e.g. iteratively delete the largest edge on a cycle)
+efficient implementation of Prim: priority queue
+efficient implementation of Kruskal: Union-Find (next time)
+
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

@@ -1,0 +1,563 @@
+Algorithms 1
+Depth-First Search: Finding bridges
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ How do I become a GBI tutor?
+Motivation to pass on your experiences to the next
+first-year students
+Hold tutorials and correct assignments
+Slides from previous tutorials and sample solutions
+will be provided
+Payment: 5 months, 40 hours each, 13.25 €/h
+
+Until end of the week (28.6.) email to
+philipp.kern@kit.edu
+
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Bridges in graphs
+Definition
+Let G = (V; E) be a graph. An edge e = {u; v } ∈ E is called a bridge if u and v lie in
+different connected components in G − e.
+Bridge
+
+Bridge
+
+Goal today
+find all bridges
+learn more about depth-first search (DFS) in the process
+
+Why are we interested in bridges?
+interesting graph-theoretic structure → smallest possible cuts
+decomposes the graph into multiple components → good for divide and conquer
+
+3
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Reminder: Graph traversal
+Depth-First Search (DFS)
+Breadth-First Search (BFS)
+start at a node s
+start at a node s
+visit all neighbors of s
+walk to new neighbor in each step
+then all neighbors of neighbors etc.
+dead end (no new neighbor)
+→ backtracking: back to predecessor
+neighbors of neighbors
+7
+
+dead end
+
+s
+
+0
+6
+5
+
+1
+
+8
+
+9
+
+4
+
+end
+s is dead end
+⇒ all nodes reachable from s colored
+
+visited node
+unvisited node
+current node
+
+s
+path to current node
+
+3
+
+2
+
+4
+
+7
+
+Thomas Bläsius – Algorithms 1
+
+neighbors
+layer 1
+
+0
+
+s
+
+3
+
+1
+
+2
+
+layer 2
+
+4
+layer 3
+
+6
+
+9
+
+5
+
+8
+
+neighbors of neighbors of neighbors
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ DFS tree
+Observation
+when exploring a node we skip edges to already visited nodes
+we also call them back edges
+non-skipped edges form a tree → tree edges
+7
+
+s
+
+0
+6
+
+3
+
+5
+
+1
+
+2
+
+Thomas Bläsius – Algorithms 1
+
+9
+
+4
+
+visited node
+unvisited node
+current node
+5
+
+8
+
+Note: Back edges
+always point to a predecessor in the DFS tree
+English: back edge
+directed graphs: additional edge types
+
+back edge
+s
+path to current node
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Characterization of bridges via DFS tree
+Bridges and trees
+in a tree every edge is a bridge
+the back edges are crucial
+
+Note: Notation
+Nodes are labeled here with their DFS number
+We view back edges as directed
+
+Example: Why is {0; 6} a bridge?
+deleting {0; 6} separates the subtree under 6
+from the rest in the DFS tree
+there is no back edge from the subtree to a predecessor of 6
+in particular one can no longer reach the root (0)
+
+0
+1
+
+6
+2
+
+7
+
+3
+4
+
+When is a tree edge {u; v } a bridge?
+5
+let u be the parent and v the child
+{u; v } is bridge ⇔ no back edge from subtree under v to above v
+
+8
+9
+
+Additionally: back edges are never bridges
+6
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Proof of structural insight
+Theorem
+An edge {u; v } is a bridge if and only if
+{u; v } is a tree edge with parent u and child v and
+no back edge from the subtree under v ends above v .
+Rough plan: case distinction
+Case 1: {u; v } is a back edge ⇒ no bridge
+ˆ
+˜
+Case 2: {u; v } is a tree edge ⇒ bridge ⇔ (2) holds
+Case 2.1: (2) doesn't hold (there is back edge) ⇒ no bridge
+Case 2.2: (2) holds (there is no back edge) ⇒ bridge
+Note
+the case distinction covers all cases
+show: in each case the statement of the theorem is satisfied
+7
+
+Thomas Bläsius – Algorithms 1
+
+(structural)
+(1)
+(2)
+0
+1
+
+6
+7
+
+2
+3
+
+8
+
+4
+5
+
+9
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Proof of structural insight
+Theorem
+An edge {u; v } is a bridge if and only if
+{u; v } is a tree edge with parent u and child v and
+no back edge from the subtree under v ends above v .
+Show for case 1: {u; v } is a back edge ⇒ no bridge
+there exists a path between u and v in the DFS tree
+u and v remain in the same component when {u; v } is deleted
+
+(structural)
+(1)
+(2)
+0
+1
+
+6
+7
+
+2
+
+Show for case 2.1: (2) doesn't hold (there is back edge) ⇒ no bridge 3
+′
+′
+′
+′
+u
+let {v ; u } be the back edge, such that v is in subtree of v
+and u ′ lies above v
+u
+(tree path v ; : : : ; v ′ ) + {v ′ ; u ′ } + (tree path u ′ ; : : : ; u)
+v
+⇒ u and v remain in the same component
+
+8
+
+4
+5
+
+9
+
+v′
+7
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Proof of structural insight
+Theorem
+An edge {u; v } is a bridge if and only if
+{u; v } is a tree edge with parent u and child v and
+no back edge from the subtree under v ends above v .
+Show for case 2.2: (2) holds (there is no back edge) ⇒ bridge
+let Tv = (Vv ; Ev ) be the subtree under v (including v )
+{u; v } is the only edge between Tv and nodes outside, because:
+assume there is another edge {u ′ ; v ′ } with v ′ ∈ Vv and u ′ ∈
+= Vv
+{u ′ ; v ′ } is not a tree edge, otherwise u ′ would be in Tv
+{u ′ ; v ′ } is thus a back edge and u ′ is predecessor of v ′ in DFS tree
+since u ′ ∈
+= Vv , u ′ must also lie above v ⇒ (2) doesn't hold
+deleting {u; v } separates Tv from the rest of the graph ⇒ {u; v } is bridge
+7
+
+Thomas Bläsius – Algorithms 1
+
+(structural)
+(1)
+(2)
+u
+v
+
+Tv
+
+u′
+v′
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ From structural to algorithmic perspective
+Theorem
+An edge {u; v } is a bridge if and only if
+{u; v } is a tree edge with parent u and child v and
+no back edge from the subtree under v ends above v .
+
+(structural)
+(1)
+(2)
+0
+
+Algorithmic perspective
+(1) is easy to check for an edge {u; v }
+Problem with (2): looking at the entire subtree under v is expensive
+
+1
+
+6
+7
+
+2
+
+(linear in size of subtree → potentially quadratic overall)
+3
+
+Plan in the following
+define a value low(v ) for each node v
+such that one can read from low(v ) whether (2) is satisfied for v
+compute these low(v ) during DFS as well
+8
+
+Thomas Bläsius – Algorithms 1
+
+8
+
+4
+5
+
+9
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Algorithmic implementation
+Definition
+Let low(v ) be the minimum of the DFS number of v and the smallest DFS number
+that can be reached from a node in the subtree under v with a back edge.
+When is a tree edge {u; v } a bridge?
+no back edge (2) ⇒ low(v ) = DFS number of v
+back edge (not 2) ⇒ low(v ) < DFS number of v
+so: {u; v } is bridge ⇔ low(v ) = DFS number of v
+
+0
+
+Thomas Bläsius – Algorithms 1
+
+6
+6
+
+1
+0
+
+How do we compute low(v )?
+we can handle this on-the-fly during DFS
+roughly: low(v ) results from
+the DFS number of v
+the back edges from v
+the values low(u1 ); : : : ; low(uk ) of children u1 ; : : : ; uk of v
+9
+
+0
+
+6
+7
+
+2
+3
+0
+
+6
+
+0
+8
+
+4
+1
+
+9
+
+5
+1
+
+9
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Computation of low(v )
+Definition
+Let low(v ) be the minimum of the DFS number of v and the smallest DFS number
+that can be reached from a node in the subtree under v with a back edge.
+Situations in which we adjust low(v )
+v seen for the first time: low(v ) := DFS number of v
+back edge {v ; u} found: low(v ) := min{low(v ); DFS number of u}
+backtrack from a child u of v : low(v ) := min{low(v ); low(u)}
+
+0
+
+0
+6
+6
+
+1
+
+Correctness
+show: when backtracking from v to parent, then low(v ) is correct
+structural induction:
+it holds for the leaves
+(beginning)
+assume it holds for the children of v
+(assumption)
+then it also holds for v
+(step)
+10
+
+Thomas Bläsius – Algorithms 1
+
+1
+0
+
+6
+7
+7
+
+2
+3
+3
+0
+1
+
+8
+6
+
+2
+0
+8
+
+4
+4
+1
+
+9
+
+5
+5
+1
+
+9
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Algorithm → Recursive implementation
+
+DFS(Graph G; Node v ; Node p)
+dfs[v ] := next_dfs
+next_dfs := next_dfs + 1
+low[v ] := dfs[v ]
+for Node u in N(v ) do
+if u = p then continue
+if dfs[u] = ∞ then
+DFS(G; u; v )
+low[v ] = min{low[v ]; low[u]}
+else
+low[v ] = min{low[v ]; dfs[u]}
+11
+
+Thomas Bläsius – Algorithms 1
+
+Reminder: Situations in which we adjust low[v ]
+v seen for first time: low[v ] := dfs[v ]
+back edge {v ; u}: low[v ] := min{low[v ]; dfs[u]}
+backtrack from child u to v : low[v ] := min{low[v ]; low[u]}
+
+first visit to v
+
+Attention: we must skip u if u is the
+parent of v
+(otherwise we interpret the tree edge from u to v as back edge from v to u)
+
+DFS for child u finished → backtrack from u to v
+neighbor u seen before → back edge
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Algorithm → Implementation
+Note on implementation in (pseudo)code
+two variants
+recursive: each node calls DFS for all its children
+iterative: without recursive calls
+Recursive implementation
+nicely simple
+backtracking happens almost automatically
+problem: possibly deep recursion → consumes much stack memory
+stack memory is statically allocated → when it's full the program crashes
+(stack overflow)
+
+Iterative implementation
+cumbersome when you want to do something during backtracking
+you then have to manually manage the recursion tree in principle
+advantage: mainly consumes (dynamically allocated) heap memory
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Summary & Preview
+DFS – Depth-First Search
+very fundamental algorithm for graph traversal
+basis for solving many different problems
+two important time points:
+discovering a node
+backtracking from a child to parent
+A bit of graph theory
+bridges in graphs
+structural insight → efficient algorithm
+Next time
+more DFS on directed graphs
+How do you dress properly?
+13
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

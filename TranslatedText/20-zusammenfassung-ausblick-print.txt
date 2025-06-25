@@ -1,0 +1,854 @@
+Algorithms 1
+Lecture 20
+Average-Case Analysis, Summary & Outlook
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ Why is everything so heavy?
+the world needs efficient algorithms
+elementary functions that describe runtimes
+√
+√
+2
+3
+1 log n log n
+n
+n n n log n n2 n3 nlog n
+
+√
+
+2
+
+n
+
+n
+
+2
+
+n
+
+3
+
+n
+
+4
+
+n!
+
+n2
+
+2
+
+super many practically relevant problems seem to live here
+What does this mean?
+We know that these problems are equally hard to solve
+We don't know any (unconditional) lower bounds
+So far nobody has found a polynomial algorithm
+Known algorithms have exponential runtime in the worst case
+Often the algorithms are super efficient in practice
+https://i.imgflip.com/o63vh.jpg?a460593 (cropped)
+
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Why is everything so easy?
+the world needs efficient algorithms
+elementary functions that describe runtimes
+√
+√
+2
+3
+1 log n log n
+n
+n n n log n n2 n3 nlog n
+Practice . . .
+
+√
+
+2
+
+n
+
+n
+
+2
+
+n
+
+3
+
+n
+
+4
+
+n!
+
+n2
+
+2
+
+. . . Theory
+
+theoretical analysis useless?
+Algorithms
+too pessimistic!
+
+so far typically considered: Worst-Case runtime
+an adversary knows the algorithm and builds an instance that maximizes
+the runtime
+almost always the right perspective (strongest possible statement,
+especially when designing algorithms)
+but... this is not how instances arise in practice . . .
+https://i.imgflip.com/3w723.jpg?a460595 (cropped)
+3
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Practical Instances: Graphs
+Roads
+
+http://en.wikipedia.org/wiki/Image:International_
+E_Road_Network.png
+
+Social Interactions
+
+Internet
+
+Nia et al. SIN: A Platform to Make Interactions in
+Social Networks Accessible, SocialInformatics 2012
+
+https://www.caida.org/projects/ascore/pics/2017/ascore-2017-feb-ipv4standalone-1000x1037.png
+
+are not built to make your algorithm slow
+real networks differ from worst-case instances
+4
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Back to theory?
+theoretically explain why algorithms are fast in practice → restrict analysis to realistic instances
+Set of all graphs
+
+G1
+
+G3
+
+G76131
+...
+
+G31415926
+...
+
+G73841998
+...
+
+G
+. . . 62951413
+
+...
+...
+
+G14480
+...
+
+...
+
+G2
+
+...
+
+G0
+
+G
+. . . 999999999
+
+...
+
+How can we mathematically describe how the adversary is allowed to choose instances?
+Restriction via properties of graphs
+"all graphs with maximum degree at most 2"
+What properties do realistic instances have?
+5
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ pwa.klicker.uzh.ch/join/algo1
+
+4
+
+2
+5
+
+3
+6
+
+3
+2
+1
+1
+
+3
+2
+Degree
+
+homogeneous
+
+Number of nodes
+
+1
+
+Number of nodes
+
+Degree distribution
+
+Number of nodes
+
+Properties of real graphs
+heterogeneous
+
+Degree
+
+Degree
+
+constant average degree
+
+square-root maximum degree
+
+The degree distribution of a road network is more...
+The degree distribution of a social network is more...
+http://en.wikipedia.org/wiki/Image:Inter
+national_E_Road_Network.png
+6
+
+Thomas Bläsius – Algorithms 1
+
+Nia et al. SIN: A Platform to Make Interactions in
+Social Networks Accessible, SocialInformatics 2012
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 4
+
+2
+5
+
+3
+6
+
+3
+2
+1
+1
+
+3
+2
+Degree
+
+Locality
+"Edges are short"
+Edges connect nodes between
+which there are already short paths
+You
+your
+best
+friend
+6
+
+Thomas Bläsius – Algorithms 1
+
+their
+best
+friend
+
+homogeneous
+
+Number of nodes
+
+1
+
+Number of nodes
+
+Degree distribution
+
+Number of nodes
+
+Properties of real graphs
+heterogeneous
+
+Degree
+
+Degree
+
+constant average degree
+
+square-root maximum degree
+
+Diameter
+"Everyone knows everyone through 6 corners"
+the longest shortest path is short
+in Facebook everyone knows everyone through
+3.57 corners (on average)
+https://research.facebook.com/blog/2016/2/
+three-and-a-half-degrees-of-separation/
+
+in road networks rather not
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Back to theory?
+Set of all graphs
+
+G1
+
+G3
+
+G76131
+...
+
+G31415926
+...
+
+G73841998
+...
+
+G
+. . . 62951413
+
+...
+...
+
+G14480
+...
+
+...
+
+G2
+
+...
+
+G0
+
+G
+. . . 999999999
+
+...
+
+How can we mathematically describe how the adversary is allowed to choose instances?
+"Graphs with heterogeneous degree distribution"
+". . . and high locality"
+". . . and small diameter"
+https://i.imgflip.com/o63vh.jpg?a460593 (cropped)
+All this is too imprecise!
+7
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Random graph
+A random graph is a graph G = (V, E) where E is a random variable.
+Erdős-Rényi Model
+V = {1, ..., n}
+Xu,v indicator random variable with
+p(Xu,v = 1) = p for all 1 ≤ u < v ≤ n.
+`V ´
+E = {{u, v} ∈ 2 | Xu,v = 1}
+follows a distribution over all graphs with n nodes
+Set of all graphs
+
+(under the assumption that we forget the node IDs after generation)
+
+"Adversary should generate Erdős-Rényi random graph"
+8
+
+Thomas Bläsius – Algorithms 1
+
+Example
+V = {1, ..., 5}
+p = 1/2
+X1,2 = 0
+X1,3 = 1
+X1,4 = 1
+X1,5 = 0
+X2,3 = 1
+
+X2,4 = 0
+X2,5 = 0
+X3,4 = 0
+X3,5 = 1
+X4,5 = 1
+
+5
+1
+4
+2
+3
+
+Properties
+homogeneous
+expected degree
+P of a node
+E[deg(v)] = u≠v Xu,v = p · (n − 1)
+
+no locality
+edges independent
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Geometric Random Graph
+Euclidean
+V = {1, ..., n}
+Xv uniformly distributed from the unit circle
+`V ´
+E = {{u, v} ∈ 2 | ||Xu − Xv||2 ≤ R}
+
+R = 1/2
+
+Locality Are two nodes with a common neighbor more likely to be connected than two randomly chosen nodes?
+u, w are two randomly chosen nodes
+{u, w} ∈ E ↔ ||Xu − Xw||2 ≤ R
+↔w ∈
+Pr[{u, v} ∈ E] ≤ A(
+A(
+
+)
+)
+
+πR2
+= π/4 = R2 = 0.25
+
+u, w have neighbor v → w ∈
+{u, w} ∈ E ↔ w ∈
+
+Thomas Bläsius – Algorithms 1
+
+v
+w
+
+→w ∈
+
+Pr[{u, w} ∈ E | {u, v}, {v, w} ∈ E] = A(
+A(
+9
+
+u
+
+)
+≈ 0.391
+)
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Geometric Random Graph
+Euclidean
+V = {1, ..., n}
+Xv uniformly distributed from the unit circle
+`V ´
+E = {{u, v} ∈ 2 | ||Xu − Xv||2 ≤ R}
+
+R = 1/2
+
+Locality
+Degree distribution homogeneous
+A(
+E[deg(u)] ≤ n · A(
+
+Set of all graphs
+
+9
+
+Thomas Bläsius – Algorithms 1
+
+)
+= n · 0.25
+)
+
+?
+
+. . . but not arbitrarily small
+u
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Geometric Random Graph
+Hyperbolic
+V = {1, ..., n}
+Xv uniformly distributed from a circle in the hyperbolic plane H
+`V ´
+E = {{u, v} ∈ 2 | distH(u, v) ≤ R}
+Locality
+Degree distribution heterogeneous
+Average-Case Analysis
+Input for the algorithm: a hyperbolic
+random graph
+low runtime with high probability
+Theory . . .
+Practice . . .
+Algorithms
+10
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Eval – Overall impression
+
+11
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Eval – Clicker
+31×
+
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Eval – Presentation style
+32×
+
+13
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Eval – Learning materials
+
+31×
+
+on the homepage: document with learning objectives, literature references and glossary
+14
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Eval – Platforms
+20×
+
+15
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Eval – Miscellaneous
+
+16
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Eval – Exercise
+Year before last
+
+Last year
+
+This year
+
+17
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ What have we learned?
+Data structures
+Which data structures have we learned about?
+For what purpose is which data structure suitable?
+How does the efficient implementation work?
+Algorithms
+Which algorithms have we learned about?
+How and why do they work?
+Methods and techniques
+Formalization
+Algorithm design
+Detailed implementation
+Correctness
+Runtime
+18
+
+Thomas Bläsius – Algorithms 1
+
+Edge: Think about what the advantages and
+disadvantages of the two structures are compared
+to each other. Do you know situations for both
+directions in which one is superior to the other?
+
+dynamic array
+hashmap
+list
+(a, b)-tree
+binary heap
+
+Union–Find
+
+graph data structure
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ What have we learned?
+Data structures
+Which data structures have we learned about?
+For what purpose is which data structure suitable?
+How does the efficient implementation work?
+sorting
+
+Algorithms
+Which algorithms have we learned about?
+How and why do they work?
+Methods and techniques
+Formalization
+Algorithm design
+Detailed implementation
+Correctness
+Runtime
+18
+
+Thomas Bläsius – Algorithms 1
+
+comparison-based
+binary search
+
+(Merge- and Quicksort)
+
+numbers
+depth-first search
+
+(Bucket- and Radixsort)
+
+directed
+undirected
+
+shortest paths
+
+minimum spanning trees
+Prim and Kruskal
+
+breadth-first search
+Dijkstra
+Bellman–Ford
+Floyd–Warshall
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ What have we learned?
+Data structures
+Which data structures have we learned about?
+For what purpose is which data structure suitable?
+How does the efficient implementation work?
+Algorithms
+Which algorithms have we learned about?
+How and why do they work?
+Methods and techniques
+Formalization
+Algorithm design
+Detailed implementation
+Correctness
+Runtime
+18
+
+Thomas Bläsius – Algorithms 1
+
+Formulation in natural language
+
+formal problem
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ What have we learned?
+Data structures
+Which data structures have we learned about?
+For what purpose is which data structure suitable?
+How does the efficient implementation work?
+Algorithms
+Which algorithms have we learned about?
+How and why do they work?
+Methods and techniques
+Formalization
+Algorithm design
+Detailed implementation
+Correctness
+Runtime
+18
+
+Thomas Bläsius – Algorithms 1
+
+Divide and Conquer
+Greedy
+dynamic programming
+
+smaller tricks
+allow some disorder
+Lazy Evaluation
+use numbers as array index
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ What have we learned?
+Data structures
+Which data structures have we learned about?
+For what purpose is which data structure suitable?
+How does the efficient implementation work?
+Algorithms
+Which algorithms have we learned about?
+How and why do they work?
+Methods and techniques
+Formalization
+Algorithm design
+Detailed implementation
+Correctness
+Runtime
+18
+
+Thomas Bläsius – Algorithms 1
+
+algorithmic idea
+
+pseudocode
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ What have we learned?
+Data structures
+Which data structures have we learned about?
+For what purpose is which data structure suitable?
+How does the efficient implementation work?
+Algorithms
+Which algorithms have we learned about?
+How and why do they work?
+Methods and techniques
+Formalization
+Algorithm design
+Detailed implementation
+Correctness
+Runtime
+18
+
+Thomas Bläsius – Algorithms 1
+
+Invariants
+Induction
+Proof by contradiction
+(minimal counterexample)
+
+Exchange argument (Greedy)
+
+(but there's usually no cookbook recipe)
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ What have we learned?
+Data structures
+Which data structures have we learned about?
+For what purpose is which data structure suitable?
+How does the efficient implementation work?
+Algorithms
+Which algorithms have we learned about?
+How and why do they work?
+Methods and techniques
+Formalization
+Algorithm design
+Detailed implementation
+Correctness
+Runtime
+18
+
+Thomas Bläsius – Algorithms 1
+
+Asymptotics: O-notation
+Solving recurrences
+(via recursion tree)
+exponential sums
+amortized analysis
+Average-Case analysis
+(randomized algorithms)
+Adversary argument
+P
+
+v ∈V deg(v) ∈ Θ(m)
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Exam (August 30, 8 AM)
+Materials
+Slides for lecture and exercise
+Exercise sheets with solutions
+Learning objectives, literature references and glossary
+Recording of lecture and exercise
+old exams
+
+(Homepage)
+(Homepage)
+(Homepage)
+(Ilias)
+(Student body, Homepage)
+
+Additional offers
+Additional tutorials every week on Monday and Wednesday 9:45 in room −101/−102
+digital office hours (via Twitch): timing is still unclear
+Allowed aids
+Cheat sheet: one A4 sheet (front and back), with any content
+Recommendation: create yourself and don't copy from fellow students
+19
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Algorithm courses at KIT
+Can be taken in the Bachelor
+(Theoretical Foundations of Computer Science)
+Algorithms 2
+Algorithms for planar graphs
+Basic practical course ICPC
+Advanced courses for the Master
+Algorithm Engineering
+Advanced Data Structures
+Parallel Algorithms
+Text Indexing
+Randomized Algorithmics
+Models of Parallel Processing
+20
+
+Thomas Bläsius – Algorithms 1
+
+Which courses are offered exactly
+is of course always somewhat in flux.
+
+Algorithmic Geometry
+Parameterized Algorithms
+Algorithms for Route Planning
+Algorithmic Graph Theory
+Algorithms for Graph Visualization
+Fine-Grained Complexity and Algorithms
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Todo for you
+
+Register for the exam!
+Prepare well for it!
+Write a good exam!
+
+We wish you much success!
+
+21
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

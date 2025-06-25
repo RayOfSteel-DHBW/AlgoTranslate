@@ -1,0 +1,414 @@
+Algorithms 1
+Sorting: Bucketsort, Radixsort, Word-RAM
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ Overview
+Seen last time
+Sorting algorithms with runtime O(n log n) (Mergesort, Quicksort)
+we only need to be able to compare elements and know nothing else about them
+comparison-based → the algorithms are universally applicable
+lower bound: every comparison-based sorting algorithm requires Ω(n log n) comparisons
+Plan for today
+sorting numbers in O(n): Bucketsort, Radixsort
+under certain assumptions about the size of the numbers
+
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Bucketsort
+Theorem
+Every comparison-based sorting algorithm requires Ω(n log n) comparisons to sort a sequence
+of n elements.
+What can we do with numbers?
+compare → doesn't help here
+address array cells → we can use that
+Bucketsort
+to sort: n numbers from [0; m)
+create buckets: array B of size m
+for each number x: store x in B[x]
+read sorted sequence from B
+
+Runtime
+Θ(m)
+Θ(n)
+Θ(n + m)
+
+Runtime Θ(n + m) = Θ(n), when m ∈ O(n)
+3
+
+Thomas Bläsius – Algorithms 1
+
+(when the numbers are not too large)
+⟨3; 7; 9; 3; 5; 1; 0; 1⟩
+0 1 2 3 4
+3
+0 11
+3
+
+5
+5
+
+6
+
+7
+7
+
+8
+
+9
+9
+
+⟨0; 1; 1; 3; 3; 5; 7; 9⟩
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Numbers as Keys
+More than just numbers
+often you don't actually want to sort numbers
+but more complex objects with respect to a characteristic
+this characteristic is also called key
+Name
+Peter Jobless
+Martyn CEO
+Henryk Engineer
+Kiki Unknown
+The Old One
+
+Example 1: People by age in years
+Input: table with person data (n rows)
+maximum age is typically small (in O(n))
+Bucketsort has runtime Θ(n)
+
+People from: QualityLand, Marc-Uwe Kling
+
+Example 2: Nodes of a graph by degree (#neighbors)
+Input: graph with n nodes
+degree of each node is less than n
+Bucketsort has runtime Θ(n)
+4
+
+Thomas Bläsius – Algorithms 1
+
+Age
+26
+38
+45
+28
+92
+
+5
+
+4
+
+5
+2
+
+4
+
+3
+
+4
+
+7
+
+3
+4
+
+3
+4
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Bucketsort: Implementation
+Note
+Bucketsort(input)
+nested loops
+m := largest key in the input + 1
+Array⟨Array⟩ buckets := array of size m of empty arrays → Runtime Θ(m · n)?
+each object lies in only one
+for obj in input do
+bucket
+buckets[obj:key]:pushBack(obj)
+therefore: Θ(m + n)
+Array A := empty array
+⟨3; 7; 9; 3; 5; 1; 0; 1⟩
+for bucket in buckets do
+// m buckets
+for obj in bucket do
+// n objects
+0 1 2 3 4 5 6 7 8 9
+3
+0 11
+5
+7
+9
+A:pushBack(obj)
+3
+return A
+⟨0; 1; 1; 3; 3; 5; 7; 9⟩
+Theorem
+With Bucketsort we can sort n natural numbers in Θ(n) time, when the size of the
+numbers lies in O(n).
+5
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Stable Sorting and Lexicographic Orders
+Observation: Bucketsort is stable
+If object X comes before object Y in the input and X:key = Y:key, then X comes before Y
+in the output.
+Lexicographic order on nations
+order by number of gold medals
+with equal gold count: by silver medals
+with equal gold and silver count: by bronze
+Sorting algorithm
+sort three times, each with stable sorting algorithm:
+first by bronze, then by silver, then by gold
+last sorting by gold: more gold ⇒ higher up
+with equal gold count: previous sorting by
+(silver; bronze) is preserved
+6
+
+Thomas Bläsius – Algorithms 1
+
+Medal table Olympics 2018
+Nation
+NOR
+GER
+CAN
+USA
+SUI
+FRA
+GBR
+POL
+UKR
+
+Gold
+14
+14
+11
+9
+5
+5
+1
+1
+1
+
+Silver Bronze
+14
+11
+10
+7
+8
+10
+8
+6
+6
+4
+4
+6
+0
+4
+0
+1
+0
+0
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ And what about larger numbers?
+Problem
+the numbers are possibly significantly larger than the
+number of objects to be sorted
+too many buckets → costs memory and runtime
+
+Name
+Income
+Peter Jobless
+35 211
+Martyn CEO
+783 491
+Henryk Engineer 123 456 789
+Kiki Unknown
+46 823
+The Old One
+46 129
+
+Idea for the example: three-stage procedure
+People from: QualityLand, Marc-Uwe Kling
+order lexicographically by (digits 1–3; digits 4–6; digits 7–9)
+before: Bucketsort with 109 buckets
+Name
+Income
+Peter Jobless
+000 035 211
+now: 3 times Bucketsort with 103 buckets
+Martyn CEO
+Henryk Engineer
+Kiki Unknown
+The Old One
+
+000 783 491
+123 456 789
+000 046 823
+000 046 129
+
+Generally: asymptotic improvement?
+Input: n numbers from [0; nc )
+People from: QualityLand, Marc-Uwe Kling
+Number of digits: log(nc ) = c · log n
+split into c blocks with log n digits each → numbers in interval [0; n)
+so: c times Bucketsort with runtime Θ(n) each ⇒ total runtime Θ(c · n)
+7
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Sorting Polynomially Large Numbers
+Just seen
+n numbers from interval [0; nc ) → c times Bucketsort with numbers from interval [0; n)
+Runtime Θ(cn) → Θ(n), when c constant
+(or LSD Radixsort)
+this algorithm is also called Radixsort
+Theorem
+With Radixsort we can sort n natural numbers in Θ(n) time, when the size of the
+numbers lies in nO(1) , i.e., is polynomial in n.
+What now?
+more explicit formulation of the algorithm → first step toward implementation
+make correctness and runtime clear again
+explanation of the name
+
+8
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Radixsort
+Algorithm
+Input: n integers from [0; nc )
+Representation of each number x to a base b:
+(k = ⌊logb nc ⌋)
+xk · b k + · · · + x1 · b 1 + x0 · b 0
+sort the numbers first with respect to x0
+then sort stably with respect to x1
+then with respect to x2 and so on
+Runtime
+Θ(k · (n + b))
+k times sorting of n numbers of size b
+
+for b = n holds k = ⌊c⌋ ⇒ Θ(n)
+
+Example from before: b = 1000
+000 035 211 = 000 · 10002 + 035 · 10001 + 211 · 10000
+000 783 491 = 000 · 10002 + 783 · 10001 + 491 · 10000
+123 456 789 = 123 · 10002 + 456 · 10001 + 789 · 10000
+
+Side note
+the base in a number system is also called
+radix (binary → 2, decimal → 10, etc.)
+hence the name Radixsort
+
+Correctness
+after sorting with respect to xi holds: numbers are sorted with respect to xi · b i + · · · + x1 · b 1 + x0 · b 0
+Proof: induction over i
+9
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ That's cheating!
+Representation of numbers in the computer
+Numbers that are up to nc large → log(nc ) = c log n bits
+we do various things with the numbers:
+compare
+address memory cells
+calculate (e.g. x0 := x mod n to get the last log n bits of x)
+previous assumption: all this works in constant time
+Usual notation here
+Questions over questions
+log2 n = log(n) · log(n)
+Shouldn't one rather assume Θ(log n) time per operation?
+log log n = log(log(n))
+Does Radixsort then have runtime Θ(n log n)?
+Do the Θ(n log n) comparisons in Merge- and Quicksort then cause runtime Θ(n log2 n)?
+
+Answer
+no (at least not in the Word-RAM model)
+10
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Excursion: Computation Model
+Computation model (informal)
+RAM (random-access machine): O(1)-memory access via address
+word RAM
+each memory location holds a word consisting of w bits → integers in [0; 2w )
+arithmetic operations and comparisons on words in Θ(1)
+What assumption do we make for w ?
+(typical computer: w = 64)
+Possibility 1: w constant
+only finitely much memory addressable → theoretically ugly (finite automaton)
+arithmetic operations in Θ(log n) → unrealistically pessimistic
+(264 > 1;8 · 1019 )
+Possibility 2: w unbounded → too optimistic
+Possibility 3: w ≥ log n
+enough bits to address all used memory cells
+not too powerful: w ≥ log n is realistic for real computers
+11
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Excursion: Computation Model
+Computation model (informal)
+RAM (random-access machine): O(1)-memory access via address
+word RAM
+each memory location holds a word consisting of w bits → integers in [0; 2w )
+arithmetic operations and comparisons on words in Θ(1)
+w ≥ log n
+Implications for sorting polynomially large numbers
+Comparisons and operations run in O(1)
+thus: runtimes Θ(n) for Radixsort and Θ(n log n) for Merge- or Quicksort
+Sorting even larger numbers
+Assumption: each number is still representable by one word, but w ∈ !(log n)
+still O(1)-operations, but Radixsort needs too many sorting steps
+√
+works in expected O(n log log n) or deterministically in O(n log log n)
+11
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Sorting Numbers
+Sorting polynomially large numbers
+exploit that you can address memory cells with numbers in O(1) time (arrays)
+Θ(n)-sorting of linearly large numbers: Bucketsort
+Θ(n)-sorting of polynomially large numbers: split each number into constantly many
+linearly large numbers → Radixsort
+important concept in this context: lexicographic sorting
+Excursion: computation model word RAM
+behaves in algorithm analysis mostly as desired
+more formal introduction of computation models: TGI (next semester)
+
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

@@ -1,0 +1,671 @@
+Algorithms 1
+Priority Queue: binary heap
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ Reminder: Priority Queue for Dijkstra
+Dijkstra's algorithm (computing shortest paths)
+per step: find unexplored node with smallest currently known distance
+desired data structure: Priority Queue
+push(v ; 7): insert v with priority 7
+popMin(): extract element with smallest priority
+decPrio(v ; 4): decrease priority of v to 4
+Note
+Priority is often also called key
+other common names for the operations: insert, extractMin, decreaseKey
+Goal for today
+develop data structure that supports these operations
+each operation should be fast (O(log n))
+initially: only push and popMin
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Reminder and Note: Pointer-based structures
+3 4 5
+4 48 17
+
+Pointer-based structures
+many small pieces of memory (nodes)
+a node stores:
+data that actually interests us
+memory addresses of other nodes (pointers)
+access by navigation along pointers
+Today: Binary tree
+each node stores:
+priority
+(e.g. node of a graph)
+other data
+left and right child
+parent node
+simplified representation: show only
+priorities; everything else is implicit
+14
+3
+
+Thomas Bläsius – Algorithms 1
+
+17 18 19
+42 ⊥ ⊥
+48 49 50
+7 23 17
+23 24 25
+15 ⊥ ⊥
+
+4
+
+simplified representation
+4
+
+8
+8
+12
+
+14
+
+12
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Where is the difficulty?
+Solution 1: extreme order
+store elements as sorted sequence (by priority)
+great: popMin works in O(1)
+problem: push is difficult → Θ(n)
+
+Reminder:
+push(x): insert element with priority x
+popMin(): extract element with smallest
+priority
+
+(the persistent problem: in lists search is slow, in arrays insertion is slow)
+
+Solution 2: extreme disorder
+store elements as (unsorted) sequence
+great: push works in O(1)
+problem: popMin is difficult → Θ(n)
+Good solution: Binary tree with a bit of order
+sort every path from root to a leaf
+enough order to find the minimum quickly
+short sorted paths → maintaining sorting is cheap
+4
+
+Thomas Bläsius – Algorithms 1
+
+2
+3
+
+8
+
+9
+10
+
+4
+13
+
+5
+
+12
+15
+
+18
+
+14
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Binary Min-Heap
+Min-heap property
+Reminder:
+push(x): insert element with priority x
+priority of a node ≤ priorities of children
+popMin(): extract element with smallest
+thus holds: all root–leaf paths are sorted
+priority
+and: minimum in the root
+Tree shape: complete binary tree
+12
+2
+3
+except last layer: all fully occupied (2i nodes on layer i)
+last layer: filled from left to right
+12
+3
+4
+8
+6
+note: Θ(log n) many layers
+9
+
+12
+4
+5
+
+12
+6
+8
+
+18
+
+Todo: Maintain these two properties
+10 13 12
+5 15 14 12
+6
+push(x): x first append as new leaf at bottom
+then: swap x up on path to root (bubble-up)
+Runtime: Θ(log n)
+popMin(): remove root and replace with last leaf
+then: swap root down to smaller child (sink-down)
+5
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Binary Min-Heap: Overview
+Invariant
+Heap property: parent ≤ child
+shape: complete binary tree
+
+Operation push(x)
+insert x as new leaf
+swap x up as long as necessary
+
+Operation popMin()
+replace root with last leaf x
+swap x down as long as necessary
+
+Note
+first step of operations violates heap property only at one place
+2
+Fix: swap the corresponding node iteratively up/down
+only Θ(log n) swap operations, since tree has height Θ(log n)
+3
+Further operations: change priority, delete entry
+can be implemented similarly
+not available in many implementations
+Trick: Lazy Evaluation (later)
+
+6
+
+Thomas Bläsius – Algorithms 1
+
+9
+
+10
+
+8
+
+4
+13
+
+5
+
+12
+15
+
+18
+
+14
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Implementation as Array
+0
+2
+
+Efficient representation in practice
+Arrays often more efficient than pointer-based structure
+Structure actually clear: complete binary tree
+store nodes consecutively in an array
+Representation of a node
+let v ∈ [0; n) be an integer
+v represents the node at position v in the array
+Child and parent nodes of v
+left child: 2v + 1
+right child: 2v
++ ˝2
+¨ v −1
+parent node: 2
+
+7
+
+Thomas Bläsius – Algorithms 1
+
+1
+3
+
+2
+8
+
+3
+9
+10
+7
+
+4
+4
+13
+8
+
+5
+9
+
+5
+12
+15
+10
+
+6
+18
+
+14
+11
+
+0 1 2 3 4 5 6 7 8 9 10 11
+2 3 8 9 4 12 18 10 13 5 15 14
+
+Proof sketch
+Nodes on layer i − 1: [2i−1 − 1; 2i − 1)
+Nodes on layer i:
+[2i − 1; 2i+1 − 1)
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Algorithm → Pseudocode (Basic operations)
+class M IN H EAP
+Array A
+// tree as array
+n()
+return A:size()
+leftChild(Node v )
+return 2v + 1
+rightChild(Node v )
+return 2v + 2
+parent(Node v )
+¨ v −1 ˝
+return 2
+swap(Node u; Node v )
+A[u]; A[v ] := A[v ]; A[u]
+8
+
+Thomas Bläsius – Algorithms 1
+
+bubbleUp(Node v )
+if v ̸= 0 and A[v ] < A[parent(v )] then
+swap(v ; parent(v ))
+bubbleUp(parent(v ))
+sinkDown(Node v )
+u' ; ur := leftChild(v ); rightChild(v )
+u := v
+// minimum of the three nodes
+if u' < n() and A[u' ] < A[u] then u := u'
+if ur < n() and A[ur ] < A[u] then u := ur
+if u ̸= v then
+9
+swap(u; v )
+sinkDown(u)
+
+8
+6
+
+12
+4
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Algorithm → Pseudocode
+class M IN H EAP
+Array A
+// tree as array
+
+push(Priority x)
+A:pushBack(x)
+bubbleUp(n() − 1)
+
+n()
+leftChild(Node v )
+rightChild(Node v )
+parent(Node v )
+swap(Node u; Node v )
+
+8
+6
+
+bubbleUp(Node v )
+sinkDown(Node v )
+
+popMin()
+res := A[0]
+swap(0; n() − 1)
+A:popBack()
+sinkDown(0)
+return res
+
+res: 2
+12
+2
+3
+12
+3
+4
+
+12
+9
+
+9
+
+4
+10
+
+9
+
+Thomas Bläsius – Algorithms 1
+
+8
+6
+12
+4
+5
+
+13
+
+12
+5
+
+12
+6
+8
+15
+
+14
+
+18
+12
+6
+2
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Notes
+Priorities don't have to be numbers
+the only thing we do with priorities: compare
+priorities can be elements of any ordered set; e.g. strings
+Runtime: Θ(log n) comparisons per operation
+Heapsort
+Step 1: insert all n elements with push
+Step 2: remove minimal element n times with popMin
+thus: elements are extracted in ascending order
+
+Θ(n log n)
+Θ(n log n)
+
+Lower bound
+comparison-based sorting needs Ω(n log n) → push or popMin needs Ω(log n)
+beatable when priorities are small integers:
+use buckets, like in bucketsort with priorities as indices of an array
+10
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Initial construction
+Situation
+given: sequence of priorities (unsorted)
+goal: make a heap out of it
+simple solution: call push n times → runtime Θ(n log n)
+Can we do better?
+Observation
+Assumption: subtree under u' and ur is already a heap
+then: sinkDown(v ) makes subtree under v into a heap
+Algorithm: call sinkDown bottom-up for each node once
+
+v
+7
+u'
+9
+
+ur
+5
+
+Preliminary consideration for runtime
+Cost for the root: Θ(log n)
+but: nodes further down in the tree also can't sink that far
+and: most nodes lie further down in the tree
+11
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Initial construction: Implementation in detail
+class M IN H EAP
+Reminder: Array representation of the tree
+0
+Array A
+// tree as array 0 1 2 3 4 5 6 7 8 9 10 11
+n()
+1
+2
+sinkDown(Node v )
+buildHeap(Array priorities)
+A := priorities
+for v = n() − 1; : : : ; 0 do
+sinkDown(v )
+
+3
+
+4
+
+5
+
+6
+
+12
+9
+
+4
+7
+
+8
+
+9
+
+10
+
+11
+
+Note: Correctness
+sinkDown is applied bottom-up: deeper layer finished before higher layer begins
+inductively: when calling sinkDown(v ) subtrees under children of v are already heaps
+after sinkDown(v ) subtree under v is a heap
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Initial construction: Runtime
+Cost for the call sinkDown(v )
+let i be the distance from v to a leaf
+v moves at most i steps down
+runtime: Θ(i + 1)
+`n´
+Number of nodes for fixed i : Θ 2i
+`P n·i ´
+Total cost: Θ
+= Θ(n)
+2i
+Side calculation:
+
+13
+
+Thomas Bläsius – Algorithms 1
+
+i =3
+i =2
+i =1
+i =0
+
+∞
+X
+i
+
+1
+2
+3
+4
+1
+1
+1
+1
+=
++
++
++
++
+·
+·
+·
+=
++
++
++
++ ::: ≤ 1
+i
+2
+2
+4
+8
+16
+2
+4
+8
+16
+i=1
+1
+1
+1
+1
++ + +
++ ::: ≤
+4
+8
+16
+2
+1
+1
+1
++ +
++ ::: ≤
+8
+16
+4
+..
+.
+
+=
+
+∞
+P
+1
+i=0
+
+2i
+
+≤2
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Priority Queues in the wild
+Java
+
+https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/PriorityQueue.html
+
+Note
+doesn't support additional operations like decPrio (needed for Dijkstra)
+use Lazy Evaluation trick for this (coming up)
+14
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ decPrio using Lazy Evaluation
+Basic idea
+mark node to be changed as outdated
+insert change as new node
+skip outdated nodes at popMin
+Actual runtime
+decPrio then has the same runtime as push
+but popMin is sometimes expensive: many outdated nodes must be skipped
+decPrio is thus lazy and leaves additional work for popMin
+Amortized runtime
+charge additional costs at popMin to responsible decPrio call
+popMin thus gets rid of all costs except for one non-outdated element → Θ(log n)
+each decPrio call is charged costs only once → Θ(log n)
+15
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Lazy Evaluation for Dijkstra
+Dijkstra(Graph G; Node s)
+d := Array of size n initialized with ∞
+d[s] := 0
+PriorityQueue Q := empty priority queue
+for Node v in V do
+Q:push(v ; d[v ])
+while Q ̸= ∅ do
+u := Q:popMin()
+for Node v in N(u) do
+if d[v ] > d[u] + len(u; v ) then
+d[v ] := d[u] + len(u; v )
+Q:decPrio(v ; d[v ])
+
+16
+
+Thomas Bläsius – Algorithms 1
+
+Dijkstra(Graph G; Node s)
+d := Array of size n initialized with ∞
+d[s] := 0
+PriorityQueue Q := PQ containing only s
+done := Array of size n init with FALSE
+while Q ̸= ∅ do
+u := Q:popMin()
+if done[u] then continue
+for Node v in N(u) do
+if d[v ] > d[u] + len(u; v ) then
+d[v ] := d[u] + len(u; v )
+Q:push(v ; d[v ])
+done[u] = TRUE
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Heaps
+Priority Queue
+push(x) insert element with priority x
+popMin() extract element with minimal priority
+Trick for additional operations (e.g. decPrio): Lazy Evaluation
+mark node to be changed as outdated → we notice this at popMin
+Binary Heap
+sufficient order to find minimum quickly
+sufficiently little order to restore this after a change
+Operations in Θ(log n) and very fast in practice
+Can we do better?
+somewhat more disorder → clean up when necessary
+Binomial heap: improves push to amortized Θ(1)
+Fibonacci heap: additionally improves decPrio to amortized Θ(1)
+17
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 

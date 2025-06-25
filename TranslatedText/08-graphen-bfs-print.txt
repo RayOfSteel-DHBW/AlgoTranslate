@@ -1,0 +1,699 @@
+Algorithms 1
+Graphs and Breadth-First Search
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+ Graphs: Basic Concepts
+Nodes & Edges
+Nodes
+
+Neighborhood
+v
+
+Edge
+
+Neighborhood N(v )
+
+Graph G = (V; E)
+|V | = n, |E| = m
+Simple graphs
+no loops
+no multiple edges
+
+Node degree
+1
+3
+6
+
+Components
+
+Directed graphs
+undirected
+e
+u
+v
+e = {u; v }
+
+directed
+e
+
+u
+v
+e = (u; v )
+
+incident
+
+adjacent
+
+directed cycle
+
+Tree
+
+Forest
+
+acyclic
+connected
+
+Loop
+
+Leaves
+Leaves
+
+disconnected
+4 connected components
+Rooted tree
+
+acyclic
+
+Root
+
+Height
+
+Parent
+Children
+
+inner nodes
+Multiple edge
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ A First Graph Problem
+Graphs are ubiquitous
+models relationships (edges) between pairs of objects (nodes)
+contacts between living beings
+interactions between proteins
+communication between sensors
+...
+Basic problem: finding connected components
+given: graph (e.g. as list of edges)
+goal: color the nodes according to the components
+Procedure: graph traversal
+start at a node s
+find and color all nodes reachable from s
+choose new color and repeat with still uncolored node (if present)
+3
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Graph Traversal
+Depth-First Search (DFS)
+Breadth-First Search (BFS)
+start at a node s
+start at a node s
+visit all neighbors of s
+walk to new neighbor in each step
+then all neighbors of neighbors etc.
+dead end (no new neighbor)
+→ backtracking: back to predecessor
+Neighbors of neighbors
+7
+
+Dead end
+
+s
+
+0
+6
+5
+
+1
+
+8
+
+9
+
+4
+
+End
+s is dead end
+⇒ all nodes reachable from s colored
+
+visited node
+unvisited node
+current node
+
+s
+Path to current node
+
+3
+
+2
+
+4
+
+7
+
+Thomas Bläsius – Algorithms 1
+
+Neighbors
+Layer 1
+
+0
+
+s
+
+3
+
+1
+
+2
+
+Layer 2
+
+4
+Layer 3
+
+6
+
+9
+
+5
+
+8
+
+Neighbors of neighbors of neighbors
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Breadth-First Search
+Abstract algorithm idea
+Breadth-First Search (BFS)
+start at a node s
+in principle we know what BFS does
+visit all neighbors of s
+but are still far from an implementation
+then all neighbors of neighbors etc.
+Efficient implementation
+not easy
+but with some practice also not hard
+for BFS: now
+Review: goals of the lecture
+develop own algorithm ideas
+efficient implementation of ideas
+good intuition which ideas can be implemented efficiently
+5
+
+Thomas Bläsius – Algorithms 1
+
+Neighbors of neighbors
+7
+
+Neighbors
+Layer 1
+
+0
+
+s
+
+3
+
+1
+
+2
+
+Layer 2
+
+4
+Layer 3
+
+6
+
+9
+
+5
+
+8
+
+Neighbors of neighbors of neighbors
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Algorithm → Pseudocode (first attempt)
+BFS(Graph G; Node s)
+' := 0
+// current layer
+color node s
+while there is a node in layer ' + 1 do
+' := ' + 1
+for Node v in layer ' do
+color node v
+Too high abstraction for pseudocode
+while there is a node in layer ' + 1 do
+How do we know this?
+for Node v in layer ' do
+Which nodes lie in layer '?
+
+6
+
+Thomas Bläsius – Algorithms 1
+
+s
+Layer 1
+Layer 2
+Layer 3
+
+Goals for runtime
+Layer ' + 1 from layer ': consider only
+edges incident to nodes from layer '
+→ total Θ(m)
+iterate over nodes in layer ': linear
+in number of nodes in layer '
+→ total Θ(n)
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Algorithm → Pseudocode (second attempt)
+BFS(Graph G; Node s)
+currLayer := {s}
+color node s
+nextLayer := N(s) and color N(s)
+while nextLayer ̸= ∅ do
+currLayer := nextLayer
+// determine next layer
+nextLayer := ∅
+for Node u in currLayer do
+for Node v in N(u) do
+if Node v is uncolored then
+insert v into nextLayer
+color node v
+7
+
+Thomas Bläsius – Algorithms 1
+
+7
+
+Observation
+new nodes v are
+inserted at back
+node u runs from front to back
+behavior of a queue
+(First In, First Out)
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+s
+
+0
+3
+
+1
+
+2
+
+9
+
+5
+
+4
+
+6
+
+6
+
+8
+
+currLayer nextLayer
+7 8 9
+
+Coloring when inserting into nextLayer
+ensures that each node v is only inserted once
+even when v has multiple edges from previous layer
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Algorithm → Pseudocode (final result)
+BFS(Graph G; Node s)
+Queue Q := empty queue
+Q:push(s)
+color node s
+while Q ̸= ∅ do
+u := Q:pop()
+for Node v in N(u) do
+if v is uncolored then
+Q:push(v )
+color node v
+Reminder: Queue
+Operations: pushBack, popFront
+FIFO: First In – First Out
+8
+
+Thomas Bläsius – Algorithms 1
+
+7
+
+s
+
+0
+3
+
+1
+
+2
+
+0
+
+1
+
+2
+
+popFront
+
+3
+
+4
+
+5
+
+6
+
+7
+
+9
+
+5
+
+4
+
+Q:
+
+6
+
+8
+
+8
+
+9
+
+pushBack
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Breadth-First Search: Runtime
+BFS(Graph G; Node s)
+Queue Q := empty queue
+Q:push(s)
+color node s
+while Q ̸= ∅ do
+u := Q:pop()
+for Node v in N(u) do
+if v is uncolored then
+Q:push(v )
+color node v
+
+Intuition from before: per layer . . .
+consider nodes in the layer → total Θ(n)
+consider only edges incident to nodes from the
+layer → total Θ(m)
+Somewhat more formal for our final implementation
+each node is inserted into queue only once
+while-loop: one pass for each node u ∈ V
+for-loop: deg(u) = |N(u)| passes
+P
+Total cost:
+deg(u) = 2m
+u∈V
+(each edge {u; v } is counted twice:
+once for u in deg(u) and once for v in deg(v ))
+
+Notation
+V : node set
+E: edge set
+
+9
+
+⇒ BFS has linear runtime Θ(m)
+
+n = |V |, m = |E|
+
+(provided our graph data structure allows us to iterate over N(u) in O(deg(u)))
+
+deg(u): degree of u
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Interlude: Graph Representation
+Basics
+represent each node by a number in {0; : : : ; n − 1}
+additional info for nodes (e.g. color): array of length n
+create array: once Θ(n)
+change/query property of a node: Θ(1)
+Adjacency list
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9
+
+N(0) N(1) N(2) N(3) N(4) N(5) N(6) N(7) N(8) N(9)
+
+1
+2
+3
+
+0
+2
+4
+
+0
+1
+4
+5
+
+0
+6
+7
+
+1
+2
+8
+
+2
+8
+
+3
+7
+9
+
+3
+6
+
+4
+5
+
+6
+
+iterate over N(v ): Θ(deg(v ))
+detailed implementation depends on application
+
+Adjacency matrix
+0123456789
+0 0 111 0 0 0 0 0 0
+1 1 0 1 0 1 0 0 0 0 0
+2 11 0 0 11 0 0 0 0
+3 1 0 0 0 0 0 11 0 0
+4 0 11 0 0 0 0 0 1 0
+5 0 0 1 0 0 0 0 0 1 0
+6 0 0 0 1 0 0 0 1 0 1
+7 0 0 0 1 0 0 1 0 0 0
+8 0 0 0 0 11 0 0 0 0
+9 0 0 0 0 0 0 1 0 0 0
+
+7
+0
+3
+1
+
+2
+
+6
+
+9
+
+5
+
+4
+
+8
+
+test if {u; v } ∈ E
+works in Θ(1)
+Θ(n2 ) memory
+iterate N(v ): Θ(n)
+
+(with engineering potential, e.g. for better cache efficiency)
+10
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Connected Components
+Basic problem: finding connected components
+given: graph
+goal: color the nodes according to components
+Just seen
+BFS(G; s) colors nodes reachable from s (component C(s))
+Runtime: Θ(mC(s) )
+
+Notation
+G = (V; E): graph
+n = |V |, m = |E|
+
+Coloring all components
+C(s): component of s
+mC(s) : #edges in C(s)
+iterate over all nodes s ∈ V → BFS(G; s) if s still uncolored
+choose new color for each BFS call
+BFS is executed once for each component → one color per component
+Runtime: Θ(n + m)
+iterate over all nodes: Θ(n)
+BFS in total (each edge belongs to only one component): Θ(m)
+11
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ BFS: Layers, Distances, Shortest Paths
+Observation
+nodes in layer ' can be reached with ' steps from s
+so BFS computes the distance from s to other nodes
+Layer 1
+
+s
+v4
+
+t
+v3
+
+v0
+
+Somewhat more formal: a few basic concepts
+Path: node sequence ⟨v0 ; : : : ; v' ⟩, with {vi−1 ; vi } ∈ E for i ∈ {1; : : : ; '} Layer 2 v2
+v1
+Layer 3
+Length of path ⟨v0 ; : : : ; v' ⟩: '
+v0 and v' are start and end nodes of ⟨v0 ; : : : ; v' ⟩
+shortest path from s ∈ V to t ∈ V : path of minimal length with start s and end t
+Distance dist(s; t): length of shortest st-path
+Theorem
+If a node v lies in layer ' during breadth-first search from s, then dist(s; v ) = '.
+12
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ BFS can compute distances
+Theorem
+If a node v lies in layer ' during breadth-first search from s, then dist(s; v ) = '.
+Proof
+there exists a path of length ' from s to v
+induction over ': clear for ' = 0
+v in layer ' ⇒ v has neighbors u in layer ' − 1
+induction hypothesis ⇒ su-path of length ' − 1
+therefore: sv -path of length '
+there is no shorter path from s to v
+edges don't skip layers
+every path from v (layer ') to s (layer 0) has
+length at least '
+
+...
+for Node v in N(u) do
+if v is uncolored then
+Q:push(v )
+color node v
+s
+Layer 1
+Layer 2
+Layer 3
+
+13
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Distances and shortest paths: actual computation
+Consequences from the proof
+just proved: the layers give the distances from s
+in the proof you see how to get the shortest path:
+...
+node v is found by node u
+for Node v in N(u) do
+define u as parent node of v
+if v is uncolored then
+backtracking the parents to s yields
+Q:push(v )
+shortest path
+color node v
+Observation
+parent relationship yields tree with root s
+s
+this tree is also called BFS tree
+u
+v
+Note
+Layer 1
+here too: how it works is clear in principle
+Layer 2
+for actual implementation you have to
+work again
+Layer 3
+14
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ Breadth-First Search (BFS)
+Graph traversal
+two approaches: BFS and DFS (DFS will come later again in detail)
+with this you can for example find the connected components
+Algorithm idea → pseudocode using BFS example
+even with such a simple algorithm you can do a lot wrong
+my hope:
+if you know the idea of breadth-first search
+but you can't memorize the pseudocode for it
+then you can implement a breadth-first search in your sleep
+Shortest paths
+BFS visits nodes in ascending distance from start
+therefore: computation of distances and shortest paths
+15
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Computer Science, Scalable Algorithms
+
+ 
