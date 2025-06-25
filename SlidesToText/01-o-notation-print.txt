@@ -1,0 +1,676 @@
+Algorithmen 1
+Einführung
+Schriftliche Multiplikation und Landau-Notation
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Ablauf
+Grundsätzlich gilt: mehr Details auch nochmal auf der Homepage
+https://scale.iti.kit.edu/teaching/2024ss/algo1/start
+
+2
+
+Rhythmus
+zwei Termine pro Woche
+Übung alle zwei Wochen (meist mittwochs)
+außerdem: wöchentliche Tutorien
+
+Materialien
+auf der Homepage
+Vorlesungsaufzeichnung im Ilias
+
+Übungsblätter & Tutorien
+Übungsblätter immer mittwochs
+Abgabe in 2er-Teams
+sehr wichtig für den Lernerfolg
+Klausurbonus
+Einteilung bis Freitag 12:00 Uhr
+
+Übung
+von Marcus, Wendy und Jean-Pierre
+vertieft den Stoff der Vorlesung
+mehr dazu nächste Woche Mittwoch
+
+Thomas Bläsius – Algorithmen 1
+
+Fragen → Discord (Link im Ilias)
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ pwa.klicker.uzh.ch/join/algo1
+
+Techniktest
+Wie formell soll es sein?
+
+3
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Algorithmus? Kann man das essen?
+al-Chwarizmi
+persischer Rechenmeister und Astronom
+lebte ca. 780–840 in Bagdad
+latinisierter Name: Algorismi
+Herkunft des Begriffs „Algorithmus“
+Moderne Definition (Wikipedia)
+Ein Algorithmus ist eine eindeutige Handlungsvorschrift zur Lösung eines Problems oder einer Klasse von Problemen.
+Algorithmen bestehen aus endlich vielen, wohldefinierten Einzelschritten.
+Damit können sie zur Ausführung in ein Computerprogramm implementiert, aber auch in
+menschlicher Sprache formuliert werden.
+Bei der Problemlösung wird eine bestimmte Eingabe in eine bestimmte Ausgabe überführt.
+4
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Was lernen wir hier?
+Wissen, verstehen, anwenden
+Vokabular an Fachbegriffen
+algorithmische Bausteine
+algorithmische Techniken
+
+Was ist eine amortisierte Analyse?
+Was macht Teile und Herrsche?
+
+Was ist eine Rekurrenz und wie löst man das?
+
+Was ist ein Heap? Was ist ein Suchbaum? Was kann ich damit machen?
+Was ist ein dynamisches Programm?
+
+Was ist ein greedy Algorithmus?
+
+Ist der Algorithmus schnell genug?
+Analysieren, evaluieren, erschaffen
+Laufzeitanalyse
+Wie kann ich ein gegebenes Problem effizient lösen?
+Entwicklung eigener Algorithmen
+Welche Datenstruktur sollte ich verwenden?
+Auswahl geeigneter Techniken und Bausteine Welche algorithmische Idee könnte funktionieren?
+Wechsel zwischen Abstraktionsebenen
+Ist meine Idee wirklich umsetzbar?
+Aufbau mentaler Shortcuts
+Ist mein Algorithmus korrekt?
+
+5
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Abstraktionsebene? Mentale Shortcuts?
+hoch
+
+nat. Sprache / Bilder
+high-level Idee
+intuitive Argumente
+
+formaler
+Beweis
+
+Pseudocode
+
+Programmiersprache
+tief
+6
+
+Thomas Bläsius – Algorithmen 1
+
+Wahl der richtigen Abstraktionsebene
+beim Programmieren will man nicht über Transistoren
+nachdenken müssen
+die Programmiersprache abstrahiert von der Hardware
+Algorithmenentwurf
+beim Ausdenken des Algorithmus will man zunächst
+nicht über das Programmieren nachdenken
+wir brauchen zusätzliche Abstraktionsebenen
+Problem & Lösung
+viele high-level Ideen gehen beim konkretisieren kaputt
+Konkretisierung oft gar nicht so einfach
+mentale Shortcuts: Intuition was geht und was nicht
+bekommt man nur mit viel Training
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Zum warm werden: schriftliche Multiplikation
+Wie geht das nochmal?
+a
+b
+berechne a · bi für jede Ziffer bi von b = (bn−1 : : : b0 )
+·
+5678 1234
+verschiebe Ergebnis um i Stellen nach links
+5678
+113
+15
+16
+addiere Ergebnisse
+17
+20
+23
+24
++
+
+223
+73
+12
+7006652
+
+Wie viele Schritte braucht das, wenn a und b jeweils n Ziffern haben?
+Berechnung von a · bi für ein i
+→ 2n − 1 Operationen
+insgesamt (alle i): 2n2 − n
+n Multiplikationen
+zusätzlich: Übertrag → n − 1 Additionen (oder 2n − 2?)
+n − 1 Schritte → (n − 1)(2n + 1)
+schriftliche Addition am Ende
+pro Schritt: addiere eine Zeile auf bisheriges Ergebnis drauf → n + 1 Additionen
+zusätzlich: Übertrag → n Additionen
+beachte: bisheriges Ergebnis hat nicht zu viele Stellen
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Je genauer desto besser?
+Warum ist das so kompliziert?
+Und wen interessiert das überhaupt so genau?
+Eine zu genaue Betrachtungsweise. . .
+erschwert die Analyse
+bringt wenig relevante Einsicht
+versperrt den Blick auf das Wesentliche bei der Suche nach einem besseren Algorithmus
+Wie ungenau darf’s denn sein?
+hängt zum Teil von der Situation ab
+fast immer gilt:
+Terme niedriger Ordnung interessieren nicht
+(4n2 − 2n − 1 → 4n2 )
+(4n2 → n2 )
+konstante Faktoren interessieren nicht
+formales Werkzeug: Landau-Symbole (O-Notation)
+8
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Welcher Algorithmus ist schneller?
+Alice und Bob haben einen Algorithmus entwickelt
+ihre Laufzeit hängt von der Problemgröße n ab
+Bobs Algorithmus benötigt f (n) = n2 + 2 Schritte
+Alice Algorithmus benötigt g (n) = 4n + 1 Schritte
+Und wenn Bobs Rechner schneller ist?
+60
+
+vs.
+
+Noch schneller?
+
+50
+
+1
+f (n)
+2
+
+40
+30
+
+f (n)
+
+20
+1
+f (n)
+4
+
+g (n)
+
+10
+0
+0
+9
+
+2
+
+Thomas Bläsius – Algorithmen 1
+
+4
+
+6
+
+8
+
+10
+
+12
+
+14
+
+16
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Landau-Notation: Vergleich von Laufzeiten
+Asymptotischer Vergleich
+f (n) wächst schneller als g (n)
+
+Notation
+f (n) ∈ !(g (n))
+
+Formale Definition
+∀c ∃n0 ∀n > n0 f (n) > c · g (n)
+
+(egal wie viel schneller der Rechner für f (n), für genügend großes n ist f (n) größer als g (n))
+
+f (n) ∈ Ω(g (n))
+
+f (n) wächst min. so schnell wie g (n)
+
+∃c ∃n0 ∀n > n0 c · f (n) ≥ g (n)
+
+(wenn der Rechner für f (n) langsam genug und n groß genug ist, dann ist f (n) größer als g (n))
+
+f (n) ∈ Θ(g (n))
+
+f (n) und g (n) wachsen gleich schnell
+
+f (n) ∈ O(g (n)) ∧ f (n) ∈ Ω(g (n))
+
+(es hängt vom Rechner ab, welche Laufzeit für großes n schneller wächst)
+
+f (n) ∈ O(g (n))
+
+f (n) wächst max. so schnell wie g (n)
+
+∃c ∃n0 ∀n > n0 f (n) ≤ c · g (n)
+
+(wenn der Rechner für f (n) schnell genug und n groß genug ist, dann ist f (n) kleiner als g (n))
+
+f (n) ∈ o(g (n))
+
+f (n) wächst langsamer als g (n)
+
+∀c ∃n0 ∀n > n0 c · f (n) < g (n)
+
+(egal wieviel langsamer der Rechner für f (n), für genügend großes n ist f (n) kleiner als g (n))
+
+Anmerkung
+asymptotisch gleich schnell zu wachsen ist eine Äquivalenzrelation
+Θ(g (n)) ist die Äquivalenzklasse
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Landau-Notation: Ordnung auf Funktionen
+kleine Funkionen
+langsam wachsend
+schnelle Laufzeit
+
+√
+
+O( n)
+
+√
+
+o( n)
+
+2 log2 (n)
+√
+3
+
+11
+
+Thomas Bläsius – Algorithmen 1
+
+123
+
+1
+log5 (n2 )
+
+log10 (n) + 4
+√
+3
+
+3 n
+
+√
+3
+
+√
+3 n+2
+
+√√
+Θ(n n)
+
+3n − 2
+
+n
++ 20
+4
+
+n2
+
+große Funkionen
+schnell wachsend
+langsame Laufzeit
+
+4
+
+9
+
+√
+
+n
+
+10n − 6
+
+n
+4n2 − 2n − 1
+
+3n2 − n + 2
+
+2n + n4 − 10
+3n
+
+n + log(n)
+
+2n
+
+2n − n10
+
+√
+
+3n + 2n
+
+3n − log(n) +
+
+n
+
+√
+!( n)
+
+√
+
+Ω( n)
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Landau-Notation: Warum so kompliziert?
+Warum ist das so kompliziert?
+Wollten wir uns das Leben nicht einfacher machen?
+Anmerkung
+mit der formalen Definition zu arbeiten ist mühsam
+was wir brauchen sind einfache Rechenregeln
+und etwas Übung
+Konstante Faktoren
+a · f (n) ∈ Θ(f (n))
+Monome
+a ≤ b ⇒ na ∈ O(nb )
+na ∈ Θ(nb ) ⇔ a = b
+
+Transitivität
+f1 (n) ∈ O(f2 (n)) ∧ f2 (n) ∈ O(f3 (n)) ⇒ f1 (n) ∈ O(f3 (n))
+Summen
+f1 (n) ∈ O(f3 (n)) ∧ f2 (n) ∈ O(f3 (n)) ⇒ f1 (n) + f2 (n) ∈ O(f3 (n))
+Produkte
+f1 (n) ∈ O(g1 (n)) ∧ f2 (n) ∈ O(g2 (n)) ⇒ f1 (n)·f2 (n) ∈ O(g1 (n)·g2 (n))
+
+(sehr ähnliche Regeln gelten auch für die anderen Symbole)
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ pwa.klicker.uzh.ch/join/algo1
+
+Landau-Notation: Klickern
+klein
+
+Welche der Aussagen ist korrekt?
+Konstante Faktoren
+a · f (n) ∈ Θ(f (n))
+Monome
+a ≤ b ⇒ na ∈ O(nb )
+
+O
+
+o
+
+na ∈ Θ(nb ) ⇔ a = b
+Θ
+
+Transitivität
+f1 (n) ∈ O(f2 (n)) ∧ f2 (n) ∈ O(f3 (n)) ⇒ f1 (n) ∈ O(f3 (n))
+Summen
+f1 (n) ∈ O(f3 (n)) ∧ f2 (n) ∈ O(f3 (n)) ⇒ f1 (n) + f2 (n) ∈ O(f3 (n))
+Produkte
+f1 (n) ∈ O(g1 (n)) ∧ f2 (n) ∈ O(g2 (n)) ⇒ f1 (n)·f2 (n) ∈ O(g1 (n)·g2 (n))
+13
+
+Thomas Bläsius – Algorithmen 1
+
+!
+
+Ω
+
+groß
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ pwa.klicker.uzh.ch/join/algo1
+
+Landau-Notation: alternative Definition
+(Annahmen: Grenzwert existiert, f (n) und g (n) positiv)
+
+Betrachte Grenzwert ‘ = lim gf (n)
+n→∞ (n)
+f (n) ∈
+
+‘=0
+o(g (n))
+
+‘<∞
+O(g (n))
+
+0<‘<∞
+Θ(g (n))
+
+‘=∞
+!(g (n))
+
+0<‘
+Ω(g (n))
+
+Welche Sichtweise soll ich denn jetzt verwenden?
+Welche der Aussagen ist korrekt?
+immer die, die gerade am angenehmsten ist
+mentaler Shortcut: mit der Zeit kennt man Θ-Klassen wichtiger elementarer Funktionen
+die Rechenregeln von vorhin reichen dann aus
+wenn der mentale Shortcut fehlt: Grenzwertbetrachtung
+Ein paar elementare Funktionen
+√
+√
+2
+∗
+3
+1 log n log n log n
+n
+n
+
+14
+
+Thomas Bläsius – Algorithmen 1
+
+n
+
+n
+
+2
+
+n
+
+3
+
+n
+
+log n
+
+√
+
+2
+
+n
+
+n
+
+2
+
+n
+
+3
+
+n
+
+4
+
+n!
+
+n2
+
+2
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Asymptotik und tatsächliche Laufzeiten
+Gedankenexperiment
+Algorithmus braucht f (n) Schritte
+Annahme: ca. 10 M Schritte pro Sekunde
+Wie groß darf die Eingabe sein, damit der Algorithmus nach 10 s fertig ist?
+n
+100 M
+4n
+
+25 M
+
+n log10 n
+
+14 M
+
+√
+
+15
+
+n n
+
+215 k
+
+n2
+
+10 k
+
+2n
+
+27
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Zurück zur schriftlichen Multiplikation
+Wie geht das nochmal?
+a
+b
+berechne a · bi für jede Ziffer bi von b = bn : : : b1
+·
+5678 1234
+verschiebe Ergebnis um i − 1 Stellen nach links
+5678
+113
+15
+16
+addiere Ergebnisse
+17
+20
+23
+24
++
+
+223
+73
+12
+7006652
+
+Wie viele Schritte braucht das, wenn a und b jeweils n Ziffern haben?
+Berechnung von a · bi für ein i → Θ(n) Operationen
+insgesamt (alle i): Θ(n2 )
+insgesamt: Θ(n2 )
+schriftliche Addition am Ende
+addiere in jedem Schritt zwei Zahlen mit Θ(n) Ziffern
+nach Θ(n) Schritten hat man das Ergebnis
+
+⇒ Θ(n2 )
+16
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Landau-Notation: zusätzliche Anmerkungen
+Schreibweise mit =
+O(g (n)) ist eine Menge von Funktionen
+` 0:98 √ ´
+` 0:98 ´
+daher schreiben wir: 4n
+− n ∈O n
+⊆ O(n)
+` 0:98 √ ´
+` 0:98 ´
+oft sieht man auch: 4n
+− n =O n
+= O(n)
+O in der Formel
+manchmal sieht man z.B.: 2Θ(n)
+damit ist die Menge der Funktionen der Form 2f (n) für f (n) ∈ Θ(n) gemeint
+also: Menge der Exponentialfunktionen
+(f (n) ∈ 2Θ(n) wenn c1n < f (n) < c2n für Konstanten c1 , c2 )
+damit kann man Laufzeiten noch gröber abschätzen
+(Θ(2n ) ̸= Θ(3n ) aber 2Θ(n) = 3Θ(n) )
+Schrumpfende Funktionen
+manchmal betrachtet man auch in n schrumpfende Funktionen
+`1´
+z.B.: Wahrscheinlichkeit 1 − O n geht gegen 1 für n → ∞
+`1´
+das O n gibt die Konvergenzgeschwindigkeit an
+17
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Zusammenfassung
+Asymptotische Betrachtungsweise von Laufzeiten
+vereinfacht die Laufzeitanalyse durch Weglassen unwichtiger Informationen
+verhindert Ablenkung vom Wesentlichen beim Entwurf von Algorithmen
+liefert meist sehr gute Vorhersage für die Praxis
+(Θ(n) ist (fast) immer besser als Θ(n2 ))
+tolles Werkzeug für faule Programmierer:
+schließe asymptotisch langsamere Algorithmen direkt aus
+weniger Arbeit beim Implementieren und Testen
+Werkzeug für diese Betrachtungsweise: Landau-Notation
+mentale Shortcuts: einfache Rechenregeln + Eingruppierung elementarer Funktionen
+formale Definition(en) für Fälle in denen die Shortcuts nicht ausreichen
+Schriftliche Multiplikation
+asymptotische Laufzeit Θ(n2 )
+nächste Vorlesung: schnellerer Algorithmus
+18
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

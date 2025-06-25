@@ -1,0 +1,670 @@
+Algorithmen 1
+Hashing
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Verzeichnis von Telefonnummern
+Situation
+Schlüssel (key)
+Wert (value)
+gegeben: Paare von (Telefonnummer; Name)
+Ziel: schnelle Beantwortung von Anfragen der Form
+Wem gehört die Telefonnummer 0721 1234567?
+Lösung 1: Sortieren + Suchen
+Vorberechnung: sortiere nach Schlüssel → O(n log n)
+Anfrage: binäre Suche → O(log n)
+Problem: Änderungen (Einfügen/Löschen) sind teuer
+
+Nummer
+0721 3453180
+0721 7968745
+0721 7652872
+0721 1234567
+0721 2738459
+
+Name
+Peter Arbeitsloser
+Martyn Vorstand
+Henryk Ingenieur
+Kiki Unbekannt
+Der Alte
+
+Personen aus: Qualityland, Marc-Uwe Kling
+
+Erinnerung
+Arrays
+schnelles Suchen
+langsames Einfügen und Löschen
+Listen
+schnelles Einfügen und Löschen
+langsames Suchen
+
+Lösung 2: Lookup-Tabelle
+Beobachtung: Schlüssel sind Zahlen → können zur Adressierung benutzt werden
+also: Array A mit A[k] = v für jedes (key; value)-Paar (k; v )
+super: Anfragen, Einfügen, Löschen geht alles in O(1)
+Problem: Schlüsselgröße ≫ #Paare ⇒ viele leere Speicherzellen in A
+2
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Hashing: Kernidee
+Lookup-Tabelle
+0
+1
+1234567
+
+Kiki Unbekannt
+
+2738459
+
+Der Alte
+
+3453180
+
+Peter Arbeitsloser
+
+7652872
+
+Henryk Ingenieur
+
+7968745
+
+Martyn Vorstand
+
+107
+
+3
+
+Thomas Bläsius – Algorithmen 1
+
+Idee: Speicherreduktion durch Schlüssel-Verkleinerung
+definiere Hashfunktion h, z.B.: h(x) = x mod 10
+Array A mit A[h(k)] = v für jedes (key; value)-Paar (k; v )
+Vorteil: h(x) hat kleinen Wertebereich ⇒ Array A ist klein
+Hashtabelle
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+Peter Arbeitsloser
+Henryk Ingenieur
+oder Julia Nonne?
+Martyn Vorstand
+Kiki Unbekannt
+Der Alte
+
+h(key) key
+0
+3453180
+5
+7968745
+2
+7652872
+7
+1234567
+9
+2738459
+2
+5872662
+
+value
+Peter Arbeitsloser
+Martyn Vorstand
+Henryk Ingenieur
+Kiki Unbekannt
+Der Alte
+Julia Nonne
+
+Personen aus: Qualityland, Marc-Uwe Kling
+
+Problem: Hash-Kollisionen
+es kann h(x) = h(y ) gelten, obwohl x ̸= y
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Umgang mit Kollisionen
+Ansatz 1: Kollisionen vermeiden
+wähle gute Hashfunktion
+wähle Speicher groß genug
+Hoffnung: keine Kollisionen (oder extrem unwahrscheinlich)
+Erkenntnis
+Kollisionen lassen sich selbst dann nicht vermeiden, wenn die Hashfunktion bestmöglich
+und die Eingabe gutartig ist.
+Ansatz 2: Auflösung der Kollisionen
+akzeptiere, dass (wenige) Kollisionen auftreten
+passe Datenstruktur entsprechend an, dass sie damit klar kommt
+Erkenntnis
+Unter gewissen Annahmen an die Eingabe schaffen wir so O(1) pro Operation.
+4
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Wie schlimm ist der Worst-Case?
+Universum U
+3453180 2738459
+1234567 5684325 7968745
+7652872
+
+...
+
+8564735
+
+Hashfunktion h
+
+Hashtabelle
+m Buckets
+
+Notation
+U: Universum möglicher Schlüssel
+m: Anzahl Buckets der Hashtabelle
+Annahme: |U| ≫ m
+
+Theorem: keine Hashfunktion ist im Worst-Case gut
+Für jede Hashfunktion gibt es eine Eingabe, bei der |U|
+(key; value)-Paare im selben
+m
+Bucket landen.
+Beweis
+im Schnitt landen |U|=m Schlüssel in jedem Bucket
+es gibt ein Bucket in dem mindestens |U|=m Schlüssel landen
+wähle diese |U|=m Schlüssel als Eingabe
+Adversary Argument: Egal wie man den Algorithmus baut, ein Gegner kann immer eine
+Eingabe wählen, die schlecht für diesen Algorithmus ist.
+5
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Tolle Hashfunktion und gutartige Eingabe
+Situation
+Hashing ist im Worst-Case komplett nutzlos
+in der Praxis: Hashing funktioniert hervorragend
+(wenige Kollisionen)
+
+Notation
+U: Universum möglicher Schlüssel
+m: Anzahl Buckets der Hashtabelle
+Annahme: |U| ≫ m
+h : U → [0; m): Hashfunktion
+
+Simple Uniform Hashing Assumption
+Annahme: wir haben eine hypothetische Hashfunktion h mit folgender Eigenschaft
+jeder Schlüssel aus U landet in jedem der m Buckets mit der selben Wahrscheinlichkeit
+unabhängig von zuvor eingefügten Schlüsseln
+sehr optimistische Annahme, aber erstmal gut um den Worst-Case loszuwerden
+Plan im Folgenden
+(außer, wenn wir sehr viel Speicher verschwenden)
+es gibt sehr wahrscheinlich trotzdem Kollisionen
+im Erwartungswert effizienter Umgang mit Kollisionen unter dieser Annahme
+Aufweichung der Annahme: austricksen des Gegners durch zufällige Entscheidungen
+6
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Geburtstagskollisionen
+Situation: n + 1 Personen, 365 mögliche Geburtstage, jeder gleich wahrscheinlich
+Kollision: es gibt Personen mit dem gleichen Geburtstag
+Pr [Kollision] = 1 − Pr [keine Kollision] ≥ 1 − e
+
+−n2 =(2·365)
+
+Person 3 hat keine Kollision mit Personen 1 oder 2
+letzte Person hat keine Kollision mit vorherigen Personen
+
+Person 2 hat keine Kollision mit Person 1
+
+„
+
+«„
+
+«
+
+“
+1
+2
+n ”
+Pr [keine Kollision] = 1 −
+1−
+··· 1 −
+365
+365
+365
+« Y
+n
+n „
+Y
+i
+super Abschätzung
+≤
+e −i=365
+=
+1−
+für kleine x
+365
+i=1
+i=1
+!
+„
+«
+„
+«
+n
+2
+X
+n · (n + 1)
+n
+i
+e −x
+= exp −
+≤ exp −
+= exp −
+365
+2 · 365
+2 · 365
+i=1
+
+1
+0;75
+0;5
+0;25
+
+1−x
+
+0
+0
+7
+
+0;25
+
+0;5
+
+0;75
+
+Thomas Bläsius – Algorithmen 1
+
+1
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Geburtstagskollisionen
+Situation: n + 1 Personen, 365 mögliche Geburtstage, jeder gleich wahrscheinlich
+Kollision: es gibt Personen mit dem gleichen Geburtstag
+Pr [Kollision] = 1 − Pr [keine Kollision] ≥ 1 − e
+
+−n2 =(2·365)
+1
+
+Was heißt das jetzt?
+für n = 23 ist die Wahrscheinlichkeit schon mehr als 50 %
+0;75
+bei einer Hashtabelle mit 365 Buckets gibt es schon bei 24
+(key; value)-Paaren mit 50 % Wahrscheinlichkeit eine Kollision 0;5
+
+2
+
+1 − e −n =(2·365)
+
+(selbst mit der Simple Uniform Hashing Assumption)
+0;25
+
+Allgemein: Balls into Bins
+0
+wirf n Bälle zufällig gleichverteilt in einen von m Eimern
+0
+12
+24
+36
+48
+√
+√
+2
+Pr [Kollision] ≈ 1 − e −n =(2·m) = 0;5 ⇔ n = 2m ln 2 ≈ 1;18 m
+für n (key; value)-Paare braucht man m ∈ Ω(n2 ) viel Speicher um die Wahrscheinlichkeit
+für eine Kollision auf unter 50 % zu drücken
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Zwischenstand: Umgang mit Kollisionen
+Ansatz 1: Kollisionen vermeiden
+wähle gute Hashfunktion
+wähle Speicher groß genug
+Hoffnung: keine Kollisionen (oder extrem unwahrscheinlich)
+Erkenntnis
+Kollisionen lassen sich selbst dann nicht vermeiden, wenn die Hashfunktion bestmöglich
+und die Eingabe gutartig ist.
+Ansatz 2: Auflösung der Kollisionen
+akzeptiere, dass (wenige) Kollisionen auftreten
+passe Datenstruktur entsprechend an, dass sie damit klar kommt
+Erkenntnis
+Unter gewissen Annahmen an die Eingabe schaffen wir so O(1) pro Operation.
+8
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Kollisionsauflösung mittels Chaining
+Vorgehen
+statt einem Objekt pro Bucket: Folge von Objekten
+Implementierung z.B. mittels Liste oder dynamischem Array
+nach Schlüssel k suchen: lineare Suche auf Folge A[h(k)]
+Eintrag mit Schlüssel k löschen: lösche in Folge A[h(k)]
+(k; v ) einfügen: hänge (k; v ) an Folge A[h(k)] an
+(bzw. ersetze vorherigen Eintrag mit Schlüssel k in A[h(k)])
+Laufzeit für eine Operation mit Schlüssel k
+Θ(|A[h(k)]|)
+Worst-Case: alle Einträge landen im Notation
+(k; v ): (key; value)-Paar
+selben Bucket → Θ(n)
+A: Array der Hashtabelle
+Hoffnung: konstant viele Kollisionen
+h: Hashfunktion
+pro Schlüssel → Θ(1)
+n: Anzahl Paare
+9
+
+Thomas Bläsius – Algorithmen 1
+
+Vorher
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+Peter Arbeitsloser
+Henryk Ingenieur
+oder Julia Nonne?
+Martyn Vorstand
+Kiki Unbekannt
+Der Alte
+
+Jetzt
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+⟨Peter Arbeitsloser⟩
+⟨Henryk Ingenieur, Julia Nonne⟩
+⟨Martyn Vorstand⟩
+⟨Kiki Unbekannt⟩
+⟨Der Alte⟩
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Chaining: Erwartete Laufzeit
+Grob überschlagen
+n
+jedes Bucket enthält im Schnitt m
+Einträge
+n
+Erwartungswert für |A[h(k)]| ist m
+konstant, wenn m ∈ Θ(n)
+super: Θ(n) Speicher und Operationen in Θ(1)
+
+Simple Uniform Hashing Assumption
+jeder Schlüssel landet in jedem der Buckets
+mit der selben Wahrscheinlichkeit
+unabhängig von zuvor eingefügten Schlüsseln
+Notation
+A: Array der Hashtabelle
+h: Hashfunktion
+n: Anzahl eingefügter Paare
+
+Formaler: Erwartungswert für die Länge von A[h(k)]
+m: Anzahl Buckets
+k: betrachteter Schlüssel
+Schlüssel in der Hashtabelle: k1 ; : : : ; kn
+ȷ
+1; falls h(k) = h(ki )
+Indikatorvariablen Xi =
+0; sonst
+ȷn
+–
+»n
+n
+P
+P
+;
+falls k ∈
+= {k1 ; : : : ; kn }
+m
+E [Xi ] =
+Xi =
+damit gilt: E [|A[h(k)]|] = E
+n−1
+1
++
+; falls k ∈ {k1 ; : : : ; kn }
+i=1
+i=1
+m
+also: m ∈ Θ(n) ⇒ E [|A[h(k)]|] ∈ Θ(1)
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Dynamisch wachsende Hashtabelle
+Theorem
+Gegeben die Simple Uniform Hashing Assumption, dann kann eine Hashtabelle die Operationen Einfügen, Suchen und Löschen in erwartet konstanter Zeit ausführen, wenn die
+Anzahl Buckets m linear ist in der Anzahl (key; value)-Paare n.
+Wie wählen wir m, wenn wir n nicht kennen?
+Simple Uniform Hashing Assumption
+starte mit irgendeiner kleinen Konstante für m
+jeder Schlüssel landet in jedem der Buckets
+mit der selben Wahrscheinlichkeit
+n zu groß (z.B. n > m) → verdopple m
+unabhängig von zuvor eingefügten Schlüsseln
+erstelle neues Array der Größe 2m → 2m Buckets
+neue Hashfunktion, die Schlüssel auf [0; 2m) abbildet (statt vorher auf [0; m))
+füge alle Elementen aus der alten in die neue Tabelle ein und lösche die alte Tabelle
+wie bei dynamischen Arrays:
+Worst-Case Kosten einer Operation (wenn gerade vergrößert wird): Θ(n)
+amortisiert über alle Operationen: Θ(1) pro Operation
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Zwischenstand
+Worst-Case
+für jede Hash-Funktion existiert eine Eingabe mit vielen Kollisionen
+Adversary Argument: es gibt keinen Algorithmus, der für alle Eingaben gut ist
+in der Praxis funktioniert es gut → Worst-Case zu pessimistisch
+Simple Uniform Hashing Assumption
+starke Annahme an Hashfunktion und Eingabe
+erwartet konstante Laufzeiten
+sehr optimistische Annahme → schwache Garantie
+
+Simple Uniform Hashing Assumption
+jeder Schlüssel landet in jedem der Buckets
+mit der selben Wahrscheinlichkeit
+unabhängig von zuvor eingefügten Schlüsseln
+
+Idee: Gegner austricksen mit zufälligen Entscheidungen
+wähle bei Erstellung / Vergrößerung der Hashtabelle eine zufällige Hashfunktion
+oblivious Adversary: Gegner kennt den Algorithmus (inklusive Wahrscheinlichkeitsverteilung), aber nicht das Ergebnis zufälliger Entscheidungen
+Worst-Case: Eingabe mit maximaler erwarteter Laufzeit
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Universelles Hashing
+Definition
+Sei H eine Menge von Hashfunktionen. H ist eine universelle Familie, wenn für alle
+k1 ; k2 ∈ U mit k1 ̸= k2 und ein zufälliges h ∈ H gilt, dass Pr [h(k1 ) = h(k2 )] ≤ m1 .
+Was bekommen wir damit?
+zufällige Wahl von h ∈ H ⇒ je zwei Schlüssel kollidieren mit Wkt. höchstens m1
+es folgt: E [Xi ] ≤ m1
+erwartete Laufzeit: Θ(1) pro Operation
+(Beweis: genauso wie vorher mit der Simple Uniform Hashing Assumption)
+
+Notation
+U: Universum der Schlüssel
+m: Anzahl Buckets
+h : U → [0; m): Hashfunktion
+
+Worst-Case vs. Average-Case
+Worst-Case über alle möglichen Eingaben
+Erwartungswert über die Wahl h ∈ H
+
+k1 ; : : : ; kn : bisherige Schlüssel
+
+Gibt es eine solche universelle Familie H überhaupt?
+13
+
+Thomas Bläsius – Algorithmen 1
+
+k: aktueller Schlüssel
+ȷ
+1; falls h(k) = h(ki )
+Xi =
+0; sonst
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Eine Universelle Familie
+Universell aber wenig nützlich
+sei H die Menge aller Funktionen der Form h : U → [0; m)
+zufälliges h ∈ H → bildet jeden Schlüssel auf zufälligen Wert ab ⇒ Pr [h(k1 ) = h(k2 )] ≤ m1
+Problem: Wie verwalten wir h, ohne h(k) für jedes k ∈ U explizit zu speichern?
+Universell und nützlich
+Notation
+U: Universum der Schlüssel
+Annahme: U = {0; : : : ; |U| − 1} und sei p ≥ |U| eine Primzahl
+m: Anzahl Buckets
+ha;b (k) = ((a · k + b) mod p) mod m
+h : U → [0; m): Hashfunktion
+k1 ; k2 ∈ U, k1 ̸= k2
+H = {ha;b (k) | a; b ∈ [0; p) ganzzahlig und a ̸= 0}
+ohne Beweis: H ist universell, also Pr [h(k1 ) = h(k2 )] ≤ m1 für zufälliges h ∈ H
+praktikabel: um h ∈ H zufällig zu wählen, wähle einfach a und b zufällig
+Theorem
+Eine Hashtabelle kann die Operationen Einfügen (Key + Value), Suchen (nach Key) und
+Löschen (bzgl. Key) in erwartet und amortisiert konstanter Zeit ausführen.
+14
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Andere Schlüsseltypen
+Bisher
+Universum U besteht aus natürlichen Zahlen
+Hashfunktion → natürliche Zahlen in kleinerem Intervall
+damit: direkte Adressierung in Θ(1) ohne zu viel Speicherverbrauch
+Hashing eröffnet ganz neue Möglichkeiten
+die Schlüssel müssen keine ganzen Zahlen sein
+Beispiele: Strings, Bilder
+man benötigt nur geeignete Hashfunktionen
+Empfehlungen bei der Wahl der Hashfunktion
+nach Möglichkeit keine eigene Hashfunktion wählen
+nutze stattdessen existierende erprobte Implementierungen
+15
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Hashtabellen in der Wildnis
+C++
+
+16
+
+Thomas Bläsius – Algorithmen 1
+
+https://en.cppreference.com/w/cpp/container/unordered_map
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Hashtabellen in der Wildnis
+Java
+
+16
+
+Thomas Bläsius – Algorithmen 1
+
+https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Hashtabellen in der Wildnis
+Python
+
+16
+
+Thomas Bläsius – Algorithmen 1
+
+https://docs.python.org/3/tutorial/datastructures.html#dictionaries
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Hashtabellen in der Wildnis
+Javascript
+
+16
+
+https://www.w3schools.com/js/js_arrays.asp
+
+Thomas Bläsius – Algorithmen 1
+
+https://www.w3schools.com/js/js_object_maps.asp
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Hashtabellen
+Was kann das?
+speichert (key; value)-Paare
+Einfügen, Löschen und Suchen in erwartet Θ(1)
+Vergleich zu sortiertem Array + binäre Suche in Θ(log n)
+Hashtabelle ist dynamisch: wir können einfügen und löschen
+Suche in der Hashtabelle ist schneller (erwartet)
+Hashtabelle ignoriert Ordnung auf den Schlüsseln
+binäre Suche kann Vorgänger finden, falls gesuchter Schlüssel selbst nicht vorhanden
+Analysetechniken
+Analyse erwarteter Laufzeit: 1 − x ≤ e −x und Summe über Indikatorvariablen
+Adversary Argument und Lösung mittels zufälliger Entscheidungen (oblivious Adversary)
+
+17
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

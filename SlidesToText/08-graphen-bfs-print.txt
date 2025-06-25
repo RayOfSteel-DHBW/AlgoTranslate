@@ -1,0 +1,701 @@
+Algorithmen 1
+Graphen und Breitensuche
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Graphen: Grundbegriffe
+Knoten & Kanten
+Knoten
+
+Nachbarschaft
+v
+
+Kante
+
+Nachbarschaft N(v )
+
+Graph G = (V; E)
+|V | = n, |E| = m
+Einfache Graphen
+keine Schleifen
+keine Mehrfachkanten
+
+Knotengrad
+1
+3
+6
+
+Komponenten
+
+Gerichtete Graphen
+ungerichtet
+e
+u
+v
+e = {u; v }
+
+gerichtet
+e
+
+u
+v
+e = (u; v )
+
+inzident
+
+adjazent
+
+gerichteter Kreis (Zyklus)
+
+Baum
+
+Wald
+
+kreisfrei
+zusammenhängend
+
+Schleife
+
+Blätter
+Blätter
+
+unzusammenhängend
+4 Zusammenhangskomp.
+Gewurzelter Baum
+
+kreisfrei
+
+Wurzel
+
+Höhe
+
+Elter
+Kinder
+
+innere Knoten
+Mehrfachkante
+2
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Ein erstes Graphenproblem
+Graphen sind allgegenwärtig
+modelliert Beziehungen (Kanten) zwischen Paaren von Objekten (Knoten)
+Kontakte zwischen Lebewesen
+Interaktionen zwischen Proteinen
+Kommunikation zwischen Sensoren
+...
+Grundlegendes Problem: Zusammenhangskomponenten finden
+gegeben: Graph (z.B. als Liste von Kanten)
+Ziel: färbe die Knoten entsprechend der Komponenten
+Vorgehen: Graphtraversierung
+laufe bei einem Knoten s los
+finde und färbe alle Knoten, die von s aus erreichbar sind
+wähle neue Farbe und wiederhole mit noch ungefärbtem Knoten (falls vorhanden)
+3
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Graphtraversierung
+Tiefensuche (DFS)
+Breitensuche (BFS)
+starte bei einem Knoten s
+starte bei einem Knoten s
+besuche alle Nachbarn von s
+laufe in jedem Schritt zu neuem Nachbarn
+dann alle Nachbarn der Nachbarn usw.
+Sackgasse (kein neuer Nachbar)
+→ Backtracking: zurück zum Vorgänger
+Nachbarn der Nachbarn
+7
+
+Sackgasse
+
+s
+
+0
+6
+5
+
+1
+
+8
+
+9
+
+4
+
+Ende
+s ist Sackgasse
+⇒ alle von s erreichbaren Knoten gefärbt
+
+besuchter Knoten
+unbesuchter Knoten
+aktueller Knoten
+
+s
+Pfad zum aktuellen Knoten
+
+3
+
+2
+
+4
+
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Nachbarn
+Layer 1
+
+0
+
+s
+
+3
+
+1
+
+2
+
+Layer 2
+
+4
+Layer 3
+
+6
+
+9
+
+5
+
+8
+
+Nachbarn der Nachbarn der Nachbarn
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Breitensuche
+Abstrakte Algorithmenidee
+Breitensuche (BFS)
+starte bei einem Knoten s
+im Prinzip wissen wir, was die BFS tut
+besuche alle Nachbarn von s
+sind aber noch weit von einer Implementiedann alle Nachbarn der Nachbarn usw.
+rung entfernt
+Effiziente Umsetzung
+nicht leicht
+mit etwas Übung aber auch nicht schwer
+für BFS: gleich
+Wiederholung: Ziele der Vorlesung
+eigene Algorithmenideen entwickeln
+effiziente Umsetzung der Ideen
+gute Intuition, welche Ideen sich effizient
+umsetzen lassen
+5
+
+Thomas Bläsius – Algorithmen 1
+
+Nachbarn der Nachbarn
+7
+
+Nachbarn
+Layer 1
+
+0
+
+s
+
+3
+
+1
+
+2
+
+Layer 2
+
+4
+Layer 3
+
+6
+
+9
+
+5
+
+8
+
+Nachbarn der Nachbarn der Nachbarn
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Algorithmus → Pseudocode (erster Versuch)
+BFS(Graph G; Node s)
+‘ := 0
+// current layer
+color node s
+while there is a node in layer ‘ + 1 do
+‘ := ‘ + 1
+for Node v in layer ‘ do
+color node v
+Zu hohe Abstraktion für Pseudocode
+while there is a node in layer ‘ + 1 do
+Woher wissen wir das?
+for Node v in layer ‘ do
+Welche Knoten liegen in Layer ‘?
+
+6
+
+Thomas Bläsius – Algorithmen 1
+
+s
+Layer 1
+Layer 2
+Layer 3
+
+Ziele für die Laufzeit
+Layer ‘ + 1 aus Layer ‘: betrachte nur
+Kanten inzident zu Knoten aus Layer ‘
+→ insgesamt Θ(m)
+über Knoten in Layer ‘ iterieren: linear
+in Anzahl Knoten in Layer ‘
+→ insgesamt Θ(n)
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Algorithmus → Pseudocode (zweiter Versuch)
+BFS(Graph G; Node s)
+currLayer := {s}
+color node s
+nextLayer := N(s) and color N(s)
+while nextLayer ̸= ∅ do
+currLayer := nextLayer
+// determine next layer
+nextLayer := ∅
+for Node u in currLayer do
+for Node v in N(u) do
+if Node v is uncolored then
+insert v into nextLayer
+color node v
+7
+
+Thomas Bläsius – Algorithmen 1
+
+7
+
+Beobachtung
+neue Knoten v werden
+hinten eingefügt
+Knoten u läuft von vorne nach hinten
+Verhalten einer Queue
+(First In, First Out)
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+s
+
+0
+3
+
+1
+
+2
+
+9
+
+5
+
+4
+
+6
+
+6
+
+8
+
+currLayer nextLayer
+7 8 9
+
+Färbung beim Einfügen in nextLayer
+stellt sicher, dass jeder Knoten v nur einmal
+eingefügt wird
+auch dann, wenn v mehrere Kanten vom vorherigen Layer hat
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Algorithmus → Pseudocode (Endergebnis)
+BFS(Graph G; Node s)
+Queue Q := empty queue
+Q:push(s)
+color node s
+while Q ̸= ∅ do
+u := Q:pop()
+for Node v in N(u) do
+if v is uncolored then
+Q:push(v )
+color node v
+Erinnerung: Queue
+Operationen: pushBack, popFront
+FIFO: First In – First Out
+8
+
+Thomas Bläsius – Algorithmen 1
+
+7
+
+s
+
+0
+3
+
+1
+
+2
+
+0
+
+1
+
+2
+
+popFront
+
+3
+
+4
+
+5
+
+6
+
+7
+
+9
+
+5
+
+4
+
+Q:
+
+6
+
+8
+
+8
+
+9
+
+pushBack
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Breitensuche: Laufzeit
+BFS(Graph G; Node s)
+Queue Q := empty queue
+Q:push(s)
+color node s
+while Q ̸= ∅ do
+u := Q:pop()
+for Node v in N(u) do
+if v is uncolored then
+Q:push(v )
+color node v
+
+Intuition von vorhin: pro Layer . . .
+betrachte Knoten in dem Layer → insgesamt Θ(n)
+betrachte nur Kanten inzident zu Knoten aus dem
+Layer → insgesamt Θ(m)
+Etwas formaler für unsere finale Umsetzung
+jeder Knoten wird nur einmal in die Queue eingefügt
+while-Schleife: ein Durchlauf für jeden Knoten u ∈ V
+for-Schleife: deg(u) = |N(u)| Durchläufe
+P
+Gesamtkosten:
+deg(u) = 2m
+u∈V
+(jede Kante {u; v } wird doppelt gezählt:
+einmal für u in deg(u) und einmal für v in deg(v ))
+
+Notation
+V : Knotenmenge
+E: Kantenmenge
+
+9
+
+⇒ BFS hat lineare Laufzeit Θ(m)
+
+n = |V |, m = |E|
+
+(vorausgesetzt, unsere Graphdatenstruktur erlaubt es uns in O(deg(u)) über N(u) zu iterieren)
+
+deg(u): Grad von u
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Einschub: Graphrepräsentation
+Grundsätzliches
+repräsentiere jeden Knoten durch eine Zahl in {0; : : : ; n − 1}
+Zusatzinfos für Knoten (z.B. Farbe): Array der Länge n
+Array erstellen: einmalig Θ(n)
+Eigenschaft eines Knotens ändern/abfragen: Θ(1)
+Adjazenzliste
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9
+
+N(0) N(1) N(2) N(3) N(4) N(5) N(6) N(7) N(8) N(9)
+
+1
+2
+3
+
+0
+2
+4
+
+0
+1
+4
+5
+
+0
+6
+7
+
+1
+2
+8
+
+2
+8
+
+3
+7
+9
+
+3
+6
+
+4
+5
+
+6
+
+über N(v ) iterieren: Θ(deg(v ))
+Detailumsetzung hängt von Anwendung ab
+
+Adjazenzmatrix
+0123456789
+0 0 111 0 0 0 0 0 0
+1 1 0 1 0 1 0 0 0 0 0
+2 11 0 0 11 0 0 0 0
+3 1 0 0 0 0 0 11 0 0
+4 0 11 0 0 0 0 0 1 0
+5 0 0 1 0 0 0 0 0 1 0
+6 0 0 0 1 0 0 0 1 0 1
+7 0 0 0 1 0 0 1 0 0 0
+8 0 0 0 0 11 0 0 0 0
+9 0 0 0 0 0 0 1 0 0 0
+
+7
+0
+3
+1
+
+2
+
+6
+
+9
+
+5
+
+4
+
+8
+
+testen ob {u; v } ∈ E
+geht in Θ(1)
+Θ(n2 ) Speicher
+N(v ) iterieren: Θ(n)
+
+(mit Engineering-Potential, z.B. für bessere Cache-Effizienz)
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Zusammenhangskomponenten
+Grundlegendes Problem: Zusammenhangskomponenten finden
+gegeben: Graph
+Ziel: färbe die Knoten entsprechend der Komponenten
+Gerade gesehen
+BFS(G; s) färbt von s aus erreichbaren Knoten (Komponente C(s))
+Laufzeit: Θ(mC(s) )
+
+Notation
+G = (V; E): Graph
+n = |V |, m = |E|
+
+Färbung aller Komponenten
+C(s): Komponente von s
+mC(s) : #Kanten in C(s)
+iteriere über alle Knoten s ∈ V → BFS(G; s) wenn s noch ungefärbt
+wähle für jeden Aufruf der BFS eine neue Farbe
+für jede Komponente wird die BFS einmal ausgeführt → eine Farbe pro Komponenten
+Laufzeit: Θ(n + m)
+über alle Knoten Iterieren: Θ(n)
+BFS in Summe (jede Kante gehört zu nur einer Komponente): Θ(m)
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ BFS: Layer, Distanzen, Kürzeste Pfade
+Beobachtung
+Knoten in Layer ‘ kann man mit ‘ Schritten von s aus erreichen
+BFS berechnet also die Distanz von s zu anderen Knoten
+Layer 1
+
+s
+v4
+
+t
+v3
+
+v0
+
+Etwas formaler: ein paar Grundbegriffe
+Pfad: Knotenfolge ⟨v0 ; : : : ; v‘ ⟩, mit {vi−1 ; vi } ∈ E für i ∈ {1; : : : ; ‘} Layer 2 v2
+v1
+Layer 3
+Länge des Pfades ⟨v0 ; : : : ; v‘ ⟩: ‘
+v0 und v‘ sind Start- bzw. Endknoten von ⟨v0 ; : : : ; v‘ ⟩
+kürzester Pfad von s ∈ V nach t ∈ V : Pfad minimaler Länge mit Start s und Ende t
+Distanz dist(s; t): Länge des kürzesten st-Pfades
+Theorem
+Liegt ein Knoten v bei der Breitensuche von s aus in Layer ‘ dann gilt dist(s; v ) = ‘.
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ BFS kann Distanzen berechnen
+Theorem
+Liegt ein Knoten v bei der Breitensuche von s aus in Layer ‘ dann gilt dist(s; v ) = ‘.
+Beweis
+es gibt einen Pfad der Länge ‘ von s nach v
+Induktion über ‘: klar für ‘ = 0
+v in Layer ‘ ⇒ v hat Nachbarn u in Layer ‘ − 1
+Ind.-Voraussetzung ⇒ su-Pfad der Länge ‘ − 1
+daher: sv -Pfad der Länge ‘
+es gibt keinen kürzeren Pfad von s nach v
+Kanten überspringen keine Layer
+jeder Pfad von v (Layer ‘) nach s (Layer 0) hat
+Länge mindestens ‘
+
+...
+for Node v in N(u) do
+if v is uncolored then
+Q:push(v )
+color node v
+s
+Layer 1
+Layer 2
+Layer 3
+
+13
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Distanzen und kürzeste Wege: tatsächliche Berechnung
+Folgerungen aus dem Beweis
+gerade bewiesen: die Layer geben die Distanzen von s
+im Beweis sieht man, wie man den kürzesten Weg erhält:
+...
+Knoten v wird durch Knoten u gefunden
+for Node v in N(u) do
+definiere u als Elternknoten von v
+if v is uncolored then
+Zurückverfolgung der Eltern bis s liefert
+Q:push(v )
+kürzesten Pfad
+color node v
+Beobachtung
+Eltern-Beziehung liefert Baum mit Wurzel s
+s
+diesen Baum nennt man auch BFS-Baum
+u
+v
+Anmerkung
+Layer 1
+auch hier: wie das geht ist im Prinzip klar
+Layer 2
+für die tatsächliche Umsetzung muss man aber
+nochmal tätig werden
+Layer 3
+14
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Breitensuche (BFS)
+Graph Traversierung
+zwei Vorgehensweisen: BFS und DFS (DFS kommt später nochmal im Detail)
+damit kann man zum Beispiel die Zusammenhangskomponenten finden
+Algorithmenidee → Pseudocode am Beispiel BFS
+auch bei einem so einfachen Algorithmus kann man viel falsch machen
+meine Hoffnung:
+wenn du die Idee der Breitensuche kennst
+du aber nicht den Pseudocode dazu auswendig kannst
+dann kannst du eine Breitensuche im Schlaf implementieren
+Kürzeste Wege
+BFS besucht Knoten in aufsteigender Distanz vom Start
+daher: Berechnung von Distanzen und kürzesten Wegen
+15
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

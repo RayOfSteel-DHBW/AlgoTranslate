@@ -1,0 +1,430 @@
+Algorithmen 1
+Generische Optimierungsmethoden
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Beispiel: Ausgewogen und Billig
+Problem
+Burger entsprechen nicht den offiziellen Ernährungsrichtlinien
+pro Gericht fehlen 0;5 mg Vitamin A, 15 mg Vitamin C, 4 g Ballaststoffe
+Ziel: Behebung dieses Problems bei möglichst geringen Kosten
+Gewürzgurken
+
+Karotten
+
+Weißkohl
+
+Vitamin A (mg=kg)
+
+35
+
+0;5
+
+0;5
+
+Vitamin C (mg=kg)
+
+60
+
+300
+
+10
+
+Ballaststoffe (g=kg)
+
+30
+0;75
+
+20
+0;5
+
+10
+0;15
+
+Preis (C/kg)
+
+. . . and when Rabbid said, “Honey or condensed milk with your bread?” he was so
+excited that he said, “Both,” and then, so
+as not to seem greedy, he added, “But
+don’t bother about the bread, please.”
+.
+A. A. Milne, Winnie the Pooh
+
+Lösung: x1 ; x2 ; x3 repräsentieren die Menge an Karotten, Kohl und Gurken
+minimiere: 0;75x1 + 0;5x2 + 0;15x3
+optimale Lösung:
+Nebenbedingungen: 35x1 + 0;5x2 + 0;5x3 ≥ 0;5
+9;5 g Karotten
+60x1 + 300x2 + 10x3 ≥ 15
+38 g Kohl
+30x1 + 20x2 + 10x3 ≥ 4
+xi ≥ 0
+290 g Gurken
+2
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Lineare Programme
+Trivia
+wurden bereits in den 40er Jahren verwendet (und manuell gelöst)
+„Programm“ ist ein militärischer Begriff für verschiedene Arten von Plänen (z.B. Versorgungsplan, Verlegungsplan für Truppen etc.)
+erstes großes LP, das mit dem Simplex-Algorithmus gelöst wurde
+optimiere Kosten für ausgewogene Ernährung
+77 Variablen, 9 Nebenbedingungen
+Simplex-Methode (per Hand in 1947): 120 Personentage
+etwas später (mittels Computer): George Dantzig versucht seine eigene Ernährung zu
+optimieren
+erster Versuch: mehrere Liter Essig pro Tag
+zweiter Versuch: 200 Brühwürfel pro Tag
+⇒ ein sinnvolles LP zu formulieren ist nicht immer trivial
+3
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Ein schwieriges Graphenproblem
+Problem: Independent Set
+Sei G = (V; E) ein Graph. Finde eine möglichst große Knotenmenge I ⊆ V , sodass für
+jede Kante {u; v } ∈ E höchstens einer der Knoten u oder v in I liegt.
+Intuition
+die Kanten modellieren Konflikte
+finde möglichst große konfliktfreie Knotenmenge
+Algorithmische Situation
+Independent Set ist NP-schwer
+wir kennen keinen Algorithmus mit polynomieller Laufzeit
+wir gehen davon aus, dass es keinen solchen Algorithmus gibt
+man sollte trotzdem nicht alle Hoffnung verlieren
+ggf. sind viele Instanzen gutartig → nur manchmal langsam
+suboptimale Lösungen können ggf. effizient gefunden werden
+4
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Independent Set als lineares Programm
+Die Variablen
+Knoten v ∈ V → Variable xv
+Einschränkung: xv ∈ {0; 1}
+Interpretation: xv = 1 ⇔ v ∈ I
+
+Problem: Independent Set
+Sei G = (V; E) ein Graph. Finde eine
+möglichst große Knotenmenge I ⊆ V ,
+sodass für jede Kante {u; v } ∈ E höchstens einer der Knoten u oder v in I liegt.
+
+Optimierungsfunktion
+Ziel: wähle möglichst viele Knoten aus → setze viele Variablen auf 1
+P
+maximiere:
+xv
+v ∈V
+
+Nebenbedingungen
+für jede Kante: höchstens einer der Endpunkte ausgewählt
+für jede Kante {u; v } ∈ E eine Nebenbedingung: xu + xv ≤ 1
+Anmerkung
+Forderung, dass xv ganzzahlige Werte annimmt macht das Problem schwer
+5
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ LPs und ILPs
+Lineare Programme (LP)
+gegeben: lineare Optimierungsfunktion und lineare Nebenbedingungen
+finde optimale reellwertige Variablenbelegung unter Einhaltung der Nebenbedingungen
+Theorie: in polynomieller Zeit lösbar
+Praxis: hoch effiziente Implementierungen verfügbar (frei und kommerziell)
+Ganzzahliges lineare Programme (ILP – Integer Linear Program)
+finde optimale ganzzahlige Variablenbelegung unter Einhaltung der Nebenbedingungen
+Theorie: NP-schwer (vermutlich nicht in polynomieller Zeit lösbar)
+Praxis: meist effiziente Implementierungen verfügbar (frei und kommerziell)
+mächtiges generisches Werkzeug um auch schwierige Probleme zu lösen
+
+6
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Rohe Gewalt (Brute-Force)
+Naiver Plan
+zähle alle Teilmengen I ∈ V auf
+teste ob I ein Independent Set ist
+gib größtes Independent Set aus
+
+Problem: Independent Set
+Sei G = (V; E) ein Graph. Finde eine
+möglichst große Knotenmenge I ⊆ V ,
+sodass für jede Kante {u; v } ∈ E höchstens einer der Knoten u oder v in I liegt.
+
+Beobachtung
+Kante {u; v } ∈ E → falls u ∈ I und v ∈ I, dann ist I kein Independent Set
+wir könnten uns eigentlich alle Teilmengen sparen, bei denen u ∈ I und v ∈ I
+Geschickteres Brute-Force: Branching
+finde eine einzelne Entscheidung und probiere alle möglichen Fälle aus
+hier: für einen Knoten v ∈ V entweder v ∈
+= I oder v ∈ I
+v∈
+= I → lösche v aus dem Graphen und löse die restliche Instanz
+v ∈ I → Nachbarn von v sind alle nicht in I → lösche N(v ) aus dem Graphen und löse
+die restliche Instanz
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Branching: Beispiel
+v
+v∈
+=I
+
+v
+
+v ∈I
+
+v
+
+Beobachtung
+im Zweig v ∈ I wurde der Graph deutlich einfacher
+je mehr Nachbarn v hat, desto mehr Knoten werden im Zweig v ∈ I gelöscht
+sinnvolle Heuristik: wähle hochgradigen Knoten v zum branchen
+8
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Branch-and-Bound
+Wie können wir Brute Force schneller machen?
+geschicktes Branching (gerade gesehen)
+treffe „offensichtliche“ Entscheidungen → Reduktionsregel
+aktueller Zweig „offensichtlich“ schlecht → Zweig abschneiden (Pruning)
+Reduktionsregel (Beispiel)
+deg(v ) ≤ 1 ⇒ es gibt ein maximales Independen Set I mit v ∈ I
+Pruning (Beispiel)
+lower bound (global): wir kennen schon eine Lösung der Größe 17
+upper bound (Situation im aktuellen Zweig):
+haben bisher 14 Knoten ausgewählt
+übriger Graph kann mit 3 Cliquen überdeckt werden
+Lösung in diesem Zweig kann nicht besser als 17 werde
+9
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Zwischenstand
+Exakte Lösungen, ggf. langsam
+Branch-and-Bound: Framework für Brute-Force Algorithmen
+auszufüllen: branching, Reduktionsregeln, Pruning mit upper/lower Bounds
+Freiheitsgrade füllen ist sehr Problemspezifisch
+Formulierung als (I)LP oder auch NLP (nicht-lineares Programm)
+Übersetzung in ein (I)LP ist problemspezifisch und nicht immer leicht
+tatsächlicher Algorithmus: nutze stark optimierte Bibliothek
+Heuristische Ansätze: opfere Optimalität für Laufzeit
+kennen wir schon: Greedy (funktioniert oft gut; meist nicht optimal)
+gleich: problemunabhängige Metaheuristiken
+Wikipedia zu Metaheuristiken:
+While the field also features high-quality research, many of the publications have been of poor quality; flaws
+include vagueness, lack of conceptual elaboration, poor experiments, and ignorance of previous literature.
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Allgemeines Optimierungsproblem
+Problem: generisches Maximierungsproblem
+Gegeben sei eine Funktion f : X → R. Finde x ∈ X mit f (x) ≥ f (y ) für alle y ∈ X.
+Beispiel: Independent Set
+Möglichkeit 1: X komplett unabhängig vom eigentlichen Problem
+X = 2V ist die Potenzmenge von V (z.B. codiert als Bitvektor {0; 1}n )
+ȷ
+|x| wenn x ein Independent Set ist
+f (x) =
+0
+sonst
+Möglichkeit 2: X enthält nur gültige Teilmengen → problemspezifisch
+X ⊆ 2V ist die Menge aller
+Problem: Independent Set
+Independent Sets
+Sei G = (V; E) ein Graph. Finde eine
+f (x) = |x|
+möglichst große Knotenmenge I ⊆ V ,
+sodass für jede Kante {u; v } ∈ E höchstens einer der Knoten u oder v in I liegt.
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Lokale Suche
+Grundsätzliches Vorgehen
+starte mit irgendeiner Lösung x ∈ X
+iteriere solange wie gewünscht:
+wähle Lösung y ∈ X die ähnlich ist zu x
+falls f (y ) > f (x) → ersetze x durch y
+
+das lohnt sich ggf. problemspezifisch zu machen
+
+Mögliche konkrete Umsetzung (sehr generisch)
+Annahme: X = {0; 1}n
+Start: wähle x ∈ X uniform zufällig
+wiederhole, bis x sich k mal in Folge nicht ändert:
+setze y = x und ändere ein zufälliges Bit von y
+falls f (y ) > f (x) → ersetze x durch y
+
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Umgang mit Lokalen Optima
+Problem
+lokale Suche hängt leicht in lokalen Optima fest
+Lösungsansätze
+Neustart mit anderer initialen Lösung
+erlaube auch kleine Verschlechterungen mit einer gewissen Wahrscheinlichkeit
+erlaube größere Veränderungsschritte
+Gleich: evolutionärer Algorithmus
+ein möglicher Ansatz die lokale Suche zu erweitern
+setzt die verschiedenen Ansätze zur Vermeidung lokaler Optima um
+es gibt eine Vielzahl Varianten und verwandter Algorithmen
+13
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Evolutionärer Algorithmus
+Grundsätzliches Vorgehen
+starte mit einer Menge P1 = {x11 ; : : : ; xn1 } ⊂ X von Lösungen
+iteriere so lange wie gewünscht:
+i
+erzeuge neue Lösungen Oi = {y1i ; : : : ; ym
+} aus der aktuellen Lösungsmenge Pi
+wähle neue Lösungsmenge Pi+1 = {x1i+1 ; : : : ; xni+1 } ⊂ Pi ∪ Oi basierend auf f
+Pi ∪ Oi
+
+Pi
+
+Variation
+
+Pi+1
+
+Selektion
+
+Aus der Evolution entliehene Begrifflichkeiten
+Pi ist die ite Population, f ist die Fitnessfunktion
+die xji sind die Eltern (parents), die yji der Nachwuchs (offspring)
+14
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Variation: Rekombination und Mutation
+Rekombination
+wähle zwei (oder mehr) Lösungen x1i ; x2i ∈ Pi
+kombiniere x1i und x2i auf irgendeine Art
+Beispiel: 01100101
+11011000
+
+Pi
+
+01101000
+
+Variation
+
+Mutation
+ähnlich wie bei der lokalen Suche
+ändere eine (z.B. durch Rekombination erzeugte) Lösung etwas ab
+Beispiel:
+01101000
+
+Pi ∪ Oi
+
+00101001
+
+15
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Evolutionäre Algorithmen: Anmerkung
+Lokale Minima und Vergleich zur lokalen Suche
+Mutation → wie bei der lokale Suche
+größere Population → startet lokale Suche im Prinzip an mehreren Stellen
+Rekombination → größere Sprünge möglich (nicht nur lokale Veränderungen)
+trotzdem: wir können natürlich nicht garantieren, dass wir das Optimum finden
+Independent Set: Generisch vs. problemspezifisch
+Erinnerung: zwei mögliche Definitionen für die Lösungsmenge X
+X = 2V ist die Potenzmenge von V
+Generisch
+Pro: sehr leicht umzusetzen
+jeder Bitvektor kommt in Betracht
+Con: funktioniert nicht immer gut
+generische Rekombination und Mutation möglich
+X ⊆ 2V ist die Menge aller Independent Sets
+Problemspezifisch
+nur manche Bitvektoren sind gültig
+Con: mehr Arbeit
+Pro: funktioniert meist deutlich besser
+Rekombination und Mutation problemspezifische
+16
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Generische Optimierungsmethoden
+Lineare Programmierung
+mächtige Modellierungssprache um verschiedene andere Probleme auszudrücken
+noch mächtiger: ganzzahlige Variablen
+mächtige Bibliotheken zum Lösen → man muss selbst keinen Algorithmus bauen
+Branch-and-Bound (Brute-Force)
+allgemeines Framework um geschickt alle Lösungen durchzuprobieren
+problemspezifisch: branching, Reduktionsregeln, Pruning mit upper/lower Bounds
+langsam im worst-case, aber in der Praxis oft gut
+Metaheuristiken: Lokale Suche, Evolutionäre Algorithmen
+sehr generisch → für alle Probleme nutzbar, geringer Arbeitsaufwand
+keine (kaum) Garantien für Qualität und Laufzeit
+problemspezifische Anpassungen → bessere Qualität und Laufzeit
+17
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Nächste Woche
+Montag: Letzte Übung
+Dynamische Programme
+Fragerunde
+Mittwoch: Letzte Vorlesung
+Rückblick
+Was haben wir gelernt?
+Wie lief die Veranstaltung?
+Ausblick
+Welche Lernangebote gibt es für die Vorbereitung auf die Klausur?
+Welche weiterführenden Lehrveranstaltungen gibt es?
+Woran forschen wir so?
+
+18
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

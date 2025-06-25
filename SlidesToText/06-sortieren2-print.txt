@@ -1,0 +1,413 @@
+Algorithmen 1
+Sortieren: Bucketsort, Radixsort, Word-RAM
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Überblick
+Letztes Mal gesehen
+Sortieralgorithmen mit Laufzeit O(n log n) (Mergesort, Quicksort)
+wir müssen Elemente nur vergleichen können und sonst nichts über sie wissen
+vergleichsbasiert → die Algorithmen sind universell einsetzbar
+untere Schranke: jeder vergleichsbasierte Sortieralgo benötigt Ω(n log n) Vergleiche
+Plan für heute
+sortieren von Zahlen in O(n): Bucketsort, Radixsort
+unter gewissen Annahmen an die Größe der Zahlen
+
+2
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Bucketsort
+Theorem
+Jeder vergleichsbasierte Sortieralgorithmus benötigt Ω(n log n) Vergleiche um eine Folge
+von n Elementen zu sortieren.
+Was können wir mit Zahlen tun?
+vergleichen → hilft hier nicht
+Array-Zellen adressieren → das können wir nutzen
+Bucketsort
+zu sortieren: n Zahlen aus [0; m)
+erstelle Buckets: Array B der Größe m
+für jede Zahl x: speichere x in B[x]
+lies sortierte Folge aus B ab
+
+Laufzeit
+Θ(m)
+Θ(n)
+Θ(n + m)
+
+Laufzeit Θ(n + m) = Θ(n), wenn m ∈ O(n)
+3
+
+Thomas Bläsius – Algorithmen 1
+
+(wenn die Zahlen nicht zu groß sind)
+⟨3; 7; 9; 3; 5; 1; 0; 1⟩
+0 1 2 3 4
+3
+0 11
+3
+
+5
+5
+
+6
+
+7
+7
+
+8
+
+9
+9
+
+⟨0; 1; 1; 3; 3; 5; 7; 9⟩
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Zahlen als Schlüssel
+Mehr als nur Zahlen
+oft will man nicht tatsächlich Zahlen sortieren
+sondern komplexere Objekte bezüglich einer Kennzahl
+diese Kennzahl nennt man auch Schlüssel (Key)
+Name
+Peter Arbeitsloser
+Martyn Vorstand
+Henryk Ingenieur
+Kiki Unbekannt
+Der Alte
+
+Beispiel 1: Personen nach Alter in Jahren
+Eingabe: Tabelle mit Personendaten (n Zeilen)
+maximales Alter ist typischerweise klein (in O(n))
+Bucketsort hat Laufzeit Θ(n)
+
+Personen aus: Qualityland, Marc-Uwe Kling
+
+Beispiel 2: Knoten eines Graphen nach Grad (#Nachbarn)
+Eingabe: Graph mit n Knoten
+Grad jedes Knotens ist kleiner n
+Bucketsort hat Laufzeit Θ(n)
+4
+
+Thomas Bläsius – Algorithmen 1
+
+Alter
+26
+38
+45
+28
+92
+
+5
+
+4
+
+5
+2
+
+4
+
+3
+
+4
+
+7
+
+3
+4
+
+3
+4
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Bucketsort: Implementierung
+Anmerkung
+Bucketsort(input)
+verschachtelte Schleifen
+m := largest key in the input + 1
+Array⟨Array⟩ buckets := array of size m of empty arrays → Laufzeit Θ(m · n)?
+jedes Objekt liegt in nur einem
+for obj in input do
+Bucket
+buckets[obj:key]:pushBack(obj)
+daher: Θ(m + n)
+Array A := empty array
+⟨3; 7; 9; 3; 5; 1; 0; 1⟩
+for bucket in buckets do
+// m buckets
+for obj in bucket do
+// n objects
+0 1 2 3 4 5 6 7 8 9
+3
+0 11
+5
+7
+9
+A:pushBack(obj)
+3
+return A
+⟨0; 1; 1; 3; 3; 5; 7; 9⟩
+Theorem
+Mit Bucketsort können wir n natürliche Zahlen in Θ(n) Zeit sortieren, wenn die Größe der
+Zahlen in O(n) liegt.
+5
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Stabiles Sortieren und lexikographische Ordnungen
+Beobachtung: Bucketsort ist stabil
+Wenn Objekt X in der Eingabe vor Objekt Y steht und X:key = Y:key, dann steht X in
+der Ausgabe vor Y .
+Lexikographische Ordnung auf den Nationen
+ordne nach Anzahl Goldmedaillen
+bei gleicher Anzahl Gold: nach Silbermedaillen
+bei gleicher Anzahl Gold und Silber: nach Bronze
+Sortieralgorithmus
+sortiere drei Mal, jeweils mit stabilem Sortieralgorithmus:
+erst nach Bronze, dann nach Silber, dann nach Gold
+letzte Sortierung nach Gold: mehr Gold ⇒ weiter oben
+bei gleicher Anzahl Gold: vorherige Sortierung nach
+(Silber; Bronze) bleibt erhalten
+6
+
+Thomas Bläsius – Algorithmen 1
+
+Medaillenspiegel Olympia 2018
+Nation
+NOR
+GER
+CAN
+USA
+SUI
+FRA
+GBR
+POL
+UKR
+
+Gold
+14
+14
+11
+9
+5
+5
+1
+1
+1
+
+Silber Bronze
+14
+11
+10
+7
+8
+10
+8
+6
+6
+4
+4
+6
+0
+4
+0
+1
+0
+0
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Und was ist mit größeren Zahlen?
+Problem
+die Zahlen sind möglicherweise signifikant größer als die
+Anzahl zu sortierender Objekte
+zu viele Buckets → kostet Speicher und Laufzeit
+
+Name
+Einkommen
+Peter Arbeitsloser
+35 211
+Martyn Vorstand
+783 491
+Henryk Ingenieur 123 456 789
+Kiki Unbekannt
+46 823
+Der Alte
+46 129
+
+Idee für das Beispiel: dreistufiges Verfahren
+Personen aus: Qualityland, Marc-Uwe Kling
+ordne lexikographisch nach (Ziffern 1–3; Ziffern 4–6; Ziffern 7–9)
+vorher: Bucketsort mit 109 Buckets
+Name
+Einkommen
+Peter Arbeitsloser 000 035 211
+jetzt: 3 Mal Bucketsort mit 103 Buckets
+Martyn Vorstand
+Henryk Ingenieur
+Kiki Unbekannt
+Der Alte
+
+000 783 491
+123 456 789
+000 046 823
+000 046 129
+
+Allgemein: asymptotische Verbesserung?
+Eingabe: n Zahlen aus [0; nc )
+Personen aus: Qualityland, Marc-Uwe Kling
+Anzahl Ziffern: log(nc ) = c · log n
+aufspalten in c Blöcke mit je log n Ziffern → Zahlen im Intervall [0; n)
+also: c mal Bucketsort mit Laufzeit je Θ(n) ⇒ Gesamtlaufzeit Θ(c · n)
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Sortieren polynomiell großer Zahlen
+Gerade gesehen
+n Zahlen aus dem Intervall [0; nc ) → c mal Bucketsort mit Zahlen aus dem Intervall [0; n)
+Laufzeit Θ(cn) → Θ(n), wenn c konstant
+(bzw. LSD Radixsort)
+den Algorithmus nennt man auch Radixsort
+Theorem
+Mit Radixsort können wir n natürliche Zahlen in Θ(n) Zeit sortieren, wenn die Größe der
+Zahlen in nO(1) liegt, also polynomiell in n ist.
+Was jetzt?
+explizitere Formulierung des Algorihtmus → erster Schritt Richtung Implementierung
+Korrektheit und Laufzeit nochmal klar machen
+Erklärung des Namens
+
+8
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Radixsort
+Algorithmus
+Eingabe: n ganze Zahlen aus [0; nc )
+Darstellung jeder Zahl x zu einer Basis b:
+(k = ⌊logb nc ⌋)
+xk · b k + · · · + x1 · b 1 + x0 · b 0
+sortiere die Zahlen erst bzgl. x0
+sortiere dann stabil bzgl. x1
+dann bzgl. x2 und so weiter
+Laufzeit
+Θ(k · (n + b))
+k mal sortieren von n Zahlen der Größe b
+
+für b = n gilt k = ⌊c⌋ ⇒ Θ(n)
+
+Beispiel von vorhin: b = 1000
+000 035 211 = 000 · 10002 + 035 · 10001 + 211 · 10000
+000 783 491 = 000 · 10002 + 783 · 10001 + 491 · 10000
+123 456 789 = 123 · 10002 + 456 · 10001 + 789 · 10000
+
+Nebenbemerkung
+die Basis in einem Zahlensystem nennt man
+auch Radix (binär → 2, dezimal → 10, etc.)
+daher der Name Radixsort
+
+Korrektheit
+nach Sortierung bzgl. xi gilt: Zahlen sind sortiert bzgl. xi · b i + · · · + x1 · b 1 + x0 · b 0
+Beweis: Induktion über i
+9
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Das ist doch geschummelt!
+Repräsentation der Zahlen im Computer
+Zahlen die bis zu nc groß sind → log(nc ) = c log n Bits
+wir machen verschiedene Dinge mit den Zahlen:
+vergleichen
+Speicherzellen adressieren
+rechnen (z.B. x0 := x mod n um die letzten log n Bits von x zu erhalten)
+bisherige Annahme: das geht alles in konstanter Zeit
+Hier übliche Notation
+Fragen über Fragen
+log2 n = log(n) · log(n)
+Sollte man nicht eher von Θ(log n) Zeit pro Operation ausgehen?
+log log n = log(log(n))
+Hat Radixsort damit doch Laufzeit Θ(n log n)?
+Sorgen die Θ(n log n) Vergleiche bei Merge- und Quicksort dann für Laufzeit Θ(n log2 n)?
+
+Antwort
+nein (zumindest nicht im Word-RAM Modell)
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Exkurs: Berechnungsmodell
+Berechnungsmodell (informell)
+RAM (random-access machine): O(1)-Speicherzugriff mittels Adresse
+word RAM
+jeder Speicherplatz hält ein Wort bestehend aus w Bits → ganze Zahlen in [0; 2w )
+arithmetische Operationen und Vergleiche auf Worten in Θ(1)
+Welche Annahme treffen wir für w ?
+(typischer Computer: w = 64)
+Möglichkeit 1: w konstant
+nur endlich viel Speicher adressierbar → theoretisch unschön (endlicher Automat)
+arithmetische Operationen in Θ(log n) → unrealistisch pessimistisch
+(264 > 1;8 · 1019 )
+Möglichkeit 2: w unbeschränkt → zu optimistisch
+Möglichkeit 3: w ≥ log n
+genug Bits um alle benutzten Speicherzellen zu adressieren
+nicht zu mächtig: w ≥ log n ist realistisch für echte Computer
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Exkurs: Berechnungsmodell
+Berechnungsmodell (informell)
+RAM (random-access machine): O(1)-Speicherzugriff mittels Adresse
+word RAM
+jeder Speicherplatz hält ein Wort bestehend aus w Bits → ganze Zahlen in [0; 2w )
+arithmetische Operationen und Vergleiche auf Worten in Θ(1)
+w ≥ log n
+Implikationen fürs Sortieren polynomiell großer Zahlen
+Vergleiche und Operationen laufen in O(1)
+damit: Laufzeiten Θ(n) für Radixsort und Θ(n log n) für Merge- oder Quicksort
+Sortieren noch größerer Zahlen
+Annahme: jede Zahl ist weiterhin durch ein Wort repräsentierbar, aber w ∈ !(log n)
+weiterhin O(1)-Operationen, aber Radixsort braucht zu viele Sortierschritte
+√
+geht in erwartet O(n log log n) bzw. deterministisch in O(n log log n)
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Sortieren von Zahlen
+Sortieren polynomiell großer Zahlen
+nutze aus, dass man mit Zahlen in O(1) Zeit Speicherzellen adressieren kann (Arrays)
+Θ(n)-Sortieren von linear großen Zahlen: Bucketsort
+Θ(n)-Sortieren von polynomiell großen Zahlen: Aufspalten jeder Zahl in konstant viele
+linear große Zahlen → Radixsort
+wichtiges Konzept in dem Kontext: lexikographische Sortierung
+Exkurs: Berechnungsmodell word RAM
+verhält sich bei der Algorithmenanalyse meist wie gewünscht
+formalere Einführung von Berechnungsmodellen: TGI (nächstes Semester)
+
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

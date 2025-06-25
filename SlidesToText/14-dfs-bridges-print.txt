@@ -1,0 +1,563 @@
+Algorithmen 1
+Tiefensuche: Brücken finden
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Wie werde ich GBI-Tutor:in?
+Motivation, eure Erfahrungen an die nächsten
+Erstis weiterzugeben
+Tutorien halten und korrigieren
+Folien früherer Tutorien und Musterlösungen
+werden bereitgestellt
+Bezahlung: 5 Monate, je 40 Stunden, 13.25 C/h
+
+Bis Ende der Woche (28.6.) Mail an
+philipp.kern@kit.edu
+
+2
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Brücken in Graphen
+Definition
+Sei G = (V; E) ein Graph. Eine Kante e = {u; v } ∈ E heißt Brücke, wenn u und v in G − e
+in verschiedenen Zusammenhangskomponenten liegen.
+Brücke
+
+Brücke
+
+Ziel heute
+finde alle Brücken
+lerne dabei die Tiefensuche (DFS) besser kennen
+
+Warum interessieren uns Brücken?
+interessante graphtheoretische Struktur → kleinstmögliche Schnitte
+zerlegt den Graphen in mehrere Komponenten → gut für Teile und Herrsche
+
+3
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Erinnerung: Graphtraversierung
+Tiefensuche (DFS)
+Breitensuche (BFS)
+starte bei einem Knoten s
+starte bei einem Knoten s
+besuche alle Nachbarn von s
+laufe in jedem Schritt zu neuem Nachbarn
+dann alle Nachbarn der Nachbarn usw.
+Sackgasse (kein neuer Nachbar)
+→ Backtracking: zurück zum Vorgänger
+Nachbarn der Nachbarn
+7
+
+Sackgasse
+
+s
+
+0
+6
+5
+
+1
+
+8
+
+9
+
+4
+
+Ende
+s ist Sackgasse
+⇒ alle von s erreichbaren Knoten gefärbt
+
+besuchter Knoten
+unbesuchter Knoten
+aktueller Knoten
+
+s
+Pfad zum aktuellen Knoten
+
+3
+
+2
+
+4
+
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Nachbarn
+Layer 1
+
+0
+
+s
+
+3
+
+1
+
+2
+
+Layer 2
+
+4
+Layer 3
+
+6
+
+9
+
+5
+
+8
+
+Nachbarn der Nachbarn der Nachbarn
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ DFS-Baum
+Beobachtung
+beim Explorieren eines Knotens überspringen wir Kanten zu schon besuchten Knoten
+wir nennen sie auch Rückkanten
+nicht-übersprungene Kanten bilden einen Baum → Baumkanten
+7
+
+s
+
+0
+6
+
+3
+
+5
+
+1
+
+2
+
+Thomas Bläsius – Algorithmen 1
+
+9
+
+4
+
+besuchter Knoten
+unbesuchter Knoten
+aktueller Knoten
+5
+
+8
+
+Anmerkung: Rückkanten
+zeigen immer zu einem Vorgänger im DFS-Baum
+englisch: back edge
+gerichtete Graphen: weitere Kantentypen
+
+Rückkante
+s
+Pfad zum aktuellen Knoten
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Charakterisierung von Brücken via DFS-Baum
+Brücken und Bäume
+in einem Baum ist jede Kante eine Brücke
+die Rückkanten sind entscheidend
+
+Anmerkung: Notation
+Knoten sind hier mit ihrer DFS-Nummer bezeichnet
+Rückkanten sehen wir als gerichtet an
+
+Beispiel: Warum ist {0; 6} eine Brücke?
+löschen von {0; 6} trennt im DFS-Baum den Teilbaum
+unter 6 vom Rest ab
+es gibt keine Rückkante aus dem Teilbaum zu einem Vorgänger von 6
+man erreicht insbesondere nicht mehr die Wurzel (0)
+
+0
+1
+
+6
+2
+
+7
+
+3
+4
+
+Wann ist eine Baumkante {u; v } eine Brücke?
+5
+sei u der Elter und v das Kind
+{u; v } ist Brücke ⇔ keine Rückkante aus dem Teilbaum unter v nach oberhalb von v
+
+8
+9
+
+Außerdem: Rückkanten sind nie Brücken
+6
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Beweis der strukturellen Einsicht
+Theorem
+Eine Kante {u; v } ist genau dann eine Brücke, wenn
+{u; v } ist eine Baumkante mit Elter u und Kind v und
+keine Rückkante aus dem Teilbaum unter v endet oberhalb von v .
+Grober Plan: Fallunterscheidung
+Fall 1: {u; v } ist eine Rückkante ⇒ keine Brücke
+ˆ
+˜
+Fall 2: {u; v } ist eine Baumkante ⇒ Brücke ⇔ (2) gilt
+Fall 2.1: (2) gilt nicht (es gibt Rückkante) ⇒ keine Brücke
+Fall 2.2: (2) gilt (es gibt keine Rückkante) ⇒ Brücke
+Beachte
+die Fallunterscheidung deckt alle Fälle ab
+zeige: in jedem Fall ist die Aussage des Theorems erfüllt
+7
+
+Thomas Bläsius – Algorithmen 1
+
+(strukturell)
+(1)
+(2)
+0
+1
+
+6
+7
+
+2
+3
+
+8
+
+4
+5
+
+9
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Beweis der strukturellen Einsicht
+Theorem
+Eine Kante {u; v } ist genau dann eine Brücke, wenn
+{u; v } ist eine Baumkante mit Elter u und Kind v und
+keine Rückkante aus dem Teilbaum unter v endet oberhalb von v .
+Zeige für Fall 1: {u; v } ist eine Rückkante ⇒ keine Brücke
+es gibt einen Pfad zwischen u und v im DFS-Baum
+u und v bleiben in der selben Komponente, wenn man {u; v } löscht
+
+(strukturell)
+(1)
+(2)
+0
+1
+
+6
+7
+
+2
+
+Zeige für Fall 2.1: (2) gilt nicht (es gibt Rückkante) ⇒ keine Brücke 3
+′
+′
+′
+′
+u
+sei {v ; u } die Rückkante, sodass v im Teilbaum von v
+und u ′ über v liegt
+u
+(Baumpfad v ; : : : ; v ′ ) + {v ′ ; u ′ } + (Baumpfad u ′ ; : : : ; u)
+v
+⇒ u und v bleiben in der selben Komponente
+
+8
+
+4
+5
+
+9
+
+v′
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Beweis der strukturellen Einsicht
+Theorem
+Eine Kante {u; v } ist genau dann eine Brücke, wenn
+{u; v } ist eine Baumkante mit Elter u und Kind v und
+keine Rückkante aus dem Teilbaum unter v endet oberhalb von v .
+Zeige für Fall 2.2: (2) gilt (es gibt keine Rückkante) ⇒ Brücke
+sei Tv = (Vv ; Ev ) der Teilbaum unter v (inklusive v )
+{u; v } ist die einzige Kante zwischen Tv und Knoten außerhalb, denn:
+angenommen es gibt weitere Kante {u ′ ; v ′ } mit v ′ ∈ Vv und u ′ ∈
+= Vv
+{u ′ ; v ′ } ist keine Baumkante, sonst wäre u ′ in Tv
+{u ′ ; v ′ } ist also Rückkante und u ′ ist Vorgänger von v ′ im DFS-Baum
+da u ′ ∈
+= Vv muss u ′ auch oberhalb von v liegen ⇒ (2) gilt nicht
+{u; v } löschen trennt Tv vom Rest des Graphen ⇒ {u; v } ist Brücke
+7
+
+Thomas Bläsius – Algorithmen 1
+
+(strukturell)
+(1)
+(2)
+u
+v
+
+Tv
+
+u′
+v′
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Von der strukturellen zur algorithmischen Sichtweise
+Theorem
+Eine Kante {u; v } ist genau dann eine Brücke, wenn
+{u; v } ist eine Baumkante mit Elter u und Kind v und
+keine Rückkante aus dem Teilbaum unter v endet oberhalb von v .
+
+(strukturell)
+(1)
+(2)
+0
+
+Algorithmische Sichtweise
+(1) ist leicht zu überprüfen für eine Kante {u; v }
+Problem bei (2): den ganzen Teilbaum unter v anschauen ist teuer
+
+1
+
+6
+7
+
+2
+
+(linear in der Größe des Teilbaums → potentiell quadratisch insgesamt)
+3
+
+Plan im Folgenden
+definiere einen Wert low(v ) für jeden Knoten v
+sodass man an low(v ) ablesen kann, ob (2) für v erfüllt ist
+berechne diese low(v ) während der DFS gleich mit
+8
+
+Thomas Bläsius – Algorithmen 1
+
+8
+
+4
+5
+
+9
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Algorithmische Umsetzung
+Definition
+Sei low(v ) das Minimum aus der DFS-Nummer von v und der kleinsten DFS-Nummer,
+die man von einem Knoten im Teilbaum unter v mit einer Rückkante erreichen kann.
+Wann ist eine Baumkante {u; v } eine Brücke?
+keine Rückkante (2) ⇒ low(v ) = DFS-Nummer von v
+Rückkante (nicht 2) ⇒ low(v ) < DFS-Nummer von v
+also: {u; v } ist Brücke ⇔ low(v ) = DFS-Nummer von v
+
+0
+
+Thomas Bläsius – Algorithmen 1
+
+6
+6
+
+1
+0
+
+Wie berechnen wir low(v )?
+können wir on-the-fly bei der DFS erledigen
+grob: low(v ) ergibt sich aus
+der DFS-Nummer von v
+den Rückkanten von v
+den Werten low(u1 ); : : : ; low(uk ) der Kinder u1 ; : : : ; uk von v
+9
+
+0
+
+6
+7
+
+2
+3
+0
+
+6
+
+0
+8
+
+4
+1
+
+9
+
+5
+1
+
+9
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Berechnung von low(v )
+Definition
+Sei low(v ) das Minimum aus der DFS-Nummer von v und der kleinsten DFS-Nummer,
+die man von einem Knoten im Teilbaum unter v mit einer Rückkante erreichen kann.
+Situationen in denen wir low(v ) anpassen
+v das erste Mal gesehen: low(v ) := DFS-Nummer von v
+Rückkante {v ; u} gefunden: low(v ) := min{low(v ); DFS-Nummer von u}
+backtracken von einem Kind u von v : low(v ) := min{low(v ); low(u)}
+
+0
+
+0
+6
+6
+
+1
+
+Korrektheit
+zeige: wenn man von v zum Elter backtrackt, dann ist low(v ) korrekt
+strukturelle Induktion:
+es gilt für die Blätter
+(Anfang)
+angenommen es gilt für die Kinder von v
+(Voraussetzung)
+dann gilt es auch für v
+(Schritt)
+10
+
+Thomas Bläsius – Algorithmen 1
+
+1
+0
+
+6
+7
+7
+
+2
+3
+3
+0
+1
+
+8
+6
+
+2
+0
+8
+
+4
+4
+1
+
+9
+
+5
+5
+1
+
+9
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Algorithmus → Rekursive Implementierung
+
+DFS(Graph G; Node v ; Node p)
+dfs[v ] := next_dfs
+next_dfs := next_dfs + 1
+low[v ] := dfs[v ]
+for Node u in N(v ) do
+if u = p then continue
+if dfs[u] = ∞ then
+DFS(G; u; v )
+low[v ] = min{low[v ]; low[u]}
+else
+low[v ] = min{low[v ]; dfs[u]}
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Erinnerung: Situationen in denen wir low[v ] anpassen
+v das erste Mal gesehen: low[v ] := dfs[v ]
+Rückkante {v ; u}: low[v ] := min{low[v ]; dfs[u]}
+backtracken von Kind u zu v : low[v ] := min{low[v ]; low[u]}
+
+erster Besuch bei v
+
+Achtung: wir müssen u überspringen, wenn u der
+Elter von v ist
+(sonst interpretieren wir die Baumkante von u nach v als Rückkante von v nach u)
+
+DFS für Kind u fertig → backtracken von u zu v
+Nachbar u vorher schon gesehen → Rückkante
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Algorithmus → Implementierung
+Anmerkung zur Umsetzung in (Pseudo)code
+zwei Varianten
+rekursiv: jeder Knoten ruft DFS für alle seine Kinder auf
+iterativ: ohne rekursive Aufrufe
+Rekursive Implementierung
+schön einfach
+backtracking passiert quasi automatisch
+Problem: möglicherweise tiefe Rekursion → verbraucht viel Stack-Speicher
+Stack-Speicher ist statisch alloziert → wenn der voll ist bricht das Programm ab
+(stack overflow)
+
+Iterative Implementierung
+umständlich, wenn man beim Backtracken etwas tun möchte
+man muss sich dann im Prinzip den Rekursionsbaum manuell mitverwalten
+Vorteil: verbraucht hauptsächlich (dynamisch allozierten) Heap-Speicher
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Zusammenfassung & Ausblick
+DFS – Tiefensuche
+sehr grundlegender Algorithmus zur Graphtraversierung
+Basis für das Lösen vieler verschiedener Probleme
+zwei wichtige Zeitpunkte:
+entdecken eines Knotens
+backtracken von einem Kind zum Elter
+Ein bisschen Graphentheorie
+Brücken in Graphen
+strukturelle Einsicht → effizienter Algorithmus
+Nächstes Mal
+mehr DFS auf gerichteten Graphen
+Wie zieht man sich richtig an?
+13
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

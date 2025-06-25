@@ -1,0 +1,851 @@
+Algorithmen 1
+Vorlesung 20
+Average-Case Analyse, Zusammfassung & Ausblick
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Why is everything so heavy?
+die Welt braucht effiziente Algorithmen
+elementare Funktionen die Laufzeiten beschreiben
+√
+√
+2
+3
+1 log n log n
+n
+n n n log n n2 n3 nlog n
+
+√
+
+2
+
+n
+
+n
+
+2
+
+n
+
+3
+
+n
+
+4
+
+n!
+
+n2
+
+2
+
+super viele praktisch relevante Probleme scheinen hier zu leben
+Was heißt das?
+Wir wissen, dass diese Probleme gleich schwer zu lösen sind
+Wir kennen keine (unbedingten) unteren Schranken
+Bisher hat niemand einen polynomiellen Algorithmus gefunden
+Bekannte Algorithmen haben exponentielle Laufzeit im Worst Case
+Häufig sind die Algorithmen in der Praxis super effizient
+https://i.imgflip.com/o63vh.jpg?a460593 (cropped)
+
+2
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Why is everything so easy?
+die Welt braucht effiziente Algorithmen
+elementare Funktionen die Laufzeiten beschreiben
+√
+√
+2
+3
+1 log n log n
+n
+n n n log n n2 n3 nlog n
+Praxis . . .
+
+√
+
+2
+
+n
+
+n
+
+2
+
+n
+
+3
+
+n
+
+4
+
+n!
+
+n2
+
+2
+
+. . . Theorie
+
+theoretische Analyse unbrauchbar?
+Algorithmen
+zu pessimistisch!
+bisher typischerweise betrachtet: Worst-Case Laufzeit
+ein Adversary kennt den Algorithmus und baut eine Instanz die die
+Laufzeit maximiert
+so gut wie immer die richtige Sichtweise (stärkst-mögliche Aussage,
+insbesondere beim Entwurf von Algorithmen)
+aber... so entstehen keine Instanzen in der Praxis . . .
+https://i.imgflip.com/3w723.jpg?a460595 (cropped)
+3
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Praktische Instanzen: Graphen
+Straßen
+
+http://en.wikipedia.org/wiki/Image:International_
+E_Road_Network.png
+
+Soziale Interaktionen
+
+Internet
+
+Nia et al. SIN: A Platform to Make Interactions in
+Social Networks Accessible, SocialInformatics 2012
+
+https://www.caida.org/projects/ascore/pics/2017/ascore-2017-feb-ipv4standalone-1000x1037.png
+
+werden nicht gebaut um deinen Algorithmus langsam zu machen
+echte Netzwerke unterscheiden sich von Worst-Case Instanzen
+4
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Zurück in die Theorie?
+theoretisch erklären warum Algorithmen in der Praxis schnell sind → Analyse einschränken auf realistische Instanzen
+Menge aller Graphen
+
+G1
+
+G3
+
+G76131
+...
+
+G31415926
+...
+
+G73841998
+...
+
+G
+. . . 62951413
+
+...
+...
+
+G14480
+...
+
+...
+
+G2
+
+...
+
+G0
+
+G
+. . . 999999999
+
+...
+
+Wie können wir mathematisch beschreiben wie der Adversary Instanzen wählen darf?
+Einschränkung über Eigenschaften von Graphen
+“alle Graphen mit Maximalgrad höchstens 2”
+Welche Eigenschaften haben realistische Instanzen?
+5
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ pwa.klicker.uzh.ch/join/algo1
+
+4
+
+2
+5
+
+3
+6
+
+3
+2
+1
+1
+
+3
+2
+Grad
+
+homogen
+
+Anzahl Knoten
+
+1
+
+Anzahl Knoten
+
+Gradverteilung
+
+Anzahl Knoten
+
+Eigenschaften von echten Graphen
+heterogen
+
+Grad
+
+Grad
+
+konstanter Durchschnittsgrad
+
+wurzeliger Maximalgrad
+
+Die Gradverteilung eines Straßennetzwerks ist eher...
+Die Gradverteilung eines sozialen Netzwerks ist eher...
+http://en.wikipedia.org/wiki/Image:Inter
+national_E_Road_Network.png
+6
+
+Thomas Bläsius – Algorithmen 1
+
+Nia et al. SIN: A Platform to Make Interactions in
+Social Networks Accessible, SocialInformatics 2012
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 4
+
+2
+5
+
+3
+6
+
+3
+2
+1
+1
+
+3
+2
+Grad
+
+Lokalität
+“Kanten sind kurz”
+Kanten verbinden Knoten zwischen
+denen es schon kurze Pfade gibt
+Du
+deine
+beste
+Freundin
+6
+
+Thomas Bläsius – Algorithmen 1
+
+ihr
+bester
+Freund
+
+homogen
+
+Anzahl Knoten
+
+1
+
+Anzahl Knoten
+
+Gradverteilung
+
+Anzahl Knoten
+
+Eigenschaften von echten Graphen
+heterogen
+
+Grad
+
+Grad
+
+konstanter Durchschnittsgrad
+
+wurzeliger Maximalgrad
+
+Durchmesser
+“Jeder kennt jeden über 6 Ecken”
+der längste kürzeste Pfad ist kurz
+in Facebook kennt jeder jeden über
+3:57 Ecken (im Durchschnitt)
+https://research.facebook.com/blog/2016/2/
+three-and-a-half-degrees-of-separation/
+
+in Straßennetzwerken eher nicht
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Zurück in die Theorie?
+Menge aller Graphen
+
+G1
+
+G3
+
+G76131
+...
+
+G31415926
+...
+
+G73841998
+...
+
+G
+. . . 62951413
+
+...
+...
+
+G14480
+...
+
+...
+
+G2
+
+...
+
+G0
+
+G
+. . . 999999999
+
+...
+
+Wie können wir mathematisch beschreiben wie der Adversary Instanzen wählen darf?
+“Graphen mit heterogener Gradverteilung”
+“. . . und hoher Lokalität”
+“. . . und kleinem Durchmesser”
+https://i.imgflip.com/o63vh.jpg?a460593 (cropped)
+Das ist alles zu unkonkret!
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Zufallsgraph
+Ein Zufallsgraph ist ein Graph G = (V; E) bei dem E eine Zufallsvariable ist.
+Erdős-Rényi Modell
+V = {1; : : : ; n}
+Xu;v Indikatorzufallsvariable mit
+p(Xu;v = 1) = p für alle 1 ≤ u < v ≤ n.
+`V ´
+E = {{u; v } ∈ 2 | Xu;v = 1}
+folgt einer Verteilung über alle Graphen mit n Knoten
+Menge aller Graphen
+
+(unter der Annahme, dass wir nach der Generierung die Knoten-IDs vergessen)
+
+“Adversary soll Erdős-Rényi Zufallsgraph generieren”
+8
+
+Thomas Bläsius – Algorithmen 1
+
+Beispiel
+V = {1; : : : ; 5}
+p = 1=2
+X1;2 = 0
+X1;3 = 1
+X1;4 = 1
+X1;5 = 0
+X2;3 = 1
+
+X2;4 = 0
+X2;5 = 0
+X3;4 = 0
+X3;5 = 1
+X4;5 = 1
+
+5
+1
+4
+2
+3
+
+Eigenschaften
+homogen
+erwarteter Grad
+P eines Knotens
+E[deg(v )] = u̸=v Xu;v = p · (n − 1)
+keine Lokalität
+Kanten unabhängig
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Geometrischer Zufallsgraph
+Euklidisch
+V = {1; : : : ; n}
+Xv gleichverteilt aus dem Einheitskreis
+`V ´
+E = {{u; v } ∈ 2 | ||Xu − Xv ||2 ≤ R}
+
+R = 1=2
+
+Lokalität Sind zwei Knoten mit gemeinsamem Nachbar wahrscheinlicher verbunden, als zwei zufällig gewählte Knoten?
+u; w sind zwei zufällig gewählte Knoten
+{u; w } ∈ E ↔ ||Xu − Xw ||2 ≤ R
+↔w ∈
+Pr[{u; v } ∈ E] ≤ A(
+A(
+
+)
+)
+
+ıR2
+= ı12 = R2 = 0:25
+
+u; w haben Nachbar v → w ∈
+{u; w } ∈ E ↔ w ∈
+
+Thomas Bläsius – Algorithmen 1
+
+v
+w
+
+→w ∈
+
+Pr[{u; w } ∈ E | {u; v }; {v ; w } ∈ E] = A(
+A(
+9
+
+u
+
+)
+’ 0:391
+)
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Geometrischer Zufallsgraph
+Euklidisch
+V = {1; : : : ; n}
+Xv gleichverteilt aus dem Einheitskreis
+`V ´
+E = {{u; v } ∈ 2 | ||Xu − Xv ||2 ≤ R}
+
+R = 1=2
+
+Lokalität
+Gradverteilung homogen
+A(
+E[deg(u)] ≤ n · A(
+
+Menge aller Graphen
+
+9
+
+Thomas Bläsius – Algorithmen 1
+
+)
+= n · 0:25
+)
+
+?
+
+. . . aber nicht beliebig klein
+u
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Geometrischer Zufallsgraph
+Hyperbolisch
+V = {1; : : : ; n}
+Xv gleichverteilt aus einem Kreis in der hyperbolischen Ebene H
+`V ´
+E = {{u; v } ∈ 2 | distH (u; v ) ≤ R}
+Lokalität
+Gradverteilung heterogen
+Average-Case Analyse
+Eingabe für den Algorithmus: ein hyperbolischer
+Zufallsgraph
+geringe Laufzeit mit hoher Wahrscheinlichkeit
+Theorie . . .
+Praxis . . .
+Algorithmen
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Eval – Gesamteindruck
+
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Eval – Klicker
+31×
+
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Eval – Vortragsstil
+32×
+
+13
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Eval – Lernmaterialien
+
+31×
+
+auf der Homepage: Dokument mit Lernzielen, Literaturhinweisen und Glossar
+14
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Eval – Plattformen
+20×
+
+15
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Eval – Sonstiges
+
+16
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Eval – Übung
+Vorletztes Jahr
+
+Letztes Jahr
+
+Dieses Jahr
+
+17
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Was haben wir gelernt?
+Datenstrukturen
+Welche Datenstrukturen haben wir kennen gelernt?
+Für welchen Zweck ist welche Datenstruktur geeignet?
+Wie funktioniert die effiziente Umsetzung?
+Algorithmen
+Welche Algorithmen haben wir kennen gelernt?
+Wie und warum funktionieren sie?
+Methoden und Techniken
+Formalisierung
+Algorithmenentwurf
+Detailumsetzung
+Korrektheit
+Laufzeit
+18
+
+Thomas Bläsius – Algorithmen 1
+
+Kante: Überleg dir, was jeweils die Vor- und
+Nachteile der beiden Strukturen im Vergleich miteinander sind. Kennst du für beide Richtungen
+Situationen, in denen jeweils die eine der anderen überlegen ist?
+
+dynamisches Array
+Hashmap
+Liste
+(a; b)-Baum
+binärer Heap
+
+Union–Find
+
+Graphdatenstruktur
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Was haben wir gelernt?
+Datenstrukturen
+Welche Datenstrukturen haben wir kennen gelernt?
+Für welchen Zweck ist welche Datenstruktur geeignet?
+Wie funktioniert die effiziente Umsetzung?
+sortieren
+
+Algorithmen
+Welche Algorithmen haben wir kennen gelernt?
+Wie und warum funktionieren sie?
+Methoden und Techniken
+Formalisierung
+Algorithmenentwurf
+Detailumsetzung
+Korrektheit
+Laufzeit
+18
+
+Thomas Bläsius – Algorithmen 1
+
+vergleichsbasiert
+binäre Suche
+
+(Merge- und Quicksort)
+
+Zahlen
+Tiefensuche
+
+(Bucket- und Radixsort)
+
+gerichtet
+ungerichtet
+
+kürzeste Wege
+
+minimale Spannbäume
+Prim und Kruskal
+
+Breitensuche
+Dijkstra
+Bellman–Ford
+Floyd–Warshall
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Was haben wir gelernt?
+Datenstrukturen
+Welche Datenstrukturen haben wir kennen gelernt?
+Für welchen Zweck ist welche Datenstruktur geeignet?
+Wie funktioniert die effiziente Umsetzung?
+Algorithmen
+Welche Algorithmen haben wir kennen gelernt?
+Wie und warum funktionieren sie?
+Methoden und Techniken
+Formalisierung
+Algorithmenentwurf
+Detailumsetzung
+Korrektheit
+Laufzeit
+18
+
+Thomas Bläsius – Algorithmen 1
+
+Formulierung in natürlicher Sprache
+
+formales Problem
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Was haben wir gelernt?
+Datenstrukturen
+Welche Datenstrukturen haben wir kennen gelernt?
+Für welchen Zweck ist welche Datenstruktur geeignet?
+Wie funktioniert die effiziente Umsetzung?
+Algorithmen
+Welche Algorithmen haben wir kennen gelernt?
+Wie und warum funktionieren sie?
+Methoden und Techniken
+Formalisierung
+Algorithmenentwurf
+Detailumsetzung
+Korrektheit
+Laufzeit
+18
+
+Thomas Bläsius – Algorithmen 1
+
+Teile und Herrsche
+Greedy
+dynamische Programmierung
+
+kleinere Tricks
+etwas Unordnung erlauben
+Lazy Evaluation
+nutze Zahlen als Arrayindex
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Was haben wir gelernt?
+Datenstrukturen
+Welche Datenstrukturen haben wir kennen gelernt?
+Für welchen Zweck ist welche Datenstruktur geeignet?
+Wie funktioniert die effiziente Umsetzung?
+Algorithmen
+Welche Algorithmen haben wir kennen gelernt?
+Wie und warum funktionieren sie?
+Methoden und Techniken
+Formalisierung
+Algorithmenentwurf
+Detailumsetzung
+Korrektheit
+Laufzeit
+18
+
+Thomas Bläsius – Algorithmen 1
+
+algorithmische Idee
+
+Pseudocode
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Was haben wir gelernt?
+Datenstrukturen
+Welche Datenstrukturen haben wir kennen gelernt?
+Für welchen Zweck ist welche Datenstruktur geeignet?
+Wie funktioniert die effiziente Umsetzung?
+Algorithmen
+Welche Algorithmen haben wir kennen gelernt?
+Wie und warum funktionieren sie?
+Methoden und Techniken
+Formalisierung
+Algorithmenentwurf
+Detailumsetzung
+Korrektheit
+Laufzeit
+18
+
+Thomas Bläsius – Algorithmen 1
+
+Invarianten
+Induktion
+Widerspruchsbeweis
+(minimales Gegenbeispiel)
+
+Austauschargument (Greedy)
+
+(es gibt aber meist kein Kochrezept)
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Was haben wir gelernt?
+Datenstrukturen
+Welche Datenstrukturen haben wir kennen gelernt?
+Für welchen Zweck ist welche Datenstruktur geeignet?
+Wie funktioniert die effiziente Umsetzung?
+Algorithmen
+Welche Algorithmen haben wir kennen gelernt?
+Wie und warum funktionieren sie?
+Methoden und Techniken
+Formalisierung
+Algorithmenentwurf
+Detailumsetzung
+Korrektheit
+Laufzeit
+18
+
+Thomas Bläsius – Algorithmen 1
+
+Asymptotik: O-Notation
+Rekurrenzen auflösen
+(via Rekursionsbaum)
+exponentielle Summen
+amortisierte Analyse
+Average-Case Analyse
+(randomisierte Algorithmen)
+Adversary Argument
+P
+
+v ∈V deg(v ) ∈ Θ(m)
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Klausur (30. August, 8 Uhr)
+Materialien
+Folien für Vorlesung und Übung
+Übungsblätter mit Lösungen
+Lernziele, Literaturhinweise und Glossar
+Aufzeichnung von Vorlesung und Übung
+alte Klausuren
+
+(Homepage)
+(Homepage)
+(Homepage)
+(Ilias)
+(Fachschaft, Homepage)
+
+Zusätzliche Angebote
+Zusatztutorien jede Woche jeweils Montag und Mittwoch 9:45 in Raum −101/−102
+digitale Sprechstunde (via Twitch): wann ist noch unklar
+Erlaubte Hilfsmittel
+Spickzettel: ein A4 Blatt (Vor- und Rückseite), mit beliebigem Inhalt
+Empfehlung: selbst erstellen und nicht von Kommiliton:innen kopieren
+19
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Algorithmen-Vorlesungen am KIT
+Im Bachelor belegbar
+(Theoretische Grundlagen der Informatik)
+Algorithmen 2
+Algorithmen für planare Graphen
+Basispraktikum ICPC
+Vertiefungsvorlesungen für den Master
+Algorithm Engineering
+Fortgeschrittene Datenstrukturen
+Parallele Algorithmen
+Text-Indexierung
+Randomisierte Algorithmik
+Modelle der Parallelverarbeitung
+20
+
+Thomas Bläsius – Algorithmen 1
+
+Welche Vorlesungen genau angeboten werden
+ist natürlich immer etwas im Wandel.
+
+Algorithmische Geometrie
+Parametrisierte Algorithmen
+Algorithmen für Routenplanung
+Algorithmische Graphentheorie
+Algorithmen zur Visualisierung von Graphen
+Fine-Grained Complexity and Algorithms
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Todo für euch
+
+Meldet euch für die Klausur an!
+Bereitet euch gut darauf vor!
+Schreibt eine gute Klausur!
+
+Wir wünschen viel Erfolg!
+
+21
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

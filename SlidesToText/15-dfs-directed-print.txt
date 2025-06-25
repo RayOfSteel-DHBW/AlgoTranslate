@@ -1,0 +1,428 @@
+Algorithmen 1
+Tiefensuche auf gerichteten Graphen
+Topologische Sortierung
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ In welcher Reihenfolge sollte ich mich anziehen?
+Abhängigkeiten beachten!
+
+2
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Topologische Sortierung
+Definition
+Sei G = (V; E) ein gerichteter Graph. Eine topologische Sortierung ist eine total Ordnung der Knoten V , sodass jede Kante von kleinerem zu größerem Knoten zeigt.
+
+3
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Topologische Sortierung
+Definition
+Sei G = (V; E) ein gerichteter Graph. Eine topologische Sortierung ist eine total Ordnung der Knoten V , sodass jede Kante von kleinerem zu größerem Knoten zeigt.
+a
+b
+
+c
+e
+
+d
+
+Ordnungen zählen
+a ist in jeder topologischen Sortierung der erste Knoten
+f ist in jeder topologischen Sortierung der letzte Knoten
+nach a kommt b oder c → die beiden Fälle sind symmetrisch
+drei topologische Sortierungen für jeden der Fälle
+
+f
+Anmerkung
+existiert genau dann wenn G
+azyklisch ist
+DAG – directed acyclic graph
+4
+
+Thomas Bläsius – Algorithmen 1
+
+a b d c
+
+e f
+
+a c
+
+e b d f
+
+a b c d e f
+
+a c b e d f
+
+a b c
+
+a c b d e f
+
+e d f
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ DFS auf gerichteten Graphen
+Grundsätzliches Ziel auf ungerichteten Graphen
+starte bei einem Knoten s
+besuche alle von s aus erreichbaren Knoten
+also alle Knoten in der Zusammenhangskomponente von s
+Grundsätzliches Ziel auf gerichteten Graphen
+starte bei einem Knoten s
+besuche alle von s aus erreichbaren Knoten
+benutze Kanten nur in die richtige Richtung
+
+0
+
+a
+Rückkante
+
+2 d
+
+b 1
+
+c 4
+
+Vorkante
+
+e 5
+
+Beobachtungen
+3 f
+man findet ggf. nicht alle Knoten in der Komponente (z.B.: s = c)
+Rückkante ist für manche nicht-Baumkanten eine unpassende Bezeichnung
+Vorkanten: nicht-Baumkante zu einem Nachfolger im selben Teilbaum
+Querkanten: Kante zu einem vorher betrachteten Teilbaum
+5
+
+Thomas Bläsius – Algorithmen 1
+
+Querkante
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Erkennung der verschiedenen Kantentypen
+Typen von nicht-Baumkanten
+Rückkante: Kante zu einem Vorgänger im DFS-Baum
+Vorkanten: Kante zu einem Nachfolger im selben Teilbaum
+Querkanten: Kante zu einem vorher abgearbeiteten Teilbaum
+Unterscheidung anhand der DFS-Nummer
+Vorkanten gehen von kleiner zu großer DFS-Nummer
+Rückkanten und Querkanten von groß zu klein
+
+Thomas Bläsius – Algorithmen 1
+
+a
+Rückkante
+
+b 1
+
+2
+d
+1
+
+c 4
+
+4
+Vorkante e 5
+3
+2
+
+Unterschied zwischen Rück- und Querkanten
+Rückkanten: Start- ist vor Zielknoten fertig abgearbeitet
+Querkante: Start- ist nach Zielknoten fertig abgearbeitet
+speichere zusätzlich eine Fertigstellungs-Nummer: FIN-Nummer
+
+6
+
+0 5
+
+Querkante
+
+3 f
+0
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Wie hilft die DFS eine topologische Sortierung zu finden?
+Beobachtungen
+Rückkanten erzeugen einen Kreis → kann es im DAG nicht geben
+FIN-Nummer auf den übrigen Kanten:
+geht immer von groß nach klein
+ordne Knoten mit absteigender FIN-Nummer
+⇒ Kanten gehen alle von vorne nach hinten
+5
+
+4
+
+3
+
+2
+
+1
+
+0
+
+a
+
+c
+
+e
+
+b
+
+d
+
+f
+
+Offene Frage
+ggf. sind nicht alle Knoten vom
+Start erreichbar
+Was tun wir dann?
+7
+
+Thomas Bläsius – Algorithmen 1
+
+0 5
+
+a
+Rückkante
+
+b 1
+
+4
+Vorkante e 5
+3
+2
+
+2
+d
+1
+
+c 4
+
+Querkante
+
+3 f
+0
+
+Vorkante
+Rückkante
+Querkante
+Baumkante
+
+DFS-Nummer
+klein → groß
+groß → klein
+groß → klein
+klein → groß
+
+FIN-Nummer
+groß → klein
+klein → groß
+groß → klein
+groß → klein
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Abarbeitung aller Knoten
+Erste DFS
+starte DFS bei irgendeinem Knoten s
+sei Vs die von s aus erreichbare Knotenmenge
+FIN-Nummern liefern topologische Sortierung für Vs
+
+V̄s
+Vs 3 s
+
+Noch nicht erreichte Knoten
+seien V̄s = V \ Vs die restlichen Knoten
+keine Kante von Vs nach V̄s (DFS hätte sie sonst gefunden)
+es ist ok, wenn alle Knoten aus V̄s vor Vs kommen
+
+2
+1
+0
+
+Weitere DFSs
+solange es noch unbesuchte Knoten gibt: DFS von unbesuchtem Knoten
+zähle FIN-Nummern weiter hoch
+FIN-Nummern liefern topologische Sortierung für alle Knoten
+8
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Algorithmus → Pseudocode
+topoSort(Graph G = (V; E))
+FIN := Array of size n initialized with ∞
+curr := 0
+for Node v in V do
+if v is uncolored then
+DFS(G; v )
+return V sorted by decreasing FIN
+
+DFS(Graph G; Node v )
+color v
+for Node u in N(v ) do
+if u is uncolored then
+DFS(G; u)
+FIN[v ] := curr
+curr := curr + 1
+
+curr = 6
+
+b FIN[b] = 5
+
+topoSort(G)
+DFS(G; a)
+DFS(G; f )
+
+FIN[c] = 3 c
+DFS(G; b)
+DFS(G; c)
+DFS(G; d)
+
+9
+
+Thomas Bläsius – Algorithmen 1
+
+e FIN[e] = 4
+
+DFS(G; e)
+
+FIN[d] = 2 d
+
+a FIN[a] = 1
+
+FIN[f ] = 0 f
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Laufzeit und Korrektheit
+Theorem
+Für einen DAG G = (V; E) berechnet topoSort in Θ(n + m) eine topologische Sortierung.
+Laufzeit
+grundsätzlich: DFS wird nur für ungefärbte Knoten aufgerufen
+Knoten wird gleich zu Beginn von DFS gefärbt
+daher: DFS wird für jeden Knoten einmal aufgerufen → Θ(n) Aufrufe
+Kosten der DFS Aufrufe selbst:
+DFS(G; v ) iteriert über alle ausgehenden Kanten von v
+das betrachtet insgesamt jede Kante einmal → Θ(m)
+zusätzlich: topoSort iteriert einmal über alle Knoten → Θ(n)
+
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Laufzeit und Korrektheit
+Theorem
+Für einen DAG G = (V; E) berechnet topoSort in Θ(n + m) eine topologische Sortierung.
+Korrektheit folgt im Prinzip schon aus der Herleitung mit den Kantentypen
+
+von vorhin. Hier aber jetzt nochmal der Vollständigkeit halber ein formaler
+Korrektheit
+Beweis mit dem finalen Wissen, was der Algo tut.
+für eine Kante (u; v ) ∈ E, zeige: FIN[u] > FIN[v ]
+u
+Fall 1: DFS(G; u) wird vor DFS(G; v ) aufgerufen
+DFS(G; v ) wird aufgerufen, bevor DFS(G; u) fertig wird v
+DFS(G; v ) wird fertig, bevor DFS(G; u) fertig wird
+DFS(Graph G; Node v )
+daher: FIN[u] > FIN[v ]
+color v
+u
+for Node u in N(v ) do
+Fall 2: DFS(G; v ) wird vor DFS(G; u) aufgerufen
+if u is uncolored then
+G ist ein DAG ⇒ u von v aus nicht erreichbar
+v
+DFS(G; u)
+DFS(G; v ) wird fertig, bevor DFS(G; u) aufgerufen wird
+FIN[v ] := curr
+daher: FIN[u] > FIN[v ]
+curr := curr + 1
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Anmerkungen
+Was passiert, wenn der Graph kein DAG ist?
+es werden trotzdem in Θ(n + m) die korrekten FIN-Nummern berechnet
+resultierende Ordnung: Rückkanten gehen in die falsche Richtung
+
+0 5
+
+a
+b 1
+2
+
+Folgerung
+wir können topoSort also auch nutzen um zu testen, ob G ein DAG ist
+einfach topoSort laufen lassen und schauen, ob es Rückkanten gibt
+wenn zyklisch, dann findet man sogar einen Kreis: Rückkante + Pfad
+aus Baumkanten
+DFS-Nummer
+klein → groß
+Vorkante
+groß → klein
+Rückkante
+groß → klein
+Querkante
+klein → groß
+Baumkante
+11
+
+Thomas Bläsius – Algorithmen 1
+
+2
+d
+1
+
+c 4
+
+4
+
+e 5
+3
+3 f
+0
+
+FIN-Nummer
+groß → klein
+klein → groß
+groß → klein
+groß → klein
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Tiefensuche auf gerichteten Graphen
+DFS – Tiefensuche
+grundlegender Algorithmus: Basis vieler anderer Algorithmen
+vier Kantentypen in gerichteten Graphen
+rekursive Implementierung
+Ausblick: Grundlage für starke Zusammenhangskomponenten
+Ein bisschen Graphentheorie
+topologische Sortierung und DAGs
+strukturelle Einsicht → effizienter Algorithmus
+
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

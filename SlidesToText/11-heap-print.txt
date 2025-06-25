@@ -1,0 +1,672 @@
+Algorithmen 1
+Prioritätswarteschlange: binärer Heap
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Erinnerung: Priority-Queue für Dijkstra
+Dijkstras Algorithmus (Berechnung kürzester Wege)
+pro Schritt: finde unexplorierten Knoten mit kleinster aktuell bekannter Distanz
+gewünschte Datenstruktur: Priority-Queue
+push(v ; 7): füge v mit Priorität 7 ein
+popMin(): extrahiere Element mit kleinster Priorität
+decPrio(v ; 4): verkleinere Priorität von v auf 4
+Anmerkung
+Priorität wird oft auch Schlüssel (key) genannt
+weitere gängige Namen für die Operationen: insert, extractMin, decreaseKey
+Ziel für heute
+Datenstruktur entwickeln, die diese Operationen unterstützt
+jede Operation sollte schnell sein (O(log n))
+zunächst: nur push und popMin
+2
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Erinnerung und Anmerkung: Verzeigerte Strukturen
+3 4 5
+4 48 17
+
+Verzeigerte Strukturen
+viele kleine Stückchen Speicher (Knoten)
+ein Knoten speichert:
+Daten, die uns tatsächlich interessieren
+Speicheradressen anderer Knoten (Zeiger)
+Zugriff durch Navigation entlang Zeiger
+Heute: Binärer Baum
+jeder Knoten speichert:
+Priorität
+(z.B. Knoten eines Graphen)
+andere Daten
+linkes und rechtes Kind
+Elternknoten
+vereinfachte Darstellung: zeige nur
+Prioritäten; alles andere ist implizit
+14
+3
+
+Thomas Bläsius – Algorithmen 1
+
+17 18 19
+42 ⊥ ⊥
+48 49 50
+7 23 17
+23 24 25
+15 ⊥ ⊥
+
+4
+
+vereinfachte Darstellung
+4
+
+8
+8
+12
+
+14
+
+12
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Wo liegt die Schwierigkeit?
+Lösung 1: extreme Ordnung
+speichere Elemente als sortierte Folge (nach Priorität)
+super: popMin geht in O(1)
+Problem: push ist schwierig → Θ(n)
+
+Erinnerung:
+push(x): Element mit Priorität x
+einfügen
+popMin(): Element mit kleinster
+Priorität extrahieren
+
+(das leidige Problem: in Listen ist Suche langsam, in Arrays ist Einfügen langsam)
+
+Lösung 2: extreme Unordnung
+speichere Elemente als (unsortierte) Folge
+super: push geht in O(1)
+Problem: popMin ist schwierig → Θ(n)
+Gute Lösung: Binärbaum mit ein bisschen Ordnung
+sortiere jeden Pfad von der Wurzel zu einem Blatt
+genug Ordnung um das Minimum schnell zu finden
+kurze sortierte Pfade → Sortierung aufrechterhalten billig
+4
+
+Thomas Bläsius – Algorithmen 1
+
+2
+3
+
+8
+
+9
+10
+
+4
+13
+
+5
+
+12
+15
+
+18
+
+14
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Binärer Min-Heap
+Min-Heap Eigenschaft
+Erinnerung:
+push(x): Element mit Priorität x
+Priorität eines Knotens ≤ Prioritäten der Kinder
+einfügen
+damit gilt: alle Wurzel–Blatt Pfade sind sortiert
+popMin(): Element mit kleinster
+und: Minimum in der Wurzel
+Priorität extrahieren
+Form des Baumes: vollständiger Binärbaum
+12
+2
+3
+außer letztes Layer: alle voll besetzt (2i Knoten auf Layer i)
+letztes Layer: von links nach rechts gefüllt
+12
+3
+4
+8
+6
+beachte: Θ(log n) viele Layer
+9
+
+12
+4
+5
+
+12
+6
+8
+
+18
+
+Todo: Aufrechterhalten dieser beiden Eigenschaften
+10 13 12
+5 15 14 12
+6
+push(x): x erstmal als neues Blatt unten anhängen
+dann: x auf dem Pfad zur Wurzel nach oben tauschen (bubble-up)
+Laufzeit: Θ(log n)
+popMin(): Wurzel entfernen und durch letztes Blatt ersetzten
+dann: Wurzel zum kleineren Kind nach unten tauschen (sink-down)
+5
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Binärer Min-Heap: Überblick
+Invariante
+Heap-Eigenschaft: Elter ≤ Kind
+Form: vollständiger Binärbaum
+
+Operation push(x)
+füge x als neues Blatt ein
+tausche x hoch solange nötig
+
+Operation popMin()
+ersetze Wurzel durch letztes Blatt x
+tausche x runter solange nötig
+
+Beachte
+erster Schritt der Operationen verletzt Heap-Eigenschaft nur an einer Stelle
+2
+Fix: tausche den entsprechenden Knoten iterativ nach oben/unten
+nur Θ(log n) Tauschoperationen, da Baum Höhe Θ(log n) hat
+3
+Weitere Operationen: Priorität ändern, Eintrag löschen
+können ähnlich implementiert werden
+in vielen Implementierungen nicht verfügbar
+Trick: Lazy Evaluation (später)
+
+6
+
+Thomas Bläsius – Algorithmen 1
+
+9
+10
+
+8
+
+4
+13
+
+5
+
+12
+15
+
+18
+
+14
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Umsetzung als Array
+0
+2
+
+In der Praxis effiziente Repräsentation
+Arrays oft effizienter als verzeigerte Struktur
+Struktur eigentlich klar: vollständiger Binärbaum
+speichere Knoten hintereinander in einem Array
+Repräsentation eines Knotens
+sei v ∈ [0; n) eine ganze Zahl
+v repräsentiert den Knoten an Stelle v im Array
+Kind- und Elternknoten von v
+linkes Kind: 2v + 1
+rechtes Kind: 2v
++ ˝2
+¨ v −1
+Elternknoten: 2
+
+7
+
+Thomas Bläsius – Algorithmen 1
+
+1
+3
+
+2
+8
+
+3
+9
+10
+7
+
+4
+4
+13
+8
+
+5
+9
+
+5
+12
+15
+10
+
+6
+18
+
+14
+11
+
+0 1 2 3 4 5 6 7 8 9 10 11
+2 3 8 9 4 12 18 10 13 5 15 14
+
+Beweisskizze
+Knoten auf Lage i − 1: [2i−1 − 1; 2i − 1)
+Knoten auf Lage i:
+[2i − 1; 2i+1 − 1)
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Algorithmus → Pseudocode (Grundoperationen)
+class M IN H EAP
+Array A
+// tree as array
+n()
+return A:size()
+leftChild(Node v )
+return 2v + 1
+rightChild(Node v )
+return 2v + 2
+parent(Node v )
+¨ v −1 ˝
+return 2
+swap(Node u; Node v )
+A[u]; A[v ] := A[v ]; A[u]
+8
+
+Thomas Bläsius – Algorithmen 1
+
+bubbleUp(Node v )
+if v ̸= 0 and A[v ] < A[parent(v )] then
+swap(v ; parent(v ))
+bubbleUp(parent(v ))
+sinkDown(Node v )
+u‘ ; ur := leftChild(v ); rightChild(v )
+u := v
+// minimum of the three nodes
+if u‘ < n() and A[u‘ ] < A[u] then u := u‘
+if ur < n() and A[ur ] < A[u] then u := ur
+if u ̸= v then
+9
+swap(u; v )
+sinkDown(u)
+
+8
+6
+
+12
+4
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Algorithmus → Pseudocode
+class M IN H EAP
+Array A
+// tree as array
+
+push(Priority x)
+A:pushBack(x)
+bubbleUp(n() − 1)
+
+n()
+leftChild(Node v )
+rightChild(Node v )
+parent(Node v )
+swap(Node u; Node v )
+
+8
+6
+
+bubbleUp(Node v )
+sinkDown(Node v )
+
+popMin()
+res := A[0]
+swap(0; n() − 1)
+A:popBack()
+sinkDown(0)
+return res
+
+res: 2
+12
+2
+3
+12
+3
+4
+
+12
+9
+
+9
+
+4
+10
+
+9
+
+Thomas Bläsius – Algorithmen 1
+
+8
+6
+12
+4
+5
+
+13
+
+12
+5
+
+12
+6
+8
+15
+
+14
+
+18
+12
+6
+2
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Anmerkungen
+Prioritäten müssen keine Zahlen sein
+das einzige, was wir mit den Prioritäten machen: vergleichen
+Prioritäten können Elemente einer beliebigen geordneten Menge sein; z.B. Strings
+Laufzeit: Θ(log n) Vergleiche pro Operation
+Heapsort
+Schritt 1: alle n Elemente mit push einfügen
+Schritt 2: n mal das minimale Element mit popMin entfernen
+damit: Elemente werden aufsteigend sortiert entnommen
+
+Θ(n log n)
+Θ(n log n)
+
+Untere Schranke
+vergleichsbasiertes Sortieren braucht Ω(n log n) → push oder popMin braucht Ω(log n)
+schlagbar, wenn Prioritäten kleine ganze Zahlen sind:
+benutze Buckets, wie bei Bucketsort mit den Prioritäten als Indizes eines Arrays
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Initialer Aufbau
+Situation
+gegeben: Folge von Prioritäten (unsortiert)
+Ziel: mache daraus einen Heap
+einfache Lösung: rufe n mal push auf → Laufzeit Θ(n log n)
+Geht es besser?
+Beobachtung
+Annahme: Teilbaum unter u‘ und ur ist bereits Heap
+dann: sinkDown(v ) macht Teilbaum unter v zum Heap
+Algo: rufe bottom-up für jeden Knoten einmal sinkDown auf
+
+v
+7
+u‘
+9
+
+ur
+5
+
+Vorüberlegung zur Laufzeit
+Kosten für die Wurzel: Θ(log n)
+aber: Knoten weiter unten im Baum können auch nicht so weit sinken
+und: die meisten Knoten liegen weiter unten im Baum
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Initialer Aufbau: Umsetzung im Detail
+class M IN H EAP
+Erinnerung: Array-Repräsentation des Baums
+0
+Array A
+// tree as array 0 1 2 3 4 5 6 7 8 9 10 11
+n()
+1
+2
+sinkDown(Node v )
+buildHeap(Array priorities)
+A := priorities
+for v = n() − 1; : : : ; 0 do
+sinkDown(v )
+
+3
+
+4
+
+5
+
+6
+
+12
+9
+
+4
+7
+
+8
+
+9
+
+10
+
+11
+
+Anmerkung: Korrektheit
+sinkDown wird bottom-up angewendet: tieferes Layer fertig bevor höheres beginnt
+induktiv: beim Aufruf sinkDown(v ) sind Teilbäume unter den Kindern von v schon Heaps
+nach sinkDown(v ) ist Teilbaum unter v ein Heap
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Initialer Aufbau: Laufzeit
+Kosten für den Aufruf sinkDown(v )
+sei i die Distanz von v zu einem Blatt
+v wandert höchstens i Schritte nach unten
+Laufzeit: Θ(i + 1)
+`n´
+Anzahl Knoten für festes i : Θ 2i
+`P n·i ´
+Gesamtkosten: Θ
+= Θ(n)
+2i
+Nebenrechnung:
+
+13
+
+Thomas Bläsius – Algorithmen 1
+
+i =3
+i =2
+i =1
+i =0
+
+∞
+X
+i
+
+1
+2
+3
+4
+1
+1
+1
+1
+=
++
++
++
++
+·
+·
+·
+=
++
++
++
++ ::: ≤ 1
+i
+2
+2
+4
+8
+16
+2
+4
+8
+16
+i=1
+1
+1
+1
+1
++ + +
++ ::: ≤
+4
+8
+16
+2
+1
+1
+1
++ +
++ ::: ≤
+8
+16
+4
+..
+.
+
+=
+
+∞
+P
+1
+i=0
+
+2i
+
+≤2
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Priority-Queues in der Wildnis
+Java
+
+https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/PriorityQueue.html
+
+Beachte
+unterstützt keine weiteren Operationen wie decPrio (für Dijkstra nötig)
+nutze dafür Lazy Evaluation Trick (gleich)
+14
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ decPrio mittels Lazy Evaluation
+Grundsätzliche Idee
+markiere zu ändernden Knoten als veraltet
+füge Änderung als neuen Konten ein
+überspringe veraltete Knoten bei popMin
+Tatsächliche Laufzeit
+decPrio hat dann die selbe Laufzeit wie push
+popMin ist aber manchmal teuer: viele veraltete Knoten müssen übersprungen werden
+decPrio ist also faul und hinterlässt zusätzliche Arbeit für popMin
+Amortisierte Laufzeit
+charge zusätzliche Kosten bei popMin auf verantwortlichen decPrio-Aufruf
+popMin wird so alle Kosten los außer für ein nicht-veraltetes Element → Θ(log n)
+jedem decPrio-Aufruf wird nur einmal Kosten zugewiesen → Θ(log n)
+15
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Lazy Evaluation für Dijkstra
+Dijkstra(Graph G; Node s)
+d := Array of size n initialized with ∞
+d[s] := 0
+PriorityQueue Q := empty priority queue
+for Node v in V do
+Q:push(v ; d[v ])
+while Q ̸= ∅ do
+u := Q:popMin()
+for Node v in N(u) do
+if d[v ] > d[u] + len(u; v ) then
+d[v ] := d[u] + len(u; v )
+Q:decPrio(v ; d[v ])
+
+16
+
+Thomas Bläsius – Algorithmen 1
+
+Dijkstra(Graph G; Node s)
+d := Array of size n initialized with ∞
+d[s] := 0
+PriorityQueue Q := PQ containing only s
+done := Array of size n init with FALSE
+while Q ̸= ∅ do
+u := Q:popMin()
+if done[u] then continue
+for Node v in N(u) do
+if d[v ] > d[u] + len(u; v ) then
+d[v ] := d[u] + len(u; v )
+Q:push(v ; d[v ])
+done[u] = TRUE
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Heaps
+Priority-Queue
+push(x) Element mit Priorität x einfügen
+popMin() Element mit minimaler Priorität extrahieren
+Trick für weitere Operationen (z.B. decPrio): Lazy Evaluation
+markiere zu ändernden Knoten als veraltet → merken wir bei popMin
+Binärer Heap
+ausreichend viel Ordnung, um Minimum schnell zu finden
+ausreichend wenig Ordnung, um diese nach einer Änderung wieder herzustellen
+Operationen in Θ(log n) und sehr schnell in der Praxis
+Geht es besser?
+etwas mehr Unordnung → aufräumen wenn nötig
+Binomial-Heap: verbessert push auf amortisiert Θ(1)
+Fibonacci-Heap: verbessert zusätzlich decPrio auf amortisiert Θ(1)
+17
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

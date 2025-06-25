@@ -1,0 +1,801 @@
+Algorithmen 1
+(2; 3)-Bäume – Implementierung
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Letztes Mal
+Suchbaum zum Verwalten von sortierten Folgen
+verzeigerte Struktur → gut zum Einfügen/Löschen
+Baumstruktur → simuliert binäre Suche
+(2; 3)-Baum
+fast binär: jeder innere Knoten hat 2 oder 3 Kinder
+balanciert: jedes Blatt hat gleiche Tiefe
+Erhaltung der Struktur beim Einfügen und Löschen
+Einfügen erzeugt ggf. Knoten mit 4 Kindern → aufspalten
+Löschen erzeugt ggf. Knoten mit nur 1 Kind
+→ vereinigen oder ausbalancieren
+verschiebt das Problem Schrittweise nach oben
+O(log n) Höhe → O(log n) Laufzeit
+2
+
+Thomas Bläsius – Algorithmen 1
+
+5
+1
+
+9
+
+0
+0
+
+4
+1
+
+4
+
+7
+5
+
+7
+
+13
+9
+
+13
+
+17
+
+aufspalten
+
+vereinigen
+
+ausbalancieren
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Heute
+Ausarbeitung der Details
+Was genau speichern wir bei jedem Knoten?
+Wie gehen wir mit Sonderfällen um (z.B. leerer Baum)?
+Wie müssen wir die Schlüssel updaten?
+Wie setzen wir die Datenstruktur in Pseudocode um?
+Anmerkungen
+es gibt meist nicht nur eine Antwort auf die Fragen
+Ziele, wenn wir mehrere Möglichkeiten haben etwas umzusetzen:
+so einfach wie möglich
+möglichst wenige Sonderbehandlungen
+Korrektheit + richtige asymptotische Laufzeit
+Lernziel: Umsetzung eines Algorithmus auf hoher Abstraktionsebene in Pseudocode
+nicht das Lernziel: Pseudocode von (2; 3)-Bäumen auswendig können
+3
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Was speichern wir bei jedem Knoten?
+Baumstruktur
+jeder Knoten hat Zeiger zu bis zu 4 Kindern
+jeder Knoten hat einen Zeiger zum Elter
+
+parent
+child[0]
+
+Navigation entsprechend der Schlüssel
+letztes Mal
+jeder Knoten kennt mehrere Schlüssel
+‘ − 1 Schlüssel für ‘ Kinder
+etwas einfacher
+jeder Knoten a kennt nur einen Schlüssel a:key
+a:key = größter Schlüssel im Teilbaum unter a
+Entscheidung für das richtige Kind beim Suchen:
+entsprechend der Schlüssel der Kinder
+4
+
+Thomas Bläsius – Algorithmen 1
+
+class N ODE
+Node parent
+Array⟨Node; 4⟩ child
+Key key
+
+child[1]
+
+k3
+k1
+
+k2
+
+k3
+
+(−∞; k1 ]
+
+(k1 ; k2 ]
+
+(k2 ; k3 ]
+
+Invariante, die wir nach jeder
+Operation wiederherstellen
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Suchen – Vorüberlegung & Initialisierung
+Wonach genau suchen wir?
+Eingabe: ein Schlüssel k
+falls k in der Folge → entsprechendes Blatt zurückgeben
+k nicht in der Folge → Blatt mit nächst größerem Schlüssel
+∞-Trick
+Was, wenn k größer als alle existierenden Schlüssel?
+füge ein Dummy-Blatt mit Schlüssel ∞ ein
+vermeidet den Sonderfall, wenn k zu groß
+vermeidet den Sonderfall, für einen leeren Baum
+Initialisierung des (2; 3)-Baums
+Wurzelknoten mit einem Kind mit Schlüssel ∞
+Schlüssel der Wurzel: ebenfalls ∞
+5
+
+Thomas Bläsius – Algorithmen 1
+
+root
+∞
+?
+∞
+?
+
+a
+
+0
+
+1
+find(1)
+
+5
+
+7
+
+9
+
+13
+
+17
+
+find(6)
+
+∞
+?
+
+find(19)
+
+class (2, 3)-T REE
+Node root
+init()
+Node a
+a:key := ∞
+a:parent := root
+root:child[0] := a
+root:key := ∞
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Suche
+Erinnerung
+Ziel: finde erstes Blatt mit Schlüssel ≥ k
+Invariante: a:key = größter Schlüssel im Teilbaum unter a
+
+find(Key k)
+Node a := root
+while a is not a leaf do
+i := min{i | k ≤ a:child[i]:key}
+a := a:child[i]
+return a
+
+∞
+∞
+
+7
+1
+0
+
+7
+1
+
+4
+
+5
+
+13
+7
+
+find(6)
+
+6
+
+Thomas Bläsius – Algorithmen 1
+
+9
+
+∞
+
+28
+13
+
+17
+
+28
+
+32
+
+∞
+
+find(28)
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Einfügen – Was wollen wir eigentlich genau?
+Option 1: insert(k)
+durchsuchbare Menge von Schlüsseln
+Duplikate beim Einfügen überspringen
+Option 2: set(k; v )
+Abbildung von Schlüsseln auf Werte
+speichere zusätzlich einen Wert an jedem Blatt
+Blatt mit Schlüssel existiert nicht → neues Blatt
+Blatt existiert → Wert überschreiben
+Heute
+wir betrachten hier Option 1
+Option 2 lässt sich aber analog umsetzen
+
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Einfügen – Vorüberlegung
+Erinnerung: Neues Blatt einfügen
+Schritt 1: neues Blatt an der richtigen Stelle einfügen
+Schritt 2: Knoten mit 4 Kindern aufspalten
+
+28
+13
+9
+
+13
+
+15
+
+13
+
+17
+
+?
+
+Thomas Bläsius – Algorithmen 1
+
+28
+
+28
+17
+
+13
+28
+
+Anmerkung
+eigentlich egal: an den Elter des Vorgängers hängen würde auch gehen
+der Elter des Nachfolgers hat aber ein paar Vorteile
+find(k) liefert direkt den Nachfolger
+Nachfolger existiert immer, dank des ∞-Knotens → kein Sonderfall
+Schlüssel der inneren Knoten bleiben korrekt → kein Update nötig
+8
+
+28
+
+15
+
+Schritt 1: Wo genau fügen wir den neuen Schlüssel k ein?
+an den Elter des Nachfolgers
+28
+also: neues Blatt wird an find(k):parent gehängt
+13
+9
+
+28
+
+9
+
+28
+13
+
+15
+
+17
+
+28
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Einfügen
+Erinnerung: Neues Blatt einfügen
+Schritt 1: neues Blatt an der richtigen Stelle einfügen
+Schritt 2: Knoten mit 4 Kindern aufspalten
+∞
+
+insert(Key k)
+if find(k):key = k then return
+Node a := find(k):parent
+Node b := {key :k; parent :a} // new leaf
+insert b into a:child // keeping it sorted
+// invariant: keys are correct (largest key in subtree)
+if a has four children then
+split(a)
+9
+
+Thomas Bläsius – Algorithmen 1
+
+13
+9
+
+28
+13
+
+17
+
+28
+
+15
+
+∞
+13
+9
+
+28
+13
+
+15
+
+17
+
+28
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Aufspalten: Knoten mit 4 Kindern
+split(Node b)
+if b = root then
+Sonderfall Wurzel
+a
+Node a := {key : ∞; parent : ⊥; child : ⟨b⟩}
+b
+b
+b:parent := a
+c0 c1 c2 c3
+c0 c1 c2 c3
+:
+root = a
+a := b:parent
+ci := b:child[i] (for i ∈ {0; 1})
+a
+a
+Node b ′ := {key : c1 :key; parent : a; child : ⟨c0 ; c1 ⟩}
+insert b ′ into a:child
+b
+b
+b′
+c0 :parent; c1 :parent := b ′
+c0 c1 c2 c3
+c0 c1 c2 c3
+remove c0 and c1 from b:child
+// invariant: keys are correct (largest key in subtree)
+if a has four children then
+ggf. rekursiv aufspalten
+split(a)
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Geht das noch etwas schöner?
+Node b ′ := {key : c1 :key; parent : a; child : ⟨c0 ; c1 ⟩}
+insert b ′ into a:child
+c0 :parent; c1 :parent := b ′
+remove c0 and c1 from b:child
+Eigentlich machen wir drei Dinge
+Knoten b ′ erstellen
+Kinder c0 ; c1 von b nach b ′ verschieben
+b ′ als Kind zu a hinzufügen
+create Node b ′
+move children c0 and c1 from b to b ′
+add b ′ as child to a
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Probleme
+schwer zu parsen
+fehleranfällig
+Wiederverwendbarkeit
+
+a
+
+a
+b′
+
+b
+c0
+
+c1
+
+c2
+
+c3
+
+c0
+
+b
+c1
+
+c2
+
+c3
+
+Besser
+lagere grundlegende Operationen in
+Subroutinen aus
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Grundlegende Subroutinen
+b als Kind von a einfügen
+b an der richtigen Position von a:child einfügen
+b:parent auf a setzen
+a:key auf b:key setzen, falls b das rechtes Kind ist
+
+a
+
+Kind b von a löschen
+b aus a:child entfernen
+b:parent auf ⊥ setzen
+a:key aktualisieren, falls b das rechtes Kind war
+
+a
+
+Kind b von Elter a zu a ′ schieben: löschen + einfügen
+
+a
+
+b
+
+b
+
+a
+
+b
+
+a
+
+a′
+
+b
+
+a′
+
+a
+b
+
+b
+
+Anmerkung: Aktualisierung des Schlüssels
+machen wir hier nur lokal → wird insbesondere nicht an den Elter von a weitergegeben
+daher: Subroutinen immer bottom-up ausführen
+ggf. am Ende nochmal Restpfad zur Wurzel aktualisieren (werden wir beim Löschen gleich noch sehen)
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Löschen – Vorüberlegung
+Erinnerung
+Schritt 1: entsprechendes
+Blatt einfach löschen
+Schritt 2: Knoten mit nur einem Kind aufräumen
+
+fuse
+
+rebalance
+
+(Verschmelzen oder Ausbalancieren)
+
+Rekursive Aufrufe
+nach Verschmelzen: Elter hat ggf. nur noch ein Kind → rekursiv aufräumen
+Problem wird Schritt für Schritt weiter nach oben propagiert
+Stopp bei Ausbalancieren oder wenn der Elter bei Verschmelzen vorher drei Kinder hatte
+Aktualisierung der Schlüssel
+benutze Operationen von eben → Schlüssel werden auf dem Weg nach oben aktualisiert
+stimmt nicht für den restlichen Pfad zur Wurzel, wenn die Rekursion stoppt
+ignorieren wir zunächst und fixen es später
+13
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Existierendes Blatt entfernen
+Erinnerung
+Schritt 1: entsprechendes
+Blatt einfach löschen
+Schritt 2: Knoten mit nur einem Kind aufräumen
+
+(Verschmelzen oder Ausbalancieren)
+
+remove(Key k)
+b := find(k)
+if b:key ̸= k then return
+a := b:parent
+remove b as child from a
+if a has only one child then
+fuseOrRebalance(a)
+
+14
+
+Thomas Bläsius – Algorithmen 1
+
+fuseOrRebalance(Node b)
+if b = root then
+b
+root := b:child[0]
+remove child root from b
+return
+Node a := b:parent
+Node b ′ = successor or predecessor of b in a:child
+a
+a
+if b ′ has two children then
+fuse
+′
+fuse(b; b ′ )
+b
+b
+else // b ′ has three children
+rebalance(b; b ′ )
+a
+b
+
+a
+b′
+
+rebalance
+b
+
+b′
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ fuse und rebalance
+a
+b
+
+a
+b′
+
+fuse
+b
+
+fuse(Node b; Node b ′ )
+a := b:parent
+for Node c ∈ b ′ :child do
+move child c from b ′ to b
+remove b ′ as child from a
+if a has only one child then
+fuseOrRebalance(a)
+
+15
+
+a
+
+Thomas Bläsius – Algorithmen 1
+
+b
+
+a
+b′
+
+rebalance
+b
+
+b′
+
+rebalance(Node b; Node b ′ )
+a := b:parent
+‘ := arg minx∈{b;b′ } x:key
+r := arg maxx∈{b;b′ } x:key
+if ‘ has three children do
+move child ‘:child[2] from ‘ to r
+else
+move child r:child[0] from r to ‘
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ fixKeysOnPathToRoot
+fixKeysOnPathToRoot(Node a)
+// only ancestors of a have incorrect keys
+while a ̸= root do
+a := a:parent
+a:key := key of right-most child
+// all keys are correct
+
+∞
+∞
+
+48
+28
+17
+
+16
+
+48
+28
+
+32
+
+Thomas Bläsius – Algorithmen 1
+
+37
+
+∞
+
+82
+48
+
+76
+
+82
+
+89
+
+remove(Key k)
+// all keys are correct
+b := find(k)
+if b:key ̸= k then return
+a := b:parent
+remove b as child from a
+// only ancestors of a have incorrect keys
+if a has only one child then
+fuseOrRebalance(a)
+else
+fixKeysOnPathToRoot(a)
+
+∞
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ fixKeysOnPathToRoot
+fixKeysOnPathToRoot(Node a)
+// only ancestors of a have incorrect keys
+while a ̸= root do
+a := a:parent
+a:key := key of right-most child
+// all keys are correct
+∞
+32
+5
+
+32
+
+1
+0
+
+16
+
+5
+1
+
+4
+
+9
+5
+
+7
+
+Thomas Bläsius – Algorithmen 1
+
+17
+9
+
+13
+
+fuse(Node b; Node b ′ )
+// only ancestors of b have incorrect keys
+a := b:parent
+for Node c ∈ b ′ :child do
+move child c from b ′ to b
+remove b ′ as child from a
+// only ancestors of a have incorrect keys
+if a has only one child then
+fuseOrRebalance(a)
+else
+fixKeysOnPathToRoot(a)
+
+28
+32
+17
+
+28
+
+32
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ fixKeysOnPathToRoot
+fixKeysOnPathToRoot(Node a)
+// only ancestors of a have incorrect keys
+while a ̸= root do
+a := a:parent
+a:key := key of right-most child
+// all keys are correct
+∞
+28
+5
+
+28
+
+1
+0
+
+16
+
+5
+1
+
+4
+
+13
+5
+
+7
+
+Thomas Bläsius – Algorithmen 1
+
+9
+
+remove(Key k)
+// all keys are correct
+b := find(k)
+if b:key ̸= k then return
+a := b:parent
+remove b as child from a
+// only ancestors of a have incorrect keys
+if a has only one child then
+fuseOrRebalance(a)
+else
+fixKeysOnPathToRoot(a)
+
+28
+17
+13
+
+17 17 28
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Implementierung (2; 3)-Bäume
+(2; 3)-Bäume
+Ausarbeitung der Details
+insbesondere Verwaltung und Aktualisierung der Schlüssel
+Endergebnis: Pseudocode
+Der Weg ist das Ziel
+unwichtig: unser Endergebnis – der Pseudocode selbst
+wichtig: der Prozess, der uns dort hin gebracht hat
+Sonderfälle vermeiden (∞-Knoten)
+Ziel: Lesbarkeit, Wiederverwendbarkeit, geringe Fehleranfälligkeit
+keine Scheu nochmal umzubauen, wenn es zu frickelig wird
+Lernziel: von der Algorithmenidee zum Pseudocode
+gegeben die algorithmische Idee
+Details ausarbeiten → korrekten Pseudocode bauen
+17
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

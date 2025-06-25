@@ -1,0 +1,988 @@
+Algorithmen 1
+Union-Find
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Motivation: Union–Find
+Letzte Vorlesung: Algorithmus von Kruskal
+wähle in jedem Schritt minimale Kante
+unter allen Kanten, die keinen Kreis mit schon gewählten Kanten bilden
+u
+
+v
+
+überspringen
+Was wollen wir erreichen?
+schnell testen ob {u; v } Kreis schließt
+äquivalent: u und v liegen in der selben Komponente
+Einfügen einer Kante vereinigt zwei Komponenten
+v
+u
+auswählen
+gewünschte Operationen
+union(u; v ): vereinige Komponenten von u und v
+find(v ): Komponente* von v
+Test ob u und v in der selben Komponente liegen: find(u) = find(v )
+
+v
+
+u
+
+u
+
+v
+
+*Umsetzung: bestimme für jede Komponente einen eindeutigen Vertreter und gib diesen zurück
+2
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Union–Find
+Etwas formaler (und ohne die Anwendung im Hinterkopf)
+Ausgangssituation: endliche Menge von disjunkten einelementigen Mengen
+Beispiel: {{a}; {b}; {c}; {d}; {e}; {f }; {g }}
+union(x; y ): vereinige die Mengen, die x und y enthalten
+find(x): liefere einen eindeutigen Vertreter der Menge, die x enthält
+Beispiel
+b
+a
+
+c
+f
+
+d
+e
+
+Menge
+3
+
+Thomas Bläsius – Algorithmen 1
+
+Vertreter
+
+union(a; f )
+union(c; d)
+find(a) → a
+find(f ) → a
+find(c) → c
+union(b; d)
+find(c) → b
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Vorüberlegung: maximale Ordnung
+Fokus auf find: Was hätten wir gerne?
+optimal: jedes Element kennt den Vertreter der eigenen Menge
+Verzeigerte Struktur
+jedes Element ist ein Knoten
+jeder Knoten hat einen Zeiger zum Vertreter der Menge
+find: nur einen Zeiger verfolgen → Θ(1)
+
+b
+a
+
+c
+e
+
+d
+
+b
+a
+
+c
+
+d
+
+e
+
+Problem für union
+alle Elemente aus einer der beiden Mengen müssen umgehängt werden → Θ(n)
+maximale Ordnung aufrecht zu erhalten ist teuer
+Lösung: erlaube etwas Unordnung
+weniger Zeiger umhängen → schnelles union
+kein direkter Zeiger zum Vertreter → langsameres find
+Ziel: genug Ordnung, dass find weiterhin schnell ist
+4
+
+Thomas Bläsius – Algorithmen 1
+
+Erinnerung: Operationen
+union(x; y ): vereinige die Mengen, die x und y enthalten
+find(x): liefere einen eindeutigen
+Vertreter der Menge, die x enthält
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Schnelleres Union: erlaube etwas Unordnung
+Plan für schnelles union
+Situation: vereinige X und Y mit Vertretern x ∈ X und y ∈ Y
+wähle x als neuen Vertreter von X ∪ Y
+neuer Zeiger: y → x
+für alle anderen y ′ ∈ Y : behalte Zeiger zu y
+
+y
+
+x
+a
+
+c
+
+b
+
+|
+
+e
+
+d
+
+{z
+
+}
+
+x
+
+Mehr Aufwand für find
+verfolge ggf. mehrere Zeiger, um den Vertreter zu finden
+Hoffnung: die Pfade von Zeigern werden nicht so lang
+
+a
+
+b
+
+y
+
+c
+
+d
+
+e
+
+Worst-Case Kosten und Baumhöhe
+resultierender Baum hat Höhe h → Kosten O(h) pro Operation
+Plan: wähle neuen Vertreter, sodass Höhe möglichst klein
+5
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Was genau machen wir jetzt?
+Repräsentation der Menge als gewurzelten Wald
+jeder Baum gehört zu einer Menge
+Wurzel jedes Baums ist der Vertreter der Menge
+find(x): verfolge Zeiger zum Elter bis zur Wurzel
+
+Waldrepräsentation
+
+Mengen
+
+b
+a
+
+union(x; y )
+finde zunächst Wurzeln: wx = find(x) und wy = find(y )
+seien hx und hy die Höhen der Bäume
+o.B.d.A. hx ≤ hy → füge wx als Kind von wy ein
+
+c
+d
+
+f
+e
+
+a
+
+b
+
+f
+
+d
+
+e
+
+c
+
+wx
+x
+
+wy
+y
+
+union(x; y )
+
+wy
+wx
+x
+
+y
+
+Anmerkungen
+speichere Höhe des Baums an der Wurzel → ggf. update bei union
+Laufzeit: dominiert durch die Höhe bei find
+6
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Höhe des Baumes
+union(x; y )
+finde zunächst Wurzeln: wx = find(x) und wy = find(y )
+seien hx und hy die Höhen der Bäume
+o.B.d.A. hx ≤ hy → füge wx als Kind von wy ein
+
+wx
+x
+
+wy
+
+union(x; y )
+
+wy
+wx
+x
+
+y
+
+y
+
+Lemma
+Ein solcher Baum der Höhe h enthält mindestens 2h Knoten. Damit gilt h ∈ O(log n).
+Beweis: Induktion über h
+Anfang: h = 0 ⇒ 1 = 20 Knoten
+Höhe h + 1 entsteht nur durch union zweier Bäume der Höhe h
+nach Induktionsvoraussetzung: mindestens 2 · 2h = 2h+1 Knoten
+
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Höhe:
+
+0
+
+1
+
+2
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Geht es besser?
+Theorem
+Es gibt eine Union–Find Datenstruktur, bei der union und find je O(log n) Zeit benötigen.
+Idee
+Höhe verringern durch gelegentliches Aufräumen
+optimal: alle Knoten sind direkte Kinder der Wurzel
+Aufräumen ≡ Knoten direkt an die Wurzel hängen
+w
+
+find(x) mit Pfadkompression
+sei ı der Pfad von x zur Wurzel w
+hänge jeden Knoten auf ı direkt an w
+asymptotisch keine zusätzlichen Kosten für find(x)
+aber: spätere Aufrufe von find ggf. schneller
+
+8
+
+Thomas Bläsius – Algorithmen 1
+
+find(x) = w
+w
+x
+x
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Union by Rank
+Problem
+Pfadkompression verringert ggf. die Höhe des Baumes,
+ohne dass wir es merken
+union nutzt die Höhe um zu entscheiden, welcher Baum
+unter welchen gehängt wird
+
+wx
+x
+
+wy
+
+Thomas Bläsius – Algorithmen 1
+
+wy
+wx
+x
+
+y
+
+Gar nicht schlimm
+4
+x
+nenne die gespeicherte Zahl nicht Höhe, sondern Rang r
+alles wie bisher bei der Höhe:
+initial: Rang r = 0 für Mengen der Größe 1
+union: kleiner Rang unter großen Rang
+4
+x
+bei gleichem Rang: erhöhe einen um 1
+weiterhin: Teilbaum unter Wurzel mit Rang r hat ≥ 2r Knoten
+außerdem: Teilbaum unter einem Knoten mit Rang r hat Höhe ≤ r
+9
+
+union(x; y )
+
+y
+
+2
+
+x
+
+y
+
+4
+
+y
+
+4
+
+y
+
+4
+
+union by rank
+
+x
+y
+
+2
+
+5
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Beispiel
+a
+
+b
+
+0
+
+c
+
+0
+
+d
+
+1
+
+3
+
+e
+
+0
+
+f
+g
+
+2
+
+0
+
+h
+
+i
+
+1
+
+0
+
+Tiebreaker
+union zwei Wurzeln mit gleichem Rang
+wähle alphabetisch kleineren Knoten als Wurzel
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Operationen
+union(a; b)
+union(b; c)
+union(d; e)
+union(f ; g )
+union(h; i)
+union(a; d)
+union(f ; h)
+find(e)
+union(a; f )
+find(h)
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Laufzeitanalyse: Grundlegende Invarianten
+Lemma
+Jeder Knoten hat einen größeren Rang als jedes seiner Kinder.
+
+x
+
+y
+
+2
+
+x
+
+4
+
+y
+
+4
+
+y
+
+4
+
+union by rank
+
+Lemma
+Es gibt höchstens n=2r Knoten mit Rang gleich r .
+
+x
+
+4
+
+x
+y
+
+Lemma
+Es gibt höchstens n=2r Knoten mit Rang größer r .
+Beweis
+bilde Summe über alle größeren Ränge:
+P n
+n
+n
+≤
+2
+·
+=
+r
++1
+i
+2
+2r
+2
+
+4
+
+2
+
+5
+
+w
+path compression
+
+w
+
+i>r
+
+v
+v
+
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Laufzeitanalyse: neue Operation link
+Die drei Schritte von union(x; y )
+wx = find(x)
+wy = find(y )
+hänge wx unter wy oder umgekehrt
+Neue Operation: link
+genauso wie union, aber nur für Wurzeln
+die beiden find Operationen fallen dann weg
+
+wx
+x
+
+wy
+
+union(x; y )
+
+wx
+x
+
+y
+
+a
+
+b
+
+wy
+y
+
+link(a; b)
+
+b
+a
+
+Warum machen wir das?
+Plan: analysiere Kosten für union und find getrennt voneinander
+Problem: lässt sich kaum trennen, wenn jedes union zwei Mal find ausführt
+Lösung: ersetze Sequenz von n union und m find durch n link und 2n + m find
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Laufzeitanalyse: neue Operation compress
+Die zwei Schritte von find(v )
+Finden der Wurzel w
+Kompression des Pfades von v nach w → bezeichne diesen Schritt mit compress(v ; w )
+w
+
+compress(v ; w )
+v
+
+w
+v
+
+Grundsätzliches Vorgehen
+Ziel: Analysiere Laufzeit von Algo A
+analysiere stattdessen einen anderen Algo B
+zeige: Laufzeit von A ist nicht größer als die von B
+damit: Laufzeit von B gibt Schranke an Laufzeit von A
+
+Betrachte compress statt find
+ersetze in Folge von link und find Operationen jedes find durch passendes compress
+beachte: resultierende Folge liefert zu jedem Zeitpunkt die selbe Datenstruktur
+außerdem: asymptotische Laufzeit bleibt gleich
+gleich: sortiere compress nach hinten
+13
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Laufzeitanalyse: Umsortieren der Operationen
+Tausche compress nach hinten
+Ergebnis und Laufzeit werden durch den Tausch nicht geändert
+wir können annehmen: zunächst alle link und dann alle compress Operationen
+w
+
+u
+
+w
+
+u
+
+u
+
+v
+
+w
+
+compress(v ; w )
+
+link(u; w )
+
+v
+
+v
+
+w
+
+u
+
+u
+
+u
+
+w
+
+w
+
+link(u; w )
+
+compress(v ; w )
+
+v
+
+v
+v
+
+14
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Umbau der Folge von Operationen
+eigentlich: n union und m find in beliebiger Reihenfolge
+stattdessen: n link gefolgt von 2n + m compress
+
+| {z }
+
+Laufzeitanalyse: Zwischenstand
+machen sehr unterschiedliche Dinge,
+aber: selbe asymptotische Laufzeit
+
+eigentliche Folge: union(c; e), find(f )
+a
+
+a
+
+d
+
+a
+a
+
+d
+
+find(c)
+b
+
+e
+
+f
+
+a
+
+d
+
+find(e)
+b
+
+c
+
+e
+
+f
+
+link(a; d)
+b
+
+c
+
+e
+
+b
+
+c
+
+d
+
+f
+
+b
+e
+
+c
+
+g
+
+g
+
+find(f )
+c
+
+d
+
+f
+
+e
+
+g
+
+f
+
+g
+g
+
+15
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Umbau der Folge von Operationen
+eigentlich: n union und m find in beliebiger Reihenfolge
+stattdessen: n link gefolgt von 2n + m compress
+
+| {z }
+
+Laufzeitanalyse: Zwischenstand
+machen sehr unterschiedliche Dinge,
+aber: selbe asymptotische Laufzeit
+
+Die n link Operationen
+link läuft in Konstanter Zeit → Θ(n)
+Ergebnis: Wald mit höchstens N = 2n nicht-isolierten Knoten
+Was wir noch tun müssen
+analysiere M = 2n + m compress Operationen
+auf einem Wald mit N Knoten
+
+w
+
+compress(v ; w )
+
+w
+v
+
+v
+
+Invarianten für die Ränge der Knoten
+Lemma
+Jeder Knoten hat einen größeren Rang als jedes seiner Kinder.
+15
+
+Thomas Bläsius – Algorithmen 1
+
+Lemma
+Es gibt höchstens N=2r Knoten mit Rang größer r .
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Laufzeitanalyse: Einteilung in Ranggruppen
+
+Wie oft hängen wir Typ 1 Knoten um?
+betrachte beliebigen Knoten v
+v wird umgehängt → neuer Elter hat größeren Rang
+kleiner Bereich von Rängen pro Gruppe
+→ v kann nicht oft Typ 1 sein bevor v Typ 2 wird
+16
+
+Thomas Bläsius – Algorithmen 1
+
+9
+
+Rang ≥ 8
+Rang ∈ [2; 4] Rang ∈ [5; 7]
+
+Wie oft hängen wir Typ 2 Knoten um?
+höchstens k Typ 2 Knoten pro compress
+M mal compress → insgesamt O(kM) Zeit
+
+Rang ≤ 1
+
+Gruppen von Rängen
+gruppiere Knoten nach ihrem Rang in k Gruppen
+zwei Typen von Knoten bei einem compress-Pfad
+Typ 1: Elter ist in der selben Gruppe
+Typ 2: Elter ist in einer höheren Gruppe
+
+8
+
+7
+5
+
+6
+5
+
+3
+2
+
+2
+
+1
+
+1
+
+1
+0
+
+0
+
+0
+
+0
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Laufzeitanalyse: Type 1 Operationen
+r0
+
+v wird umgehängt → neuer Elter hat größeren Rang
+jeder Knoten in Gruppe i ist höchstens ri−1 mal Typ 1
+Lemma
+Es gibt höchstens N=2r Knoten mit Rang größer r .
+
+jeder Knoten in Gruppe i hat Rang größer ri
+davon gibt es höchstens N=2ri viele
+17
+
+Thomas Bläsius – Algorithmen 1
+
+Gruppe 1
+Gruppe 2
+
+Lemma
+Jeder Knoten hat einen größeren Rang als jedes seiner Kinder.
+
+8
+
+7
+5
+
+6
+5
+
+r2
+Gruppe 3
+
+Beweis
+
+9
+
+r1
+
+3
+2
+
+2
+
+r3
+Gruppe 4
+
+Lemma
+Sei Gruppe i die Menge aller Knoten mit Rang in (ri ; ri−1 ]
+für r0 > r1 > · · · > rk . In jeder Folge von compress
+Operationen werden insgesamt höchstens N · r2i−1
+ri Knoten
+aus Gruppe i von Typ 1 umgehängt.
+
+1
+
+1
+
+1
+0
+
+0
+
+0
+
+0
+
+r4
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Laufzeitanalyse: Wahl der Gruppen
+R
+
+Lemma
+Es werden insgesamt nur O(kM) Knoten von Typ 2 umgehängt.
+(M: Anzahl compress Operationen, k: Anzahl Gruppen)
+
+Gruppe 1
+Gruppe 4
+
+Gruppe 3
+
+log log R
+Wähle: r0 = R (maximaler Rang) und ri = log ri −1
+dann: Kosten für Typ 1 in Gruppe i in O(N)
+Typ 1 insgesamt: O(kN)
+log log log R
+Wie viele Gruppen bekommen wir dann?
+Nach wie vielen log ist das Ergebnis ≤ 1?
+diese Anzahl heißt iterierten Logarithmus log∗ R
+beachte: R ∈ O(log N)
+log log log log R
+18
+
+Thomas Bläsius – Algorithmen 1
+
+9
+8
+
+log R
+Gruppe 2
+
+Lemma
+Es werden insgesamt höchstens N· r2i−1
+ri Knoten aus Gruppe i von Typ 1 umgehängt.
+(N: Anzahl Knoten)
+
+7
+5
+
+6
+5
+
+3
+2
+
+2
+
+1
+
+1
+
+1
+0
+
+0
+
+0
+
+0
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Laufzeitanalyse
+Folgerung
+Eine Folge von M compress Operationen in einem Wald mit N Knoten benötigt nur
+O((N + M) log∗ N) Umhängeoperationen.
+Zurück zu union und find
+was wir analysieren wollten: n union und m find Operationen
+was wir analysiert haben:
+n link → liefert Wald mit höchstens N = 2n Knoten in Θ(n) Zeit
+M = 2n + m compress auf Wald mit N Knoten in O((N + M) log∗ N)
+wir wissen: union, find-Folge hat gleiche Laufzeit wie link, compress-Folge
+Theorem
+Eine beliebige Folge von n union und m find Operationen mit Union-by-Rank und Pfadkompression benötigt O((n + m) log∗ n) Zeit. Also amortisiert O(log∗ n) pro Operation.
+19
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Wie cool ist das denn?
+Theorem
+Eine beliebige Folge von n union und m find Operationen mit Union-by-Rank und Pfadkompression benötigt O((n + m) log∗ n) Zeit. Also amortisiert O(log∗ n) pro Operation.
+Wie schnell wächst log∗ (n)?
+·2
+··
+betrachte Potenzturm der Höhe k: n = 22
+dann gilt: log∗ n = k
+mit größer werdendem k wächst n extrem schnell
+→ mit größer werdendem n wächst log∗ n extrem langsam
+Zum Vergleich
+für n ∈ (65 536; 265 536 ] gilt log∗ n = 5 und log n ∈ (16; 65 536]
+265 536 > 1019 728
+das beobachtbare Universum hat zwischen 1078 und 1082 Atome
+20
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Zusammenfassung
+Union–Find
+sehr nützliche Datenstruktur
+in vielen Programmiersprachen (z.B. C++, Java) nicht Teil des Standards
+aber: nicht so schwer selbst zu implementieren (Analyse kompliziert, Algo selbst leicht)
+Laufzeitanalyse
+spannende Technik: baue den Algorithmus zum Zweck der Analyse um
+der analysierte Algo macht ggf. gar nicht das gewünschte oder ist nicht umsetzbar
+aber: die Analyse des anderen Algos liefert trotzdem Schranke für den eigentlichen Algo
+Ausblick: Da geht noch was
+kann verbessert werden auf amortisierte Laufzeit Θ(¸(n)) pro Operation (das ist tight)
+¸(n): inverse Ackermannfunktion
+¸(n) wächst noch langsamer als log∗ n
+21
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

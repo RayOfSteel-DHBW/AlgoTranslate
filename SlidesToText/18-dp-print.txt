@@ -1,0 +1,797 @@
+Algorithmen 1
+Dynamische Programmierung
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Fibonacci-Zahlen
+Definition: F (1) = F (2) = 1; F (n) = F (n − 1) + F (n − 2) für n ≥ 3
+Fib(Number n)
+F := Array of size n + 1
+F [1] := 1
+F [2] := 1
+for i ∈ {3; : : : ; n} do
+F [i] := F [i − 1] + F [i − 2]
+return F [n]
+
+F(Number n)
+if n = 1 or n = 2 then
+return 1
+return F(n − 1) + F(n − 2)
+Rekursionsbaum:
+
+Laufzeit
+iterativ: Θ(n)
+√
+1+ 5
+n
+rekursiv: Θ(’ ) mit ’ = 2 ≈ 1;6181
+Thomas Bläsius – Algorithmen 1
+
+F(6)
+
+F(5)
+F(4)
+F(3)
+
+2
+
+(1; 1; 2; 3; 5; 8; 13; 21; : : : )
+
+F(2)
+
+F(4)
+F(3)
+
+F(3)
+
+F(2) F(1)
+
+F(2) F(1)
+
+F(2)
+
+F(2) F(1)
+
+(Rekurrenz lösen (nicht hier): T (n) = T (n − 1) + T (n − 2) + Θ(1))
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Was ist hier passiert?
+Rekursiv definiertes Problem
+reduziert Gesamtproblem auf kleinere Teilprobleme
+Gesamtproblem: berechne F (n); Teilprobleme: berechne F (n − 1) und F (n − 2)
+Teilprobleme überlappen sich
+für F (n − 1) muss man nochmal F (n − 2) berechnen
+rekursive Lösung: betrachtet selbes Teilproblem mehrfach
+
+3
+
+Iterative Lösung
+baue schrittweise größere Teillösungen auf
+Teillösungen speichern → keine mehrfache Berechnung
+
+meist recht einfach
+
+Und wenn das Problem gar nicht rekursiv definiert ist?
+finde eine äquivalente rekursive Definition
+
+das ist der schwierige Teil
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Problemstellung: Splittability
+Definition
+Ein String S der Länge n ist eine Folge von Buchstaben ⟨S[0]; : : : ; S[n − 1]⟩. Die Teilfolge
+⟨S[a]; : : : ; S[b]⟩ bezeichnen wir auch mit S[a; b] = S[a; b + 1) = S(a − 1; b] = S(a − 1; b + 1).
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9 10 11 12 13 14 15 16
+
+E i n B e i s p i e l S t r i n g
+
+S[3; 11)
+Problem: Splittability
+Gegeben ein String S, gibt es Trennstellen 0 = s0 < · · · < sk = n, sodass S[si−1 ; si ) für
+alle i ∈ [1; k] ein gültiges Wort ist? Wir sagen dann, dass S splittable ist.
+m o n k e y e a r t h a i r
+
+s0
+4
+
+Thomas Bläsius – Algorithmen 1
+
+s1
+
+s2
+
+s3
+
+s4
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Teilprobleme und rekursive Definition
+Problem: Splittability
+Gegeben ein String S, gibt es Trennstellen 0 = s0 < · · · < sk = n, sodass S[si−1 ; si ) für
+alle i ∈ [1; k] ein gültiges Wort ist? Wir sagen dann, dass S splittable ist.
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9 10 11 12 13
+
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9 10 11 12 13
+
+Teilprobleme
+m o n k e y e a r t h a i r
+für i ∈ [0; n]: Ist S[0; i) splittable?
+Beispiel: S[0; 9) ist splittable
+beachte: Gesamtproblem fragt ob S[0; n) splittable ist
+
+Rekursive Definition auf Basis der Teilprobleme
+m o n k e y e a r t h a i r
+splittable(0) = true
+Beispiel:
+splittable(i) = ∃j ∈ [0; i) splittable(j)∧isWord(S[j; i)) splittable(7) ∧ isWord(S[7; 10)) = true
+⇒ splittable(10) = true
+5
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Korrektheit
+Theorem
+Der Teilstring S[0; i) ist genau dann splittable, wenn splitable(i) = true.
+Beweis: Induktion über i
+Induktionsanfang: der leere String ist splittable und splitable(0) = true
+Hinrichtung: S[0; i) splittable ⇒ splittable(i) = true
+betrachte Lösung 0 = s0 < · · · < sk = i
+dann ist S[0; sk−1 ) splittable und S[sk−1 ; i) ein Wort
+nach I.V. gilt dann splittable(sk−1 ) = true (und es gilt isWord(sk−1 ; i) = true)
+sk−1
+
+s0 = 0
+
+splittable
+⇒ splittable(sk−1 )
+6
+
+Thomas Bläsius – Algorithmen 1
+
+sk = i
+
+gültiges Wort
+⇒ isWord(S[sk−1 ; i))
+
+Erinnerung: Rekursive Definition von splittable
+splittable(0) = true
+splittable(i) = ∃j ∈ [0; i) splittable(j)∧isWord(S[j; i))
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Korrektheit
+Theorem
+Der Teilstring S[0; i) ist genau dann splittable, wenn splitable(i) = true.
+Beweis: Induktion über i
+Induktionsanfang: der leere String ist splittable und splitable(0) = true
+Rückrichtung: S[0; i) splittable ⇐ splittable(i) = true
+es gibt j, sodass splittable(j) und isWord(S[j; i)
+nach I.V.: S[0; j) ist splittable (außerdem ist S[j; i) ein Wort)
+damit ist auch S[0; i) splittable
+j
+
+0
+
+splittable(j)
+⇒ splittable
+6
+
+Thomas Bläsius – Algorithmen 1
+
+isWord(S[j; i))
+⇒ gültiges Wort
+
+i
+
+Erinnerung: Rekursive Definition von splittable
+splittable(0) = true
+splittable(i) = ∃j ∈ [0; i) splittable(j)∧isWord(S[j; i))
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Iterative Implementierung
+isSplittable(String S)
+s := Array of size n + 1
+s[0] := true
+for i ∈ {1; : : : ; n} do
+s[i] = false
+for j ∈ {0; : : : ; i − 1} do
+if s[j] and isWord(S[j; i)) then
+s[i] := true
+return s[n]
+
+Laufzeit
+Θ(n2 ) Aufrufe von isWord (also: polynomiell)
+Bekommen wir auch eine Lösung?
+speichere für jedes i wegen welchem j wir
+s[i] := true gesetzt haben
+verfolge diese Pointer rückwärts von n aus
+m o n k e y e a r t h a i r
+
+s: t f f f t f t t f t t t f f t
+Erinnerung: Rekursive Definition von splittable
+splittable(0) = true
+splittable(i) = ∃j ∈ [0; i) splittable(j)∧isWord(S[j; i))
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ In drei Schritten zum dynamischen Programm
+Schritt 1: Spezifikation der Teilprobleme
+Welche Zwischenergebnisse wollen wir berechnen?
+Worüber geht die Induktion?
+Beispiel: Ist S[0; i) splittable?
+
+8
+
+schwer
+erfordert Kreativität
+ggf. richtige Idee nötig
+interagiert mit Schritt 2
+
+Schritt 2: Aufstellung der Rekurrenz für Teillösungen
+Wie berechnen wir neue aus alten Zwischenergebnissen?
+Korrektheit: Induktion
+Beispiel: Lösung für i dank Lösungen für 0; : : : ; i − 1
+
+nicht superschwer
+
+Schritt 3: Iterative Berechnung der Teillösungen
+Wie verwalten wir die Zwischenergebnisse?
+Wie hängen die Zwischenergebnisse voneinander ab?
+In welcher Reihenfolge berechnen wir Zwischenergebnisse?
+Wie bekommen wir die tatsächliche Lösung?
+
+leicht
+
+Thomas Bläsius – Algorithmen 1
+
+(mit etwas Übung)
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Longest Common Subsequence
+Problem: LCS
+Gegeben Folgen ⟨a1 ; : : : ; an ⟩ und ⟨b1 ; : : : ; bm ⟩, was ist die längste gemeinsame Teilfolge?
+Schritt 1: Spezifikation der Teilprobleme
+A G C A T A
+Wie lang ist die LCS von ⟨a1 ; : : : ; ai ⟩ und ⟨b1 ; : : : ; bj ⟩?
+A C G A C
+i = n und j = m liefert Gesamtlösung
+vereinfachte Sichtweise: nur Größe der Lösung (Berechnung der Lösung selbst heben wir uns für Schritt 3 auf)
+Schritt 2: Aufstellung der Rekurrenz
+Ziel: LCS(i; j) bezeichnet Länge der LCS von ⟨a1 ; : : : ; ai ⟩ und ⟨b1 ; : : : ; bj ⟩
+LCS(i; 0) = LCS(0; j) = 0
+ai
+ȷ
+::: A
+LCS(i − 1; j − 1) + 1
+wenn ai = bj
+LCS(i; j) =
+max {LCS(i; j − 1); LCS(i − 1; j)} wenn ai ̸= bj
+::: A
+Korrektheit: folgt induktiv
+bj
+9
+
+Thomas Bläsius – Algorithmen 1
+
+:::
+
+ai
+C
+
+::: G
+bj
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Longest Common Subsequence: Schritt 3
+Rekurrenz
+LCS(i; 0) = LCS(0; j) = 0
+ȷ
+LCS(i − 1; j − 1) + 1
+wenn ai = bi
+LCS(i; j) =
+max {LCS(i; j − 1); LCS(i − 1; j)} wenn ai ̸= bi
+
+Schritt 3: Iterative Berechnung der Teillösungen
+Wie verwalten wir die Zwischenergebnisse?
+Wie hängen die Zwischenergebnisse voneinander ab?
+In welcher Reihenfolge berechnen wir Zwischenergebnisse?
+Wie bekommen wir die tatsächliche Lösung?
+
+Antworten auf die Fragen von Schritt 3
+speichere für jedes (i; j) ∈ [0; n] × [0; m] eine Zahl
+→ Array von Arrays
+Eintrag bei (i; j) hängt ab von Einträgen bei:
+(i − 1; j − 1), (i; j − 1) und (i − 1; j)
+von oben links nach unten rechts ausfüllen (Zeilenweise)
+zur Rekonstruktion der Lösung:
+merke für jeden Eintrag, von wo er kommt
+Rückverfolgung dieser Pointer → Lösung
+
+j
+
+0
+
+i
+
+2
+3
+4
+5
+
+2
+
+3
+
+4
+
+5
+
+6
+
+A G C A T A
+
+0
+1
+
+1
+
+A
+C
+G
+A
+C
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+1
+
+1
+
+1
+
+1
+
+1
+
+1
+
+0
+
+1
+
+1
+
+2
+
+2
+
+2
+
+2
+
+0
+
+1
+
+2
+
+2
+
+2
+
+2
+
+2
+
+0
+
+1
+
+2
+
+2
+
+3
+
+3
+
+3
+
+0
+
+1
+
+2
+
+3
+
+3
+
+3
+
+3
+
+(jeder diagonale Schritt ist gemeinsames Zeichen)
+
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Subset Sum
+Situation
+ihr braucht kœri + Pommes (3;70 C)
+ihr wollt gerne passend bezahlen
+
+Problem: Subset Sum
+Gegeben eine Multimenge A = {a1 ; : : : ; an } von natürlichen
+Zahlen und einePnatürliche Zahl S. Gibt es eine Teilmenge
+A′ ⊆ A, sodass a∈A′ a = S?
+Anmerkungen
+das ist in gewissem Sinne ein schweres Problem
+mehr dazu in TGI nächstes Semester
+aber: S nicht zu groß → effiziente Lösung mit DP
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Subset Sum: Teilprobleme und Rekurrenz
+Problem: Subset Sum Problem
+Gegeben eine Multimenge A = {a1 ; : : : ; an } von
+natürlichen Zahlen und eine natürliche
+P
+Zahl S. Gibt es eine Teilmenge A′ ⊆ A, sodass a∈A′ a = S?
+Schritt 1: Spezifikation der Teilprobleme
+betrachte ein Paar (i; s) mit i ≤ n und s ≤ S
+P
+′
+Gibt es Teilmenge A ⊆ {a1 ; : : : ; ai }, sodass a∈A′ a = s?
+i = n und s = S liefert Gesamtlösung
+Schritt 2: Aufstellung der Rekurrenz
+Ziel: SSP(i; s) = true genau dann wenn es für das Paar (i; s) eine Lösung gibt
+SSP(0; s) = true ⇔ s = 0 (false sonst) und SSP(i; s) = false für s < 0
+SSP(i; s) = SSP(i − 1; s) ∨ SSP(i − 1; s − ai )
+ai nicht gewählt
+ai gewählt
+(Korrektheit folgt induktiv)
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Subset Sum: Schritt 3
+Rekurrenz
+SSP(0; s) = true ⇔ s = 0
+
+Schritt 3: Iterative Berechnung der Teillösungen
+Wie verwalten wir die Zwischenergebnisse?
+
+SSP(i; s) = false für s < 0
+
+Wie hängen die Zwischenergebnisse voneinander ab?
+
+SSP(i; s) = SSP(i − 1; s) ∨ SSP(i − 1; s − ai )
+
+In welcher Reihenfolge berechnen wir Zwischenergebnisse?
+Wie bekommen wir die tatsächliche Lösung?
+
+Antworten auf die Fragen von Schritt 3
+SSP(i; s) = false für s < 0 brauchen wir nicht explizit speichern
+für jedes (i; s) ∈ [0; n] × [0; S] ein boolescher Wert → Array von Arrays
+s − ai
+Einträge in Zeile i hängen von Einträgen in Zeile i − 1 ab
+Reihenfolge: Tabelle zeilenweise ausfüllen
+zur Rekonstruktion der Lösung:
+i −1
+merke für jeden Eintrag, von wo er kommt
+Rückverfolgung dieser Pointer → Lösung
+i
+
+s
+
+(jeder diagonale Schritt entspricht ausgewähltem Element)
+
+13
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Alternativer Sichtweise für Schritt 3: Pfadfindung
+s − ai
+
+Rekurrenz
+SSP(0; s) = true ⇔ s = 0
+SSP(i; s) = false für s < 0
+
+s
+
+i −1
+
+SSP(i; s) = SSP(i − 1; s) ∨ SSP(i − 1; s − ai )
+
+i
+
+Bisher: Welche Einträge muss ich anschauen, um (i; s) auszufüllen?
+Jetzt: Welche Einträge kann ich auf true setzen, wenn ich weiß, dass SSP(i; s) = true?
+s
+
+Pfadfindung in einem Graphen
+fasse jedes Paar (i; s) als Knoten auf
+Kanten: (i; s) → (i + 1; s) und (i; s) → (i + 1; s + ai+1 )
+Ja-Instanz ⇔ es gibt einen Pfad von (0; 0) zu (n; S)
+beachte: Graph nur implizit repräsentiert
+Vorteil: wir besuchen in der Tabelle nur Zellen, die true sind
+14
+
+Thomas Bläsius – Algorithmen 1
+
+i
+
+t
+
+i +1
+
+t
+
+s + ai+1
+
+t
+
+(ggf. deutlich weniger als alle Zellen)
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ In drei Schritten zum dynamischen Programm
+Schritt 1: Spezifikation der Teilprobleme
+Welche Zwischenergebnisse wollen wir berechnen?
+Worüber geht die Induktion?
+Induktion über Parameter oder eine Baumstruktur
+
+schwer
+erfordert Kreativität
+ggf. richtige Idee nötig
+interagiert mit Schritt 2
+
+Schritt 2: Aufstellung der Rekurrenz für Teillösungen
+Wie berechnen wir neue aus alten Zwischenergebnissen?
+Korrektheit: vollständige oder strukturelle Induktion
+
+nicht superschwer
+(vorausgesetzt ihr habt eine gute
+Spezifikation der Teilergebnisse)
+
+Schritt 3: Iterative Berechnung der Teillösungen
+Wie verwalten wir die Zwischenergebnisse?
+Wie hängen die Zwischenergebnisse voneinander ab?
+In welcher Reihenfolge berechnen wir Zwischenergebnisse?
+Wie bekommen wir die tatsächliche Lösung?
+15
+
+Thomas Bläsius – Algorithmen 1
+
+leicht
+(mit etwas Übung)
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Dynamische Programmierung
+DPs haben wir schon häufiger gesehen (ohne es zu wissen)
+Bellman–Ford
+DP über die Anzahl Kanten aus denen die Pfade bestehen
+Iteration i: berechne kürzeste Pfade unter allen Pfaden, die aus ≤ i Kanten bestehen
+Blatt 11, Aufgabe 1 – Dijkstras Angst-Gegner
+berechne kürzesten Pfad in einem DAG
+DP über topologische Sortierung der Knoten
+Lernziel
+ihr habt verstanden, wie DPs funktionieren → schnelleres Verständnis unbekannter DPs
+ihr könnt zumindest einfache DPs selber bauen
+(insbesondere, wenn die Teillösungen gegeben sind)
+
+16
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Bonus: Längster Pfad im Baum
+Problem: Longest Path
+Gegeben einen (gewurzelten) Baum T . Wie lang ist der längste Pfad in T ?
+Schritt 1: Spezifikation der Teilprobleme
+strukturelle Induktion über Baumstruktur
+Teillösung (Typ 1) für v : längster Pfad in Tv , der nicht in v endet
+Teillösung (Typ 2) für v : längster Pfad in Tv , der in v endet
+
+v
+u1
+
+u2
+
+Teillösungen (Typ 2) für ui
+Schritt 2: Aufstellung der Rekurrenz
+erhalte Lösung für v aus Lösung für Kinder u1 ; : : : ; uk
+Ziel: LPt (v ) repräsentiert Teillösung von Typ t für v
+Teillösungen (Typ 1) für ui
+Falls v ein Blatt: LP1 (v ) = LP2 (v ) = 0
+LP2 (v ) = maxi {LP2 (ui ) + 1}
+h
+i
+LP1 (v ) = max maxi {max{LP1 (ui ); LP2 (ui )}}; maxi̸=j {LP2 (ui ) + LP2 (uj ) + 2}
+17
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Bonus: Längster Pfad im Baum: Korrektheit
+Rekurrenz
+Falls v ein Blatt: LP1 (v ) = LP2 (v ) = 0
+LP2 (v ) = maxi {LP2 (ui ) + 1}
+h
+LP1 (v ) = max maxi {max{LP1 (ui ); LP2 (ui )}};
+i
+maxi̸=j {LP2 (ui ) + LP2 (uj ) + 2}
+
+Was wollen wir zeigen?
+Ziel: LPi (v ) repräsentiert Teillösung von Typ i für v
+Typ 1: längster Pfad in Teilbaum Tv unter v
+Typ 2: längster Pfad in Tv , der in v endet
+LP2 (v ) = maxi {LP2 (ui ) + 1}
+
+Korrektheit mittels struktureller Induktion
+korrekt für die Blätter
+korrekt für v falls korrekt für die Kinder u1 ; : : : ; uk
+Typ 2: Pfad führt über ein Kind ui (+1 wegen {v ; ui })
+Typ 1, Fall 1: längster Pfad in Tv enthält v nicht
+maxi {LP1 (ui ); LP2 (ui )}
+Typ 1, Fall 2: längster Pfad in Tv enthält v
+v
+
+u1
+
+18
+
+Thomas Bläsius – Algorithmen 1
+
+v
+u1
+
+v
+u2
+
+u1
+
+maxi̸=j {LP2 (ui ) + LP2 (uj ) + 2}
+
+v
+
+u2
+
+u1
+
+u2
+
+u2
+
+v
+oder
+
+u1
+
+u2
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Bonus: Längster Pfad im Baum: Schritt 3
+Rekurrenz
+Falls v ein Blatt: LP1 (v ) = LP2 (v ) = 0
+LP2 (v ) = maxi {LP2 (ui ) + 1}
+h
+LP1 (v ) = max maxi {max{LP1 (ui ); LP2 (ui )}};
+i
+maxi̸=j {LP2 (ui ) + LP2 (uj ) + 2}
+
+Schritt 3: Iterative Berechnung der Teillösungen
+Wie verwalten wir die Zwischenergebnisse?
+Wie hängen die Zwischenergebnisse voneinander ab?
+In welcher Reihenfolge berechnen wir Zwischenergebnisse?
+Wie bekommen wir die tatsächliche Lösung?
+
+Antworten auf die Fragen von Schritt 3
+speichere zwei Werte an jedem Knoten v : LP1 (v ) und LP2 (v )
+Eltern hängen von Kindern ab → Reihenfolge: bottom-up (z.B. entsprechend der Lagen im BFS-Baum)
+tatsächliche Lösung berechnen: wie bei vorherigen DPs
+Anmerkung
+Teillösungen überlappen nicht: Teillösung jedes Kinds ui nur für den einen Elter v relevant
+rekursive Implementierung in dem Fall also auch ok (entspricht im Prinzip einer DFS)
+19
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

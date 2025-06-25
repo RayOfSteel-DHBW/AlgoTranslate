@@ -1,0 +1,702 @@
+Algorithmen 1
+Kürzeste Wege in gewichteten Graphen – Dijkstras Algorithmus
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Problemstellung
+Gegeben
+ein Graph G = (V; E) (ungerichtet oder gerichtet)
+Gewichtsfunktion len : E → Z, die jeder Kante e ∈ E
+eine Länge len(e) zuordnet
+Startknoten s
+Pfadlängen und Distanzen
+Länge eines Pfades ⟨v0 ; : : : ; vk ⟩:
+
+2
+7
+
+s
+6
+
+2
+
+1
+
+5
+
+3
+
+1
+1
+3
+2
+
+k
+P
+
+len (vi−1 ; vi )
+
+Pfad der Länge 12
+3
+
+1
+
+2
+
+6
+9
+
+Distanz dist(s; t): Länge des kürzesten st-Pfades
+Problem: Single-Source Shortest Path (SSSP)
+Gegeben einen gewichtete Graphen G = (V; E) und
+einen Knoten s ∈ V , berechne dist(s; t) für alle t ∈ V .
+Thomas Bläsius – Algorithmen 1
+
+1
+
+(Kurzform für len({vi−1 ; vi }))
+
+i=1
+
+2
+
+3
+
+0
+s
+
+7
+
+2
+
+7
+
+3 8
+
+1
+
+1
+
+1
+
+2 2
+1
+
+6
+3
+6
+
+3
+
+5
+
+9
+
+3
+3
+
+2
+
+6
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Erinnerung: BFS
+Vorgehen
+arbeite die Knoten layerweise ab
+Explorieren eines Knotens u aus Layer i − 1:
+betrachte alle Nachbarn v von u
+v ungefärbt ⇒ v gehört zu Layer i
+Kürzeste Pfade: v in Layer i ⇒ dist(s; v ) = i
+sv -Pfad der Länge i (dist(s; v ) ≤ i)
+induktiv: es gibt einen Pfad der Länge i − 1 zu u
+zusammen mit {u; v } ⇒ sv -Pfad der Länge i
+kein kürzerer Pfad möglich (dist(s; v ) ≥ i):
+gäbe es einen kürzeren sv -Pfad, dann hätte v
+einen Nachbarn in einem vorherigen Layer
+layerweise Abarbeitung ⇒ v wäre schon gefärbt
+3
+
+Thomas Bläsius – Algorithmen 1
+
+s
+
+3
+dist(s; u) = 6
+
+6
+1
+w
+
+u
+6
+7
+dist(s; v ) = 9
+
+2
+
+dist(s; w ) = 2
+
+5
+
+3
+v
+
+Mit Kantenlängen?
+speichere dist(s; v ) statt Layer
+dist(s; u) ≤ 6 ⇒ dist(s; v ) ≤ 9
+ggf. findet man später einen
+kürzeren Pfad zu v
+oder sogar zu u
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Kernproblem beim Umgang mit Kantenlängen
+Plan für das generelle Vorgehen
+speichere d[v ] für jeden Knoten v : Länge des kürzesten
+bekannten sv -Pfades (Invariante: dist(s; v ) ≤ d[v ])
+Explorieren eines Knotens u:
+betrachte alle Nachbarn v von u
+falls d[v ] > d[u] + len(u; v ), setze d[v ] = d[u] + len(u; v )
+
+4
+
+s
+
+0
+3
+3
+
+8
+
+u
+
+v
+
+2
+
+8 5
+
+Anders als bei BFS
+v gefunden ̸⇒ kürzester sv -Pfad gefunden
+d[v ] wird ggf. mehrfach aktualisiert
+v schon exploriert, wenn d[v ] sich ändert
+→ v muss erneut exploriert werden
+
+nicht schlimm: keine Zusatzkosten verglichen mit dem Testen ob v schon gefärbt ist
+problematisch: könnte öfters passieren
+und ggf. kaskadieren
+
+Ziel im Folgenden
+v exploriert ⇒ kürzester sv -Pfad gefunden
+
+super: jeden Knoten einmal explorieren
+kostet insgesamt Θ(m) (wie bei BFS)
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Explorierungsreihenfolge → Dijkstras Algorithmus
+Ziel: v exploriert ⇒ kürzester sv -Pfad gefunden
+Strategie: exploriere Knoten u mit minimalem d[u]
+(unter allen noch nicht explorierten Knoten)
+
+betrachte alle Nachbarn v von u
+falls d[v ] > d[u] + len(u; v ),
+setze d[v ] = d[u] + len(u; v )
+
+Zielführende Strategie
+Annahme: für alle vorher explorierten Knoten v gilt d[v ] = dist(s; v )
+zeige: für u gilt ebenfalls d[u] = dist(s; u)
+Intuition:
+su-Pfad über v mit d[v ] < d[u] schon gefunden (v exploriert)
+Knoten w mit d[w ] > d[u] explorieren kann d[u] nicht senken 3
+Achtung: wir nehmen hier nicht-negative Kantenlängen an
+
+6
+
+Gleich
+Wrap-Up: Algo-Beschreibung, Umsetzung in Pseudocode, Beispiel
+formaler Korrektheitsbeweis
+5
+
+Thomas Bläsius – Algorithmen 1
+
+s
+
+Erinnerung: Explorieren von u
+8
+
+3
+
+v
+
+2
+
+u
+3
+
+8 5
+
+∞
+7
+
+0
+s
+6
+
+2
+
+∞
+
+7
+2
+
+1
+
+1
+
+2
+6
+
+1
+
+∞
+
+8
+1
+
+5
+
+3
+
+3
+
+4
+
+∞
+
+u
+
+x
+
+bereits exploriert
+noch nicht exploriert
+aktueller Wert für d[·]
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Dijkstras Algorithmus
+Algorithmus
+wiederhole bis alle Knoten exploriert:
+wähle unexplorierten Knoten u mit minimalem d[u]
+exploriere u
+Initialisierung: d[v ] = ∞ für v ∈ V und d[s] = 0
+
+s
+
+Erinnerung: Explorieren von u
+betrachte alle Nachbarn v von u
+falls d[v ] > d[u] + len(u; v ),
+setze d[v ] = d[u] + len(u; v )
+
+8
+
+3
+
+v
+
+2
+
+u
+3
+
+8 5
+
+Dijkstra(Graph G; Node s)
+schon exploriert
+∞
+7 2
+d := Array of size n initialized with ∞
+0
+am explorieren (u)
+7
+s
+d[s] := 0
+1
+1
+unexploriert
+∞
+6
+∞
+2 2
+9
+while there is an unexplored node do
+1
+6
+x d[·]
+∞
+8
+∞
+6
+3
+Node u := unexp. node with min. d[u]
+1
+5
+3
+4
+∞
+∞
+7
+6
+10
+9
+for Node v in N(u) do
+if d[v ] > d[u] + len(u; v ) then
+Konstruktion der kürzesten Pfade (wie bei BFS)
+d[v ] := d[u] + len(u; v )
+jeder Knoten merkt sich seinen Vorgänger
+∞
+9
+3 ∞
+8
+
+6
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Ausblick: Priority-Queue
+Wie finden wir den unexplorierten Knoten u mit minimalem d [u]?
+naiv: einmal alle Knoten anschauen → Θ(n) pro Iteration → Θ(n2 ) insgesamt
+Datenstruktur: Priority-Queue (Prioritätswarteschlange)
+push(v ; 7): füge v mit Priorität 7 ein
+popMin(): extrahiere Element mit kleinster Priorität
+decPrio(v ; 4): verkleinere Priorität von v auf 4
+Wie schnell gehen die Operationen?
+unterschiedliche Varianten mit unterschiedlichen Laufzeiten
+viele schnelle Varianten: O(log n) pro Operation
+Fibonacci-Heap: Θ(log n) für popMin, Θ(1) für push und decPrio
+Wie geht das?
+clevere Verwaltung der Elemente in einer Baumstruktur
+werden wir bald genauer kennen lernen
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Dijkstras Algorithmus mit Priority-Queue
+Dijkstra(Graph G; Node s)
+d := Array of size n initialized with ∞
+d[s] := 0
+PriorityQueue Q := empty priority queue
+for Node v in V do
+Q:push(v ; d[v ])
+while Q ̸= ∅ do
+u := Q:popMin()
+for Node v in N(u) do
+if d[v ] > d[u] + len(u; v ) then
+d[v ] := d[u] + len(u; v )
+Q:decPrio(v ; d[v ])
+
+8
+
+Thomas Bläsius – Algorithmen 1
+
+Anmerkung
+man könnte die Knoten auch beim ersten
+Entdecken erst in die Queue einfügen
+dann muss man sich merken, welche
+schon eingefügt sind (ähnlich zu BFS)
+Laufzeitanalyse
+n Mal push
+jeder Knoten wird nur einmal aus der
+Queue entfernt ⇒ n Mal popMin
+jede Kante nur zweimal betrachtet (einmal
+von jeder Seite) ⇒ m Mal decPrio
+Θ(n log n + m), wenn decPrio in Θ(1)
+Θ((n + m) log n), wenn decPrio in Θ(log n)
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Korrektheit: Überblick
+Theorem
+Gegeben einen Graphen G = (V; E), Kantenlängen len : E → N und s ∈ V , dann berechnet Dijkstras Algorithmus in Θ(n log n + m) Zeit die Distanzen dist(s; v ) für alle v ∈ V .
+Anmerkung: die Kantenlängen sind hier nicht-negativ
+Beweis
+Laufzeit: gerade gesehen
+Korrektheit: zeige die folgenden zwei Lemmas
+(der Algo behauptet nicht Pfade zu kennen, die es gar nicht gibt)
+Lemma
+Wenn d[v ] < ∞, dann gibt es einen sv -Pfad der Länge d[v ]. Das heißt d[v ] ≥ dist(s; v )
+gilt zu jedem Zeitpunkt.
+(der Algo findet tatsächlich den kürzesten Pfad)
+Lemma
+In dem Moment, in dem u aus der Queue entfernt und exploriert wird gilt d[u] = dist(s; u).
+9
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Korrektheit: Algo kennt nur existiernede Pfade
+(der Algo behauptet nicht Pfade zu kennen, die es gar nicht gibt)
+Lemma
+Wenn d[v ] < ∞, dann gibt es einen sv -Pfad der Länge d[v ]. Das heißt d[v ] ≥ dist(s; v )
+gilt zu jedem Zeitpunkt.
+
+Mehr oder weniger offensichtlich
+Invariante gilt am Anfang
+bleibt beim Explorieren eines Knotens erhalten
+
+s
+
+Erinnerung: Explorieren von u
+betrachte alle Nachbarn v von u
+falls d[v ] > d[u] + len(u; v ),
+setze d[v ] = d[u] + len(u; v )
+
+8
+
+3
+
+v
+
+2
+
+u
+3
+
+8 5
+
+Beweis im Detail
+Invariante gilt nach der Initialisierung: d[s] = 0 und d[v ] = ∞ für alle v ∈ V \ {s}
+d[v ] kann nur durch das Explorieren eines Nachbarn u geändert werden
+da Invariante vorher galt: es gibt su-Pfad der Länge d[u]
+Invariante bleibt erhalten: es gibt sv -Pfad der Länge d[u] + len(u; v )
+
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Korrektheit: Algo findet kürzesten Pfad
+(der Algo findet tatsächlich den kürzesten Pfad)
+Lemma
+In dem Moment, in dem u aus der Queue entfernt und exploriert wird gilt d[u] = dist(s; u).
+
+Intuition
+Erinnerung: wir explorieren immer den unexplorierten Knoten u mit minimalem d[u]
+∞
+su-Pfad über v mit d[v ] < d[u] schon gefunden (v exploriert)
+7 2
+0
+3 ∞
+Knoten w mit d[w ] > d[u] explorieren kann d[u] nicht senken
+7
+
+s
+
+Problem: das ist noch kein Beweis
+nur weil wir später keinen kürzeren Pfad mehr finden können
+heißt das nicht, dass wir jetzt den kürzesten Pfad haben
+
+6
+
+3
+6
+
+Thomas Bläsius – Algorithmen 1
+
+6
+
+1
+
+∞
+
+8
+1
+
+5
+
+3
+
+Nützliche Beobachtung
+Knoten werden in nicht-absteigender Reihenfolge exploriert
+also: wenn d[v ] < d[u] beim Explorieren, dann wird v vor u exploriert
+11
+
+2
+1
+
+1
+
+2
+
+4
+
+∞
+
+u
+
+x
+
+bereits exploriert
+noch nicht exploriert
+aktueller Wert für d[·]
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Korrektheit: Algo findet kürzesten Pfad
+(der Algo findet tatsächlich den kürzesten Pfad)
+Lemma
+In dem Moment, in dem u aus der Queue entfernt und exploriert wird gilt d[u] = dist(s; u).
+
+Beweis: angenommen es stimmt nicht
+wähle Gegenbeispiel u mit d[u] > dist(s; u), sodass u
+der erste solche Knoten auf einem kürzesten su-Pfad ist
+
+Notation
+d[v ]: Länge des kürzesten bekanntesten
+Pfades von s nach v beim Explorieren
+dist(s; v ): tatsächliche Distanz von s nach v
+len(v ; u): Länge der Kante {v ; u}
+
+Einschub: Beweistechnik
+naheliegendes Argument: u ist Gegenbeispiel ⇒ ein Nachbar von u ist Gegenbeispiel
+damit hangeln wir uns von Gegenbeispiel zu Gegenbeispiel
+und müssen zeigen: irgendwann endet das in einem Widerspruch
+schöner: starte mit einem minimalen Gegenbeispiel
+
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Korrektheit: Algo findet kürzesten Pfad
+(der Algo findet tatsächlich den kürzesten Pfad)
+Lemma
+In dem Moment, in dem u aus der Queue entfernt und exploriert wird gilt d[u] = dist(s; u).
+
+Beweis: angenommen es stimmt nicht
+wähle Gegenbeispiel u mit d[u] > dist(s; u), sodass u
+der erste solche Knoten auf einem kürzesten su-Pfad ist
+sei v der Vorgänger von u auf diesem Pfad
+
+Notation
+d[v ]: Länge des kürzesten bekanntesten
+Pfades von s nach v beim Explorieren
+dist(s; v ): tatsächliche Distanz von s nach v
+len(v ; u): Länge der Kante {v ; u}
+
+(v ist also kein Gegenbeispiel)
+dist(s; v )
+
+ı: s
+
+len(v ; u)
+
+v
+dist(s; u) = dist(s; v ) + len(v ; u)
+
+u
+
+Nützliche Beobachtung
+Knoten werden in nicht-absteigender Reihenfolge exploriert
+also: wenn d[v ] < d[u] beim Explorieren,
+dann wird v vor u exploriert
+
+es gilt: d[v ] = dist(s; v ) ≤ dist(s; u) < d[u]
+damit wird v vor u exploriert
+dabei wird d[u] auf d[v ] + len(v ; u) = dist(s; v ) + len(v ; u) = dist(s; u) gesetzt
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Dijkstras Algo: Zusammenfassung und Anmerkungen
+Theorem
+Gegeben einen Graphen G = (V; E), Kantenlängen len : E → N und s ∈ V , dann berechnet Dijkstras Algorithmus in Θ(n log n + m) Zeit die Distanzen dist(s; v ) für alle v ∈ V .
+Anmerkungen
+funktioniert für gerichtete und ungerichtete Graphen
+wir brauchen nicht-negativen Kantenlängen
+das Betrachten der Kante e = {u; v } beim Explorieren von u heißt auch relaxieren von e
+Nächstes Mal
+Umgang mit negativen Kantenlängen: Bellman–Ford
+Berechnung der Distanzen zwischen allen Paaren: Floyd–Warshall
+Später
+effiziente Priority-Queues
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Ausblick: Routenplanung in der Praxis
+Kürzeste Wege auf Straßengraphen
+Europa hat ca. 18 M Knoten und 42 M Kanten
+Dijkstra braucht mehrere Sekunden
+ungeeignet für viele Anwendungen
+Problem: viel besser als O(n log n + m) kann es nicht werden
+Beobachtung: der Eingabegraph ist immer der gleiche
+Idee
+zwei Phasen:
+1. generiere Zusatzinformationen über G
+2. beschleunigte Anfrage dank dieser Information
+drei Kriterien: Beschleunigung, Vorberechnungszeit, Speicherplatz
+13
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Ausblick: Routenplanung in der Praxis (Beispiele)
+Zielgerichtetes Routing (Arc-Flags)
+manche Straßen in Karlsruhe sind nicht relevant, wenn man nach Berlin möchte
+Vorberechnung: berechne für jede Kante, ob sie für ein Ziel in Berlin relevant ist
+Anfrage: Zielknoten liegt in Berlin → Dijkstra, aber ignoriere irrelevanten Kanten
+Ausnutzung von Transitknoten
+Situation: wir wollen von Karlsruhe weit weg fahren
+kürzester Weg führt dann immer erstmal auf die Autobahn
+es gibt nicht so viele Autobahnauffahrten → wenige Transitknoten
+berechne Distanzen zwischen allen Paaren von Transitkonten vor
+Anmerkungen
+es lohnt sich: bis zu 1 000 000 mal schneller als Dijkstra
+viele der Algorithmen wurden hier in Karlsruhe entwickelt
+mehr davon? → Vorlesung Algorithmen für Routenplanung (Master)
+14
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Kürzeste Wege – SSSP
+Dijkstras Algorithmus
+vermutlich der bekannteste Graphalgorithmus (vielleicht nach BFS und DFS)
+effiziente Berechnung kürzester Wege
+Wunschzettel: eine schnelle Priority-Queue
+Beweistechniken
+Invariante
+Widerspruch mit minimalem Gegenbeispiel
+
+(Algo kennt nur Pfade, die es wirklich gibt)
+(Algo findet den kürzesten Pfad)
+
+Ausblick Routenplanung
+Algorithmische Technik: Vorberechnung, wenn bei vielen Anfragen auf den selben Daten
+kann Anfragen sehr beschleunigen
+
+15
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

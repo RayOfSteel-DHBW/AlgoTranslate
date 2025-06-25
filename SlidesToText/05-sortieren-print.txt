@@ -1,0 +1,883 @@
+Algorithmen 1
+Sortieren: Mergesort, Quicksort, untere Schranke
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Anmerkung: untere Laufzeitschranken
+Der Algorithmus benötigt Ω(n 2 ) Schritte – Was bedeutet das?
+Interpretation 1: auf allen Eingaben ist die Laufzeit mindestens quadratisch
+Interpretation 2: es gibt Eingaben, sodass die Laufzeit mindestens quadratisch ist
+Was gilt für die Vorlesung?
+außer explizit angegeben sprechen wir immer über den Worst Case
+also: Interpretation 2
+Warum machen wir das so?
+Interpretation 1 betrachtet den Best Case → der ist selten relevant
+Interpretation 2 nützlich in verschiedenen Situationen:
+„jeder Algo hat Laufzeit Ω(n2 )“ → es gibt keinen sub-quadratischen Algo
+„ein konkreter Algo hat Laufzeit Ω(n2 ) und O(n3 )“ → die Laufzeit ist im Worst Case
+zwischen quadratisch und kubisch
+2
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Sortieren
+7
+
+48 1
+9 82 4
+
+13
+5
+17 0 89
+76 28 32 63
+
+37
+
+Gegeben
+n Elemente aus einer geordneten Menge (z.B. Zahlen)
+Gesucht
+sortierte Folge dieser Elemente (z.B. als Array oder Liste)
+⟨0; 1; 4; 5; 7; 9; 13; 17; 28; 32; 37; 48; 63; 76; 82; 89⟩
+
+Insertion Sort
+füge Elemente nach und nach ein
+halte Folge dabei sortiert
+Bearbeitung des iten Elements:
+suchen in Folge der Länge i − 1
+einfügen in Folge der Länge i − 1
+
+bisher sortierte Teilfolge:
+⟨0; 5; 13; 17; 28; 76⟩
+für Arrays (random access)
+binäre Suche: O(log n)
+einfügen:
+O(1)
+für Listen
+
+O(log n) pro Element
+⇒ O(n log n) gesamt
+
+Problem
+wir kennen noch keine Datenstruktur, mit der wir schnell suchen und einfügen können
+3
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Sortieren
+7
+
+48 1
+9 82 4
+
+13
+5
+17 0 89
+76 28 32 63
+
+37
+
+Gegeben
+n Elemente aus einer geordneten Menge (z.B. Zahlen)
+Gesucht
+sortierte Folge dieser Elemente (z.B. als Array oder Liste)
+⟨0; 1; 4; 5; 7; 9; 13; 17; 28; 32; 37; 48; 63; 76; 82; 89⟩
+
+bisher sortierte Teilfolge:
+Insertion Sort
+füge Elemente nach und nach ein
+⟨0; 5; 13; 17; 28; 76⟩
+halte Folge dabei sortiert
+Liste
+Array
+Bearbeitung des iten Elements:
+Θ(i)
+Θ(log i)
+suchen in Folge der Länge i − 1
+Θ(1)
+Θ(i)
+einfügen in Folge der Länge i − 1
+Θ(i)
+Θ(i)
+n
+Kosten
+in
+Schritt
+i:
+P
+Θ(i) = Θ(n2 )
+Laufzeit:
+heute: zwei andere Algorithmen mit Θ(n log n) Laufzeit
+i=1
+3
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Sortieren mittels Teile und Herrsche
+Instanz zerlegen
+
+Teile lösen
+
+⟨ ; ; ; ; ⟩
+
+kombinieren
+
+⟨ ; ; ; ; ; ; ; ; ; ⟩
+⟨ ; ; ; ; ⟩
+Mergesort: arbeite beim Zusammenfügen
+48 63
+5
+13 82
+0
+32 7 89 28
+
+48 63
+5
+13 82
+0
+32 7 89 28
+
+˙
+
+7; 13; 32; 48; 82
+
+¸
+˙
+
+˙
+
+¸
+0; 5; 28; 63; 89
+Zwei offene Fragen
+Wie setzt man das im Detail um?
+Welche Laufzeit liefert das?
+
+Quicksort: arbeite beim Zerlegen
+48 63
+5
+13 82
+0
+32 7 89 28
+4
+
+Thomas Bläsius – Algorithmen 1
+
+48 63
+5
+13 82
+0
+32 7 89 28
+
+¸
+0; 5; 7; 13; 28; 32; 48; 63; 82; 89
+
+˙
+
+¸
+0; 5; 7; 13; 28
+˙
+
+˙
+
+32; 48; 63; 82; 89
+
+¸
+0; 5; 7; 13; 28; 32; 48; 63; 82; 89
+
+¸
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Mergesort im Detail
+mergesort(Array A)
+13 48 82 7 32 63 89 0 28 5 Korrektheit
+Induktion über A:size()
+// base case: small array
+Anfang: passt für A:size() ≤ 1
+if A:size() ≤ 1 then return A
+Induktionsschritt:
+// partition instance
+B:size() < A:size()
+13 48 82 7 32
+B := first half of A
+Induktionsvoraussetzung ⇒
+C := second half of A
+63 89 0 28 5
+mergesort(B) sortiert B
+// solve parts
+analog:
+7 13 32 48 82
+B := mergesort(B)
+mergesort(C) sortiert C
+0 5 28 63 89
+C := mergesort(C)
+daher: merge(B; C) liefert A
+// combine solutions
+in sortierter Form
+return merge(B; C)
+(vorrausgesetzt merge ist korrekt)
+0 5 7 13 28 32 48 63 82 89
+merge(Array B; Array C)
+// input: sorted arrays B and C; output: B ⊔ C in sorted order
+5
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Wie funktioniert merge?
+Plan
+erstelle neues Array A für das Ergebnis
+füge iterativ das kleinste noch nicht eingefügte Element in A ein
+für B; C: kenne Positionen iB ; iC ab der die
+noch nicht eingefügten Elemente kommen
+
+B:
+
+0 1 2 3 4
+7 13 32 48 82
+
+C:
+
+0 1 2 3 4
+0 5 28 63 89
+
+iB
+
+A:
+
+iC
+
+0 1 2 3 4 5 6 7 8 9
+0 5 7 13 28 32
+
+Invariante (nach jedem Einfügen)
+genau die Elemente vor iB aus B und vor iC aus C wurden schon in A eingefügt
+alle eingefügten Elemente sind kleiner als die nicht eingefügten Elemente
+bisher in A eingefügte Elemente sind sortiert
+(beachte: sie gilt am Anfang)
+Bleibt die Invariante in jedem Schritt erhalten?
+B und C sortiert ⇒ kleinstes nicht eingefügtes Element ist B[iB ] oder C[iC ]
+damit: min{B[iB ]; C[iC ]} in A einfügen (und iB bzw. iC erhöhen) erhält Invariante
+6
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Merge im Detail
+nB = nC = 5
+0 1 2 3 4
+0 1 2 3 4
+merge(Array B; Array C)
+B: 7 13 32 48 82 C: 0 5 28 63 89
+iB ; iC ; nB ; nC := 0; 0; B:size(); C:size()
+iB
+iC
+A := Array of size nB + nC
+// result
+// iterate over B and C simultaneously
+0 1 2 3 4 5 6 7 8 9
+while iB < nB or iC < nC do
+A: 0 5 7 13 28 32 48 63 82 89
+// next element comes from B
+iB +iC
+if iC = nC or (iB ̸= nB and B[iB ] ≤ C[iC ]) then
+A[iB + iC ] := B[iB ]
+iB := iB + 1
+Laufzeitanalyse
+// next element comes from C
+iB +iC wird in jedem Schleifendurchlauf
+else
+um genau 1 größer
+A[iB + iC ] := C[iC ]
+daher: nB + nC Schleifendurchläufe
+iC := iC + 1
+Laufzeit: Θ(nB + nC ) = Θ(A:size())
+return A
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Laufzeit Mergesort
+mergesort(Array A)
+// base case: small array
+if A:size() ≤ 1 then return A
+// partition instance
+B := first half of A
+C := second half of A
+// solve parts
+B := mergesort(B)
+C := mergesort(C)
+// combine solutions
+return merge(B; C)
+
+8
+
+Thomas Bläsius – Algorithmen 1
+
+T (n)
+Θ(1)
+Θ(n)
+T ( n2 )
+T ( n2 )
+Θ(n)
+
+(n = A:size())
+Laufzeit
+Rekurrenz: T (n) = 2 · T ( n2 ) + Θ(n)
+Mastertheorem ⇒ T (n) ∈ Θ(n log n)
+
+Mastertheorem?
+Voll anstrengend!
+Muss ich das auswendig können?
+Herleitung für Θ(n log n) in diesem Fall
+Rekursionsbaum: Binärbaum der Tiefe log2 n
+Aufwand auf Ebene i:
+2i Knoten mit n · 2−i Elementen
+Θ(n) Kosten für n Elem. ⇒ Θ(n) pro Ebene
+gesamt: Θ(n log n)
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Sortieren mittels Teile und Herrsche
+Instanz zerlegen
+
+Teile lösen
+
+⟨ ; ; ; ; ⟩
+
+kombinieren
+
+⟨ ; ; ; ; ; ; ; ; ; ⟩
+⟨ ; ; ; ; ⟩
+Mergesort: arbeite beim Zusammenfügen
+48 63
+5
+13 82
+0
+32 7 89 28
+
+48 63
+5
+13 82
+0
+32 7 89 28
+
+˙
+
+7; 13; 32; 48; 82
+
+¸
+˙
+
+˙
+
+¸
+0; 5; 28; 63; 89
+Zwei offene Fragen
+Wie setzt man das im Detail um?
+Welche Laufzeit liefert das?
+
+Quicksort: arbeite beim Zerlegen
+48 63
+5
+13 82
+0
+32 7 89 28
+9
+
+Thomas Bläsius – Algorithmen 1
+
+48 63
+5
+13 82
+0
+32 7 89 28
+
+¸
+0; 5; 7; 13; 28; 32; 48; 63; 82; 89
+
+˙
+
+¸
+0; 5; 7; 13; 28
+˙
+
+˙
+
+32; 48; 63; 82; 89
+
+¸
+0; 5; 7; 13; 28; 32; 48; 63; 82; 89
+
+¸
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Quicksort: arbeiten beim Zerlegen
+Zerlegung in große und kleine Elemente
+wähle ein Element als Pivot Element
+zwei Teilarrays: Elemente die kleiner/größer
+sind als das Pivot
+Best Case
+die zwei Teilarrays sind etwa gleich groß
+Θ(log n) Ebenen, Θ(n) Vergleiche pro Ebene
+Gesamtkosten: Θ(n log n)
+48 82 32 63 89
+Worst Case
+Pivot ist kleinstes oder größtes Element
+Vergleich zwischen jedem Elementpaar
+Gesamtkosten: Θ(n2 )
+
+13 48 82 7 32 63 89 0 28 5
+13 7 0 5
+0 5
+
+13
+5
+
+Thomas Bläsius – Algorithmen 1
+
+48 32 63
+32
+
+89
+
+63
+
+48 82 63 89
+82 63 89
+82 89
+
+Hoffnung: mit zufällig gewähltem Pivot ist man nah am Best Case
+10
+
+48 82 32 63 89
+
+89
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Erwartete Laufzeit bei zufälligen Pivots
+Nutze Linearität des Erwartungswerts
+–
+»n
+n
+P
+P
+E [Xi ] ∈ O(n log n)
+Xi =
+E [X] = E
+i=1
+
+i=1
+
+Ziel: schätze E [Xi ] ab für beliebiges aber festes i
+Vergleiche des i -ten Elements ei
+schlechter Vergleich
+ei
+
+guter Vergleich
+ei
+
+ei
+ungleichmäßige Aufteilung
+
+ei
+gleichmäßige Aufteilung
+
+Ziel: wähle genaue Definition sodass
+ˆ −˜
+ˆ +˜
+weniger schlecht als gut: E Xi ≤ E Xi
+wenige gute Vergleiche:
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Xi+ ∈ O(log n)
+
+Zufallsvariablen
+X: Anzahl Vergleiche insgesamt
+Xi : Anzahl Vergleiche des i-ten
+Elements ei mit einem Pivot
+Xi− : Anzahl schlechte Vergleiche von ei mit einem Pivot
+Xi+ : Anzahl gute Vergleiche von
+ei mit einem Pivot
+
+ˆ −
+˜
++
+E [Xi ] = E Xi + Xi
+ˆ −˜
+ˆ +˜
+= E Xi + E Xi
+ˆ +˜
+≤ 2E Xi ∈ O(log n)
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Gute und schlechte Vergleiche im Detail
+Wann nennen wir den Vergleich mit einem Pivot gut?
+k
+k: Größe des aktuellen
+Arrays
+guter Vergleich:
+¨ 3 ˝beide
+Teilarrays ≤ 4 k
+¨3 ˝
+≤ 4k
+
+Zufallsvariablen
+Xi− : Anzahl schlechte Vergleiche von ei mit einem Pivot
+Xi+ : Anzahl gute Vergleiche von
+ei mit einem Pivot
+
+¨3 ˝
+≤ 4k
+
+Wenige gute Vergleiche: Xi+ ∈ O(log n)
+Teilarray von ei schrumpft bei jedem guten Vergleich um den Faktor 34
+das kann nur O(log n) oft passieren
+ˆ +˜
+ˆ −˜
+Mehr gute als schlechte Vergleiche: E Xi ≥ E Xi
+Hälfte der möglichen Pivots führen zu gutem Vergleich
+daher: Pr [guter Vergleich] ≥ 12 ≥ Pr [schlechter Vergleich]
+12
+
+Thomas Bläsius – Algorithmen 1
+
+¨k ˝
+
+˚k ˇ
+
+4
+
+2
+
+gute Pivots
+
+¨k ˝
+4
+
+(sortiertes Teilarray)
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Quicksort: Ergebnis
+Theorem
+Auf jeder Eingabe der Länge n benötigt Quicksort mit zufälligen Pivots im Erwartungswert
+O(n log n) Vergleiche.
+Anmerkungen
+damit ist auch die Erwartete Laufzeit in O(n log n)
+wir sprechen hier auch vom Average Case
+der Erwartungswert bezieht sich nur auf die zufälligen Entscheidungen des Algorithmus
+bei der Eingabe wird weiterhin der Worst Case betrachtet
+Bonus am Ende der Folien: alternative Analyse
+liefert alternative Perspektive
+gibt genaueres Ergebnis
+13
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Untere Schranke: Geht es schneller?
+Theorem
+Jeder vergleichsbasierte Sortieralgorithmus benötigt Ω(n log n) Vergleiche um eine Folge
+von n Elementen zu sortieren.
+Beweis
+<
+>
+ähnlich wie bei der binären Suche:
+k Vergleiche
+<
+>
+<
+>
+binäre Entscheidung pro Vergleich
+< >
+< >
+< >
+< >
+k Vergleiche → 2k verschiedene Ausführungen
+verschiedene Ausführungen:
+2k Ausführungen
+betrachte zwei Permutationen der Eingabe
+Elemente müssen unterschiedlich umsortiert werden
+B ADC
+A C BD
+jede Permutation führt zu unterschiedlicher Ausführung
+jeder korrekte Algo braucht n! verschiedene Ausführungen A B C D
+AB C D
+(n! Blätter im Entscheidungsbaum)
+zu zeigen: log(n!) ∈ Θ(n log n)
+min. n! Ausführungen ⇒ min. log(n!) Vergleiche
+14
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Nebenrechnung: log(n!) ∈ Θ(n log n)
+Möglichkeit 1: Stirlingformel
+√
+` n ´n
+`√ ` n ´ n ´
+die Stirlingformel sagt: n! ≈ 2ın e ∈ Θ n e
+` `√ ` n ´n ´´
+daher: log(n!) ∈ Θ log n e
+` `√ ´
+´
+= Θ log n + n · (log n − log e) = Θ(n log n)
+
+Logarithmengesetze
+log(a · b) = log(a) + log (b)
+log( ba ) = log(a) − log (b)
+log(ab ) = b · log(a)
+
+Möglichkeit 2: von Hand
+n Summanden, jeder ≤ log n
+n! = n · (n − 1) · (n − 2) · · · · · 1
+log(n!) = log(n) + log(n − 1) + log(n − 2) + · · · + log(1) ∈ O(n log n)
+ersten n2 Summanden ≥ log( n2 )
+
+also: log(n!) ≥ n2 · log( n2 ) = n2 log n − n2 log 2 ∈ Ω(n log n)
+⇒ log(n!) ∈ Θ(n log n)
+15
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Vergleichsbasiertes Sortieren
+Heute gesehen
+Teile und Herrsche zum Sortieren von Folgen
+Mergesort: arbeite beim Zusammenfügen der Teillösungen
+Quicksort: arbeite beim Zerlegen in Teilprobleme
+Was soll das? Hätte nicht ein Θ(n log n) Algorithmus gereicht?
+Mergesort: konzeptuell einfacher, deterministisch
+Quicksort: geht in-place (ohne zusätzlichen Speicher), in der Praxis schneller
+Einstellungsgespräch: ggf. wird erwartet, dass ihr beide kennt
+Analysetechniken
+Analyse erwarteter Laufzeit eines randomisierten Algorithmus
+Entscheidungsbaum für untere Schranke
+16
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Bonus: Alternative Analyse
+Summe der einzelnen Vergleiche
+seien e1 ≤ e2 ≤ · · · ≤ en die sortierten Elemente
+Xij = 1 wenn ei und ej verglichen werden, Xij = 0 sonst
+2
+E [X] = E 4
+
+n X
+n
+X
+
+3
+Xij 5 =
+
+i=1 j=i+1
+
+n X
+n
+X
+
+E [Xij ]
+
+i=1 j=i+1
+
+n n−i+1
+n X
+n
+X
+X 2
+X
+2
+2
+=
+≤
+=
+j −i +1
+k
+k
+i=1 k=2
+i=1 k=2
+i=1 j=i+1
+n X
+n
+X
+
+= 2n ·
+
+n
+X
+1
+
+k
+k=2
+
+Wahrscheinlichkeit für Xi j = 1
+Xij = 1 ⇔ das erste Pivot aus
+{ei ; ei+1 ; : : : ; ej−1 ; ej } ist ei oder ej
+Xi j = 0
+ei
+
+ej
+
+ei
+
+ej
+
+≤ 2n ln n
+
+Theorem
+Auf jeder Eingabe der Länge n benötigt Quicksort
+mit zufälligen Pivots erwartet ≤ 2n ln n Vergleiche.
+17
+
+Zufallsvariablen
+X: Anzahl Vergleiche insgesamt
+Xij : Indikatorvariable für Vergleich zwischen ei und ej
+
+Thomas Bläsius – Algorithmen 1
+
+Xi j = 1
+ej
+ei
+oder
+ej
+ei
+
+2
+E [Xij ] = Pr [Xij = 1] = j−i+1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Bonus: Nebenbemerkung zur harmonischen Summe
+Harmonische Zahl Hn
+n
+P
+1
+Hn =
+k
+
+1
+1=2
+1=3
+
+k=1
+
+nützlich zu wissen: Hn ∈ Θ(log n)
+Beweis und genauere Abschätzung
+Zn
+n
+n
+X
+X
+1
+1
+1
+Hn − 1 =
+≤
+dx ≤
+= Hn
+k
+x
+k
+k=2
+
+Zn
+
+1
+
+k=1
+
+ˆ
+˜n
+1
+dx = ln x 1 = ln n
+x
+
+1
+
+0
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+1
+x
+
+1
+1=2
+1=3
+0
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+1
+1=2
+1=3
+0
+
+18
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

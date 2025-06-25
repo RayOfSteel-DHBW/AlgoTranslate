@@ -1,0 +1,700 @@
+Algorithmen 1
+Listen und binäre Suche
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Wiederholung: Zwei Arten der Datenablage
+Index: 0 1 2 3 4 5 6 7 8 9 10 11
+Felder (Arrays)
+Adresse: 30 31 32 33 34 35 36 37 38 39 40 41
+Menge aufeinanderfolgender Speicherzellen
+Daten: 4 48 89 1 0 9 13 7 32 76 17 5
+Zugriff mit Adresse bzw. Index an beliebiger Stelle in Θ(1)
+sehr nah an der Hardware
+letztes Mal: Komfort-Funktionen für dynamisches Wachstum
+3 4 5
+Verzeigerte Strukturen
+17 18 19
+4 48 17
+viele kleine Stückchen Speicher (Knoten)
+42 ⊥ ⊥
+ein Knoten speichert:
+48 49 50
+Daten, die uns tatsächlich interessieren
+7 23 17
+Speicheradressen anderer Knoten (Zeiger)
+Zugriff durch Navigation entlang Zeiger
+23 24 25
+15 ⊥ ⊥
+abstrahiert stärker von der Hardware
+heute: Listen als einfaches Beispiel
+2
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Doppelt verkettete Liste
+Ziele
+speichere eine Folge von Zahlen ⟨4; 48; 89; 1⟩
+flexible Einfüge- und Löschoperationen
+
+(abstraktes Objekt, Mathe)
+(Funktionalität, Softwaretechnik)
+
+Repräsentation und Effiziente Umsetzung
+(Algorithmik)
+jeder Knoten der Datenstruktur speichert:
+next
+next
+next
+front
+eine der Zahlen der Folge value
+48
+89
+1 ⊥
+⊥ 4
+Zeiger zum nächsten Knoten next
+back
+Zeiger zum vorherigen Knoten prev
+prev
+prev
+prev
+Einstiegspunkte: front, back
+17
+Beispiel: ⟨4; 48; 89; 1⟩
+Einfüge- und Löschoperationen
+next
+next
+next
+next
+front
+Änderungen sind nur lokal
+48
+17
+89
+1 ⊥
+⊥ 4
+konstant viele Zeiger umhängen
+→ konstante Laufzeit (Θ(1))
+back
+prev
+prev
+prev
+prev
+3
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Wo stehen wir?
+Gerade gesehen
+grundlegende Funktionsweise einer Liste
+High-Level Verständnis, warum flexibles Einfügen und Löschen effizient geht
+→ hohes Abstraktionslevel
+Offene Detailfragen
+Gibt es Sonderfälle zu beachten?
+Wie gehe ich mit den ⊥-Pointern um?
+Ziel: Elegante Implementierung, die Sonderfälle reduziert
+Welche nützlichen Operationen gehen sonst noch?
+front
+
+next
+
+⊥ 4
+
+Thomas Bläsius – Algorithmen 1
+
+next
+
+48
+prev
+
+4
+
+17
+Beispiel: ⟨4; 48; 89; 1⟩
+next
+
+17
+prev
+
+next
+
+1 ⊥
+
+89
+prev
+
+prev
+
+back
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Implementierungsdetails
+Dummy Knoten ⊥ für den Kopf
+keine Null-Pointer mehr für erstes
+und letztes Listenelement
+einfacher, dank Reduktion von
+Sonderfällen
+
+head
+
+next
+next
+
+⊥
+
+next
+
+4
+prev
+
+next
+
+48
+prev
+
+next
+
+89
+prev
+
+1
+prev
+
+prev
+
+insertAfter(Node a; Node x)
+// insert node x after node a
+b := a:next
+a
+x:prev := a
+x:next := b
+a:next := x
+b:prev := x
+
+next
+
+x
+
+prev
+
+a
+
+b
+
+next
+
+prev
+
+x
+
+next
+
+prev
+
+b
+
+Beachte: funktioniert auch dann,
+wenn a = ⊥ oder a:next = ⊥
+5
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Mächtigere Operationen
+Operation: Splice (verbinden, zusammenfügen)
+gegeben: zwei Listen L1 und L2 mit Knoten a; b ∈ L1 und c ∈ L2
+Ziel: verschiebe ⟨a; : : : ; b⟩ von L1 nach L2 hinter c
+a′
+
+a
+1
+
+L1 :
+
+4
+
+48
+
+89
+
+L2 :
+
+76
+
+17
+
+5
+
+c
+
+c′
+
+0
+
+9
+
+Ergebnis:
+L1 :
+
+4
+
+48
+
+b
+
+b′
+
+13
+
+7
+
+32
+
+a′
+
+b′
+
+89
+
+7
+
+32
+
+a
+
+Laufzeit: Θ(1)
+
+L2 :
+
+76
+
+17
+c
+
+6
+
+Thomas Bläsius – Algorithmen 1
+
+1
+
+splice(a; b; c)
+// cut out ⟨a; : : : ; b⟩
+a′ := a:prev
+b ′ := b:next
+a′ :next := b ′
+b ′ :prev := a′
+// insert after c
+c ′ := c:next
+a:prev := c
+b:next := c ′
+c:next := a
+c ′ :prev := b
+
+b
+0
+
+9
+
+13
+
+5
+c′
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Liste oder Array?
+Stärken der Liste: flexibel modifizierbar in Θ(1)
+89
+⟨4; 48; 1; 0; 9⟩ ⟨4; 48; 89; 1; 0; 9⟩ ⟨4; 89; 1; 0; 9⟩
+Einfügen, Löschen, Verschieben
+⟨4; 48; 89; 1⟩ + ⟨0; 9; 13⟩ → ⟨4; 48; 89; 1; 0; 9; 13⟩
+Konkatenation zweier Listen
+⟨4; 48; 89; 1; 0; 9; 13; 7⟩ ⟨32; 76; 17; 5⟩
+Verschieben ganzer Bereiche
+⟨4; 48; 89; 1; 0; 9; 13; 7; 32; 76; 17; 5⟩
+Löschen ganzer Bereiche
+Schwächen der Liste
+kein wahlfreier Zugriff (random access)
+man muss die relevanten Knoten immer schon
+in der Hand haben
+in der Praxis: schlechtere konstante Faktoren
+(Speicheroverhead, Cache-Effekte)
+
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Nebenbemerkung
+Θ(1) für das Löschen eines Bereichs ist ggf.
+eine etwas blauäugige Sichtweise
+Was passiert mit dem reservierten Speicher?
+Geben wir den frei? Wer bezahlt das?
+Oder nehmen wir ein memory leak in Kauf?
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Listenvarianten
+Mehr als nur eine Liste
+Liste ist eher ein Konzept als eine einzelne Datenstruktur
+unterschiedliche Anwendungen erfordern im Detail unterschiedliche Implementierungen
+Beispiel 1: Listengröße
+nützliche Information: Größe der Liste (Anzahl Knoten)
+Lösung: speichere diese Info und aktualisiere sie bei Änderungen
+Problem: splice wird teurer, weil wir die verschobenen Elemente zählen müssen
+Beispiel 2: Einfach verkettete Liste
+speichere nur next aber nicht prev
+weniger Speicherplatz, oft schneller
+aber: weniger flexibel, merkwürdige Benutzerschnittstelle (z.B. removeAfter)
+
+8
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Listen in der Wildnis
+C++
+
+9
+
+Thomas Bläsius – Algorithmen 1
+
+https://en.cppreference.com/w/cpp/container/list
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Listen in der Wildnis
+Java
+
+9
+
+Thomas Bläsius – Algorithmen 1
+
+https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/LinkedList.html
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Stapel und Warteschlangen
+Stack
+Operationen: pushBack, popBack
+Implementierung: z.B. mittels Array
+LIFO: Last In – First Out
+Queue
+Operationen: pushBack, popFront
+Implementierung: z.B. mittels Liste
+FIFO: First In – First Out
+Deque – Double-ended Queue
+Operationen: pushBack, popBack,
+pushFront, popFront
+Implementierung: z.B. mittels Liste
+10
+
+Thomas Bläsius – Algorithmen 1
+
+pushBack
+popBack
+
+popFront
+
+pushFront
+popFront
+
+pushBack
+
+pushBack
+popBack
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Suchen
+Problemstellung
+gegeben: Folge von n Zahlen A (als Array oder Liste) und eine Zahl x
+Ziel: finde x in der Folge A (z.B. erstes/jedes Auftreten)
+?
+
+45 ∈ ⟨4; 48; 89; 1; 0; 9; 13; 7; 32; 76; 17; 5; 37; 28; 82; 63⟩
+Lineare Suche
+schaue jedes Element aus A an
+lineare Laufzeit: Θ(n)
+Geht es besser?
+nur manche Elemente betrachtet → x kann sich unter den nicht angeschauten verstecken
+wir müssen zumindest die Eingabe einmal komplett lesen ⇒ Ω(n)
+also: besser als Θ(n) geht nicht, außer wir fordern zusätzliche Eigenschaften für A
+
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Suchen in sortierten Folgen
+Problemstellung
+gegeben: sortierte Folge von n Zahlen A und eine Zahl x
+Ziel: finde x in der Folge A (z.B. erstes Auftreten oder Vorgänger)
+?
+
+45 ∈ ⟨0; 1; 4; 5; 7; 9; 13; 17; 28; 32; 37; 48; 63; 76; 82; 89⟩
+Binäre Suche
+durch einen Vergleich: entscheide ob x in der linken oder rechten Hälfte von A liegt
+suche rekursiv in der relevanten Hälfte von A
+Abbruch: zu durchsuchende Folge ist nur noch konstant groß (hier: 2)
+Anzahl Vergleiche
+pro Vergleich halbiert sich die Größe von A → nur Θ(log n) Halbierungen
+Implementierung
+pro Schritt: Zugriff auf mittleres Element im aktuell betrachteten Bereich
+wahlfreier Zugriff → Array
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Abstraktionslevel: Idee → Implementierung
+binSearchRec(A; x; beg = 0; end = n − 1)
+// find x in ⟨A[beg]; : : : ; A[end]⟩
+if end − beg = 1 then
+// base case: range has size 2
+if x = A[beg] then return beg
+if x = A[end] then return end
+return between beg and end
+// general case: half the range
+mid := ⌈(beg + end)=2⌉
+if x < A[mid] then
+return binSearchRec(A; x; beg; mid)
+else
+return binSearchRec(A; x; mid; end)
+13
+
+Thomas Bläsius – Algorithmen 1
+
+Was müssen wir beweisen?
+ausgegebenes Ergebnis ist korrekt
+Terminierung nach Laufzeit Θ(log n)
+Korrektheitsbeweis mittels Invarianten
+zeige, dass wir immer im richtigen Teilbereich suchen: A[beg] ≤ x ≤ A[end]
+A:
+
+Bereich des aktuellen Aufrufs
+beg
+mid
+end
+neuer Bereich für x < A[mid]
+neuer Bereich für x ≥ A[mid]
+
+wenn A[beg] ≤ x ≤ A[end] im aktuellen
+Aufruf gilt
+dann auch im nächsten
+Achtung am Anfang:
+A[0] ≤ x ≤ A[n − 1] muss nicht gelten!
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Implementierung: zweiter Versuch
+Was genau wollen wir haben?
+binSearchRec(A; x; beg = 0; end = n)
+Index i, sodass: A[i] = x
+(falls x ∈ A) // find i ∈ [beg; end] with this property
+oder A[i − 1] < x < A[i]
+(falls x ̸∈ A) if beg = end then return beg
+(Konvention: A[−1] = −∞, A[n] = ∞)
+
+Invariante für diesen Index i: i ∈ [beg; end]
+Beweis der Invariante
+gilt am Anfang mit beg = 0 und end = n
+für den Erhalt der Invariante, prüfe 4 Fälle:
+Fall 1.1: x ∈ A und x ≤ A[mid]
+Fall 1.2: x ∈ A und x > A[mid]
+Fall 2.1: x ̸∈ A und x ≤ A[mid]
+Fall 2.2: x ̸∈ A und x > A[mid]
+
+// general case: half the range
+mid := ⌊(beg + end)=2⌋
+if x ≤ A[mid] then
+return binSearchRec(A; x; beg; mid)
+else
+return binSearchRec(A; x; mid + 1; end)
+Bereich des aktuellen Aufrufs
+beg
+mid
+end
+neuer Bereich für x ≤ A[mid] neuer Bereich für x > A[mid]
+
+Basisfall: mit der Invariante sehr einfach
+14
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Implementierung: zweiter Versuch
+Was genau wollen wir haben?
+binSearchRec(A; x; beg = 0; end = n)
+Index i, sodass: A[i] = x
+(falls x ∈ A) // find i ∈ [beg; end] with this property
+oder A[i − 1] < x < A[i]
+(falls x ̸∈ A) if beg = end then return beg
+(Konvention: A[−1] = −∞, A[n] = ∞)
+
+Invariante für diesen Index i: i ∈ [beg; end]
+Beweis der Laufzeit
+end − beg wird mindestens halbiert:
+j
+k
+mid − beg = beg+end
+− beg
+2
+beg+end
+end−beg
+−
+beg
+=
+2
+“j
+k2
+”
+end − (mid + 1) = end − beg+end
++1
+2
+≤ end − beg+end
+2
+end−beg
+=
+2
+
+≤
+
+14
+
+Thomas Bläsius – Algorithmen 1
+
+// general case: half the range
+mid := ⌊(beg + end)=2⌋
+if x ≤ A[mid] then
+return binSearchRec(A; x; beg; mid)
+else
+return binSearchRec(A; x; mid + 1; end)
+Bereich des aktuellen Aufrufs
+beg
+mid
+end
+neuer Bereich für x ≤ A[mid] neuer Bereich für x > A[mid]
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Binäre Suche
+Theorem
+Sei M eine geordnete Menge (z.B. Z). Sei A ein sortiertes Array der Länge n mit Werten
+aus M und sei x ∈ M. Die binäre Suche findet den Index i mit A[i − 1] < x ≤ A[i] in
+Θ(log n) Vergleichen.
+(Konvention: A[−1] = −∞, A[n] = ∞)
+Folgerungen: Bereichsanfragen
+für a; b ∈ M können wir in Θ(log n) herausfinden, wie viele Elemente A aus [a; b] enthält
+A enthält k Elemente aus [a; b] → wir können sie in Θ(log n + k) aufzählen
+Einfache Idee, mit Stolperfallen in der Umsetzung
+abstrakte Idee: vergleiche in jedem Schritt mit mittlerem Element → halbiere Suchraum
+Umsetzung: man muss mit Randfällen etwas aufpassen
+hilfreiche Technik: Korrektheitsbeweis mittels Invariante
+
+15
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Schneller geht es nicht
+Theorem
+Man kann nicht in o(log n) suchen.
+
+Sehr verkürzte Darstellung!
+
+Theorem
+Es gibt keine Datenstruktur die für jede geordnete Menge M und jede Teilmenge M ′ ⊆ M
+mit n := |M ′ | berechnet werden kann, die für jedes x ∈ M in o(log n) Zeit testet, ob x ∈ M ′ .
+Warum ist das so umständlich?
+Sagt die einfachere Formulierung nicht das gleiche!?!
+hier wichtig: wir wissen von M nur, dass es eine geordnete Menge ist
+das einzige was wir mit Elementen aus M tun können: Ordnungsrelation
+überprüfen → jede Entscheidung basiert auf einem Vergleich
+wir sagen auch: vergleichsbasiertes Suchen geht nicht in o(log n)
+für manche Mengen M kann man tatsächlich in o(log n) suchen
+(später auf Übungsblatt)
+16
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Schneller geht es nicht
+Theorem
+Es gibt keine Datenstruktur die für jede geordnete Menge M und jede Teilmenge M ′ ⊆ M
+mit n := |M ′ | berechnet werden kann, die für jedes x ∈ M in o(log n) Zeit testet, ob x ∈ M ′ .
+Beweis
+Ausführung der Suche hängt nur von Vergleichen zwischen x und Elementen in M ′ ab
+Menge aller Ausführungen: Entscheidungsbaum
+<
+>
+=
+eine Ausführung: Pfad von Wurzel zu Blatt
+<
+>
+<
+>
+=
+=
+→ Pfadlänge = Anzahl Vergleiche
+< = >
+< = >
+< = >
+bei „=“ wird terminiert, da x gefunden < = >
+→ blaues Blatt
+jedes x ∈ M ′ findet man an einem andern blauen Blatt
+k−1
+P i
+2 = 2k − 1 verschiedene blaue Blätter
+höchstens k Vergleiche ⇒ höchstens
+i=0
+′
+
+für k < log2 n kann nicht für jedes x ∈ M das richtige Ergebnis herauskommen
+17
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Zusammenfassung
+Listen
+verzeigerte Datenstruktur zur Speicherung einer Folge
+flexibel modifizierbar: z.B. schnelles Einfügen, Löschen, Splice
+kein wahlfreier Zugriff mittels Index (kein random access)
+Binäre Suche
+Abstraktionsebene
+Voraussetzung: sortierte Folge und wir haben random access
+Vergleich mit mittlerem Element des aktuellen Suchraums
+hoch
+(Ideenfindung,
+Abschätzung
+der Laufzeit)
+→ halbiert Suchraum → Θ(log n) Vergleiche
+Korrektheit der Detailumsetzung via Invariante
+niedrig
+(Formalisierung, Weg zur Implementierung)
+
+Untere Schranke
+besser als Θ(log n) geht es nicht
+außer, wenn wir Annahmen darüber machen, auf welcher Art von Daten wir suchen
+18
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

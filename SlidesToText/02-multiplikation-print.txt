@@ -1,0 +1,665 @@
+Algorithmen 1
+Teile und Herrsche
+Karatsubas Algorithmus und Master-Theorem
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Multiplikation: Idee → Code
+Wie geht das nochmal?
+a
+b
+5678 · 1234
+5678
+113
+15
+16
+17
+20
+23
+24
++
+223
+73
+12
+7006652
+
+berechne a · bi für jede Ziffer bi von b = (bn−1 : : : b0 )
+verschiebe Ergebnis um i
+Stellen nach links
+addiere Ergebnisse
+Hohe Abstraktionsebene
+leicht zu verstehen
+schwer zu implementieren
+2
+
+Thomas Bläsius – Algorithmen 1
+
+Konkretisierung mittels Pseudocode
+mult(a; b)
+// Θ(n2 )
+// Θ(1)
+total := 0
+// Θ(n2 )
+for i from 0 to n − 1 do
+// Θ(n)
+prod := a · bi · 10i
+// Θ(n)
+total := total + prod
+// Θ(n)
+return total
+a · bi
+carry := 0
+for j from 0 to n − 1 do
+(carry; cj ) := aj · bi + carry
+cn := carry
+return (cn ; : : : ; c0 )
+
+// Θ(n)
+// Θ(1)
+// Θ(n)
+// Θ(1)
+// Θ(1)
+// Θ(n)
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Einschub: Pseudocode
+Nutzen
+interpoliert zwischen hoher und niedriger Abstraktionsebene
+viele mächtige Operationen → hohe Abstraktionsebene → Ideenvermittlung
+nur primitive Operationen → tiefe Abstraktionsebene → tatsächliche Implementierung
+kann helfen von der high-level Idee zu einer Implementierung zu kommen
+kann bei der Analyse (Laufzeit und Korrektheit) helfen
+Regeln
+in der Vorlesung: Syntax wird immer on-the-fly miterklärt
+flexibler als bei richtiger Programmiersprache (z.B. mathematische Formeln)
+man kann auch etwas kreativ sein, sollte es aber konsistent halten
+Hauptziele:
+gut lesbar (für Menschen)
+richtige Abstraktionsebene
+3
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Wie schnell multipliziert ein Computer Zahlen?
+Typische Annahme
+Θ(1) für die Multiplikation zweier Zahlen
+passt meist gut zur Realität
+macht die Analyse angenehm
+Warum lernen wir dann hier etwas über Multiplikations-Algorithmen?
+Warum erlauben wir uns pro Schritt nur Ziffern zu multiplizieren?
+schönes Beispiel für Laufzeitanalyse
+schönes Beispiel für Rekursion
+schönes Beispiel für Teile und Herrsche
+blödes Beispiel, weil ihr dann denkt Zahlen zu multiplizieren wäre teuer
+Also: Der folgende Algo ist nicht relevant, außer ihr multipliziert sehr sehr große Zahlen. In
+der Vorlesung gilt sonst immer: multiplizieren in Θ(1).
+4
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Teile und Herrsche
+Schriftliche Multiplikation
+5678 · 1234 = 5678 · (1 · 103 + 2 · 102 + 3 · 101 + 4 · 100 )
+
++
+5678 · 1 · 103
+
+5678 · 2 · 102
+
+5678 · 3 · 101
+
+5678 · 4 · 100
+
++
+5 · 103 · 2 · 102
+
+6 · 102 · 2 · 102
+
+7 · 101 · 2 · 102
+
+8 · 100 · 2 · 102
+
+Idee im Kern
+spalte schwieriges Problem in mehrere leichtere Probleme
+wiederhole das, bis die Instanz trivial ist
+hier: Problem selbst wird substanziell leichter (Zahl → Ziffer)
+allgemein: Problem bleibt gleich, aber Instanz wird leichter (z.B. kleineres n)
+5
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Teile und Herrsche
+Multiplikation mit anderer Zerlegung
+5678 · 1234 = (56 · 102 + 78) · (12 · 102 + 34)
+
++
+
+ab cd
+56 · 12 · 104
+
+56 · 34 · 102
+
+78 · 12 · 102
+
+78 · 34 · 100
+
++
+
++
+
++
+
++
+
+mult(x; y )
+// assumption: n = |x| = |y | = 2k for k ∈ N
+if n = 1 return x · y
+a; b := first and second half of x
+c; d := first and second half of y
+return mult(a; c) · 10n + mult(b; d)
++(mult(a; d) + mult(c; b)) · 10n=2
+
+Größe des Rekursionsbaums
+jeder Knoten hat 4 Kinder → Lage i hat 4i Knoten
+n wird mit jeder Lage halbiert → log2 (n) Lagen
+logP
+2 (n)
+` log (n) ´
+` 2´
+i
+2
+Knoten insgesamt:
+4 ∈Θ 4
+=Θ n
+i=0
+
+` 2´
+Achtung: das heißt noch nicht, dass die Laufzeit auch Θ n ist (stimmt in diesem Fall aber)
+6
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Einschub: Exponentielle Summen & geometrische Reihen
+Exponentiell wachsende Lagen
+Lage i
+0
+1
+2
+
+Summe der Knoten
+Anzahl Knoten
+40 = n2 · 1=4k
+41 = n2 · 1=4k−1
+42 = n2 · 1=4k−2
+
+k −1
+4k−1 = n2 · 1=41
+k = log2 (n)
+4k = n2 · 1=40
+
+klein → groß
+k
+P
+4i
+i=0
+
+groß → klein
+k ` ´
+k
+` 1 ´i
+P
+2 P 1 i
+2
+n · 4 =n ·
+4
+i=0
+
+i=0
+
+geometrische Summe ∈ Θ(1)
+
+∈ Θ(n2 )
+
+Mentaler Shortcut: Summen, die exponentiell schrumpfen/wachsen
+P i
+i c wird asymptotisch vom größten Summanden dominiert
+b
+` a
+´
+P
+(c ∈ (0; 1) ∪ (1; ∞) konstant)
+i
+b
+c ∈Θ c +c
+also:
+(a; b > 0 können von n abhängen)
+i=a
+
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Ziel: weniger rekursive Aufrufe
+Bisher
+xy = (a · 10n=2 + b) · (c · 10n=2 + d)
+= ac · 10n + (ad + bc) · 10n=2 + bd
+vier rekursive Multiplikationen
+
+mult(x; y )
+// assumption: n = |x| = |y | = 2k for k ∈ N
+if n = 1 return x · y
+a; b := first and second half of x
+c; d := first and second half of y
+return mult(a; c) · 10n + mult(b; d)
++(mult(a; d) + mult(c; b)) · 10n=2
+
+Idee zur Verbesserung
+ignoriere zunächst die 10er-Potenzen
+(a + b) · (c + d) = ac + ad + bc + bd
+wenn wir (a + b) · (c + d), ac und bd kennen, können wir daraus ad + bc erhalten
+berechne (a + b) · (c + d), ac und bd
+berechne dann (ad + bc) = (a + b) · (c + d) − ac − bd
+nur drei rekursive Multiplikationen
+dafür etwas mehr Additionen
+8
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Karatsubas Algorithmus
+mult(x; y )
+// assumption: n = |x| = |y | = 2k for k ∈ N
+if n = 1 return x · y
+a; b := first and second half of x
+c; d := first and second half of y
+ac := mult(a; c)
+bd := mult(b; d)
+sum := mult((a + b); (c + d)) − ac − bd
+return ac · 10n + sum · 10n=2 + bd
+
+Erinnerung
+xy = ac · 10n + (ad + bc) · 10n=2 + bd
+(ad + bc) = (a + b) · (c + d) − ac − bd
+Anzahl Knoten im Rekursionsbaum
+3 Kinder → 3i Knoten auf Lage i
+n wird immer halbiert → log2 (n) Lagen
+log2 (n)
+”
+”
+“
+“
+X
+3i ∈ Θ 3log2 (n) = Θ nlog2 (3)
+i=0
+` 1;585 ´
+⊆O n
+
+Offene Fragen
+Wie viel Arbeit macht man in jedem Knoten? Sind die zusätzlichen Additionen schlimm?
+Können wir annehmen, dass n eine Zweierpotenz ist? Könnte nicht |a + b| > n2 sein?
+9
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Karatsubas Algorithmus – Laufzeitanalyse
+Arbeit pro Knoten
+linear in`der Größe
+der Zahlen
+´
+also: Θ n · 21i für einen Knoten auf Lage i
+
+·
+·
+
+·
+
+·
+
+Arbeit pro Lage
+3i Knoten auf Lage i
+“ ` ´”
+`
+´
+1
+3 i
+i
+Gesamtarbeit für Lage i: 3 · Θ n · 2i = Θ n · 2
+Arbeit insgesamt
+exponentielle Summe → dominiert durch letzte Lage i = log2 (n)
+“ ` ´
+”
+“ “ log (3) ””
+` log (3) ´
+log
+(n)
+2
+3
+n 2
+also: Θ n · 2
+=Θ n·
+=Θ n 2
+n
+Sanity Check: letzte Lage hat nlog2 (3) Knoten und konstanten Aufwand pro Knoten
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Rundungsfehler?
+Annahme: n = |x| = |y | ist Zweierpotenz
+mult(x; y )
+···
+Problem: a + b hat ggf. n2 + 1 Ziffern
+a; b := first, second half of x
+also: keine Zweiterpotenz mehr im rekursiven Aufruf
+···
+Umgang mit ungeradem n
+sum := mult((a + b); (: : : )) : : :
+n ungerade ⇒ |a| = ⌈ n2 ⌉ = n2 + 12
+damit hat a + b bis zu n2 + 32 Ziffern
+
+Nebenrechnung
+n0 = n
+
+Was ändert sich bei der Analyse?
+ni = #Ziffern auf Lage i (n0 = n)
+bisher: ni = 2ni
+jetzt: ni+1 ≤ n2i + 32 ≤ 2ni + 3
+
+n1 = n2 + 32
+
+n2 = 2n2 + 232 + 32
+
+Achtung: Abbruch der Rekursion müsste man hier nochmal genauer anschauen.
+Möglichkeit 1: Zeige, dass es für konstant viele Ziffern nach konstanter Zeit terminiert.
+Möglichkeit 2: Brich die Rekursion nicht erst bei n = 1, sondern etwas früher ab.
+Thomas Bläsius – Algorithmen 1
+
+· 12 + 32
+
+n3 = 2n3 + 233 + 232 + 32
+
+` log (3) ´
+kein asymptotischer Unterschied → Laufzeit Θ n 2
+
+11
+
+· 12 + 32
+
+ni = 2ni
+
++3·
+
+i
+P
+1
+j=1
+
+2j
+
+· 12 + 32
+
+≤ 2ni + 3
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Karatsubas Algorithmus
+Theorem
+Karatsubas `Algo. multipliziert
+zwei
+n-Ziffern
+´
+`
+´
+Zahlen in Θ nlog2 (3) ⊆ O n1;585 Zeit.
+Analyse via Rekursionsbaum
+Wie viele Knoten sind auf Lage i?
+Wie groß ist das n auf Lage i?
+Wie viel Zeit kostet ein Knoten in Lage i?
+
+mult(x; y )
+if n = 1 return x · y
+a; b := first and second half of x
+c; d := first and second half of y
+ac := mult(a; c)
+bd := mult(b; d)
+sum := mult((a + b); (c + d)) − ac − bd
+return ac · 10n + sum · 10n=2 + bd
+
+Warum ist das so viel Arbeit?
+Muss ich das für jeden rekursiven Algorithmus so analysieren?
+Kann man da nicht irgendwie abkürzen?
+
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Rekurrenzen
+Laufzeit als Formel
+Laufzeit
+ȷ für Basisfall → Kosten in den Blättern
+Θ(1) ` ´
+wenn n = 1,
+T (n) =
+3 · T n2 + Θ(n) wenn n > 1.
+Anzahl rekursiver Aufrufe
+Laufzeit für den Aufruf selbst
+→ Anzahl Kinder im Baum
+→ Kosten für einen Knoten
+neue Instanzgrößen
+→ Änderung von n zwischen Lagen
+
+` log (3) ´
+⇒ T (n) ∈ Θ n 2
+Können wir das verallgemeinern?
+ȷ
+Θ(1)` ´
+wenn n = 1,
+T (n) =
+a · T bn + Θ(nc ) wenn n > 1.
+
+⇒ T (n) ∈ Θ (??)
+13
+
+Thomas Bläsius – Algorithmen 1
+
+mult(x; y )
+if n = 1 return x · y
+a; b := first and second half of x
+c; d := first and second half of y
+ac := mult(a; c)
+bd := mult(b; d)
+sum := mult((a + b); (c + d)) − ac − bd
+return ac · 10n + sum · 10n=2 + bd
+Analyse via Rekursionsbaum
+Wie viele Knoten sind auf Lage i?
+Wie groß ist das n auf Lage i?
+Wie viel Zeit kostet ein Knoten in Lage i?
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Lösen allgemeiner Rekurrenzen
+Können wir das verallgemeinern?
+ȷ
+Θ(1)` ´
+wenn n = 1,
+T (n) =
+a · T bn + Θ(nc ) wenn n > 1.
+Situation für Lage i
+#Knoten:
+Instanzgröße:
+Kosten pro Knoten:
+
+14
+
+Analyse via Rekursionsbaum
+Wie viele Knoten sind auf Lage i?
+Wie groß ist das n auf Lage i?
+Wie viel Zeit kostet ein Knoten in Lage i?
+
+Gesamtkosten für Lage i Gesamtkosten für den Baum
+
+a
+
+i
+
+n
+bi
+nc
+b ci
+
+a
+
+i
+
+nc
+· bci
+
+=
+
+` a ´i
+bc
+
+·n
+
+c
+
+Anzahl Lagen
+
+logb (n)
+
+P ` a ´i
+
+· nc
+
+bc
+exponentielle Summe
+→ dominiert von größtem Summanden
+i
+
+(außer wenn a=b c = 1)
+
+a < bc
+
+a = bc
+
+T (n) ∈ Θ (nc )
+
+T (n) ∈ Θ (nc log n)
+
+a > bc
+` log (a) ´
+T (n) ∈ Θ n b
+
+(Kosten der Wurzel dominiert)
+
+(Kosten auf jeder der logb (n) Lagen gleich)
+
+(Kosten der nlogb (a) Blätter dominiert)
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Master-Theorem
+Theorem
+Sei T (n) = a · T ( bn ) + f (n) mit f (n) ∈ Θ(nc ) und T (1) ∈ Θ(1). Dann gilt
+8
+wenn a < b c ;
+<Θ (nc )
+c
+T (n) ∈ Θ `(nc log n)
+wenn
+a
+=
+b
+;
+´
+:
+Θ nlogb (a)
+wenn a > b c :
+Ein Name, viele Theoreme
+es gibt viele Varianten des Master-Theorems
+Einschränkung f (n) ∈ Θ(nc ) kann man aufweichen
+asymmetrische Verzweigung: z.B. T (n) = T ( n2 ) + 2T ( n4 )
+Runden auf ganze Zahlen
+aktuelles Papier zum Thema:
+William Kuszmaul, Charles E. Leiserson
+Floors and Ceilings in Divide-and-Conquer Recurrences
+Symposium on Simplicity in Algorithms (SOSA 2021)
+15
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Zusammenfassung
+[Karatsuba; 1962]
+Karatsubas Algorithmus
+algorithmische Technik: Teile und Herrsche
+` log (3) ´
+` 1;585 ´
+Multiplikation zweier n-Ziffern Zahlen in Θ n 2
+⊆O n
+Zeit
+noch` schneller:
+´
+` 1;465 ´
+log3 (5)
+[Toom, Cook; 1963–1966]
+Θ n
+⊆O n
+[Schönhage, Strassen; 1971]
+O (n · log n · log log n)
+`
+´
+O(log∗ n)
+[Fürer; 2007]
+O n · log n · 2
+
+Auflösung von Rekurrenzen
+Analyse des Rekursionsbaums + exponentielle Summen → Master-Theorem
+Master-Theorem funktioniert nicht immer (z.B. T (n) = 2T (n − 1))
+weitere Techniken: branching vector, vollständige Induktion
+nützlich: WolframAlpha
+Pseudocode
+16
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Erinnerung
+
+meldet euch bis Freitag 12 Uhr für die Tutorien an
+(Infos auf der Homepage)
+
+kommt in den Discord-Server
+(Link im Ilias)
+
+17
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

@@ -1,0 +1,535 @@
+Algorithmen 1
+Dynamische Arrays & amortisierte Analyse
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+Datenstrukturen
+Was ist das überhaupt?
+Algorithmus: Abfolge von Schritten. Jeder Schritt . . .
+liest (wenige) Daten im Speicher
+verarbeitet die gelesenen Daten
+schreibt Daten in den Speicher
+Zugriff auf den Speicher mittels Speicheradressen
+Datenstruktur: Abstraktionsebene über dem Speicher
+versteckt, wie Daten genau im Speicher abgelegt sind
+bietet Schnittstelle mit angenehmen Operationen
+
+2
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Zwei Arten der Datenablage
+Felder (Arrays)
+Menge aufeinanderfolgender Speicherzellen
+Zugriff mit Adresse bzw. Index an beliebiger Stelle in Θ(1)
+sehr nah an der Hardware
+heute: Komfort-Funktionen
+Verzeigerte Strukturen
+viele kleine Stückchen Speicher (Knoten)
+ein Knoten speichert:
+Daten, die uns tatsächlich interessieren
+Speicheradressen anderer Knoten (Zeiger)
+Zugriff durch Navigation entlang Zeiger
+abstrahiert stärker von der Hardware
+nächstes Mal: Listen als einfaches Beispiel
+3
+
+Thomas Bläsius – Algorithmen 1
+
+Index: 0 1 2 3 4 5 6 7 8 9 10 11
+Adresse: 30 31 32 33 34 35 36 37 38 39 40 41
+Daten: 4 48 89 1 0 9 13 7 32 76 17 5
+
+3 4 5
+4 48 17
+
+17 18 19
+42 ⊥ ⊥
+48 49 50
+7 23 17
+23 24 25
+15 ⊥ ⊥
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Beschränkte und Unbeschränkte Arrays
+Index: 0 1 2 3 4 5 6 7 8 9 10 11
+Beschränkte Arrays
+Adresse: 30 31 32 33 34 35 36 37 38 39 40 41
+beim Erstellen des Arrays muss ich festlegen,
+Daten: 4 48 89 1 0 9 13 7 32 76 17 5
+wie viel Speicher ich brauche
+nachträgliches Vergrößern schwierig: nachfolgende Speicherzellen ggf. schon belegt
+Problem: benötigter Speicher ist ggf. durch äußere Faktoren bedingt (Nutzereingabe)
+
+Ich wünsche mir: unbeschränkte Arrays
+Verhalten wie bei Arrays (direkter Zugriff mittels Index)
+zusätzliche Funktionen:
+4 48 89 1 0 :pushBack(9)
+4 48 89 1 0 9
+4 48 89 1 0 :popBack()
+4 48 89 1
+4 48 89 1 0 :size()
+5
+Wünschen kann man sich ja viel, aber wie setzen wir das um?
+
+4
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Unbeschränkte Arrays: naives Vorgehen
+Umsetzung von pushBack(x)
+erstelle neues Array, das um 1 größer ist
+kopiere Daten von altem in neues Array
+schreibe x in die freie Zelle am Ende
+lösche altes Array
+
+Index: 0 1 2 3 4
+Adresse: 30 31 32 33 34
+Daten: 4 48 89 1 0
+
+0 1 2 3 4 5
+82 83 84 85 86 87
+4 48 89 1 0 x
+
+Kosten für das Einfügen von Elementen
+Einfügen von item Element: Kosten Θ(i)
+„n «
+n
+P
+P
+i = Θ(n2 )
+Θ(i) = Θ
+Einfügen von n Elementen:
+i=1
+
+i=1
+
+im Schnitt: Kosten Θ(n) pro Operation → viel zu teuer
+Müssen wir wirklich jedes Mal umkopieren?
+alloziere großzügig etwas mehr Speicher
+nur dann kopieren, wenn der allozierte Speicher voll ist
+5
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Unbeschränkte Arrays: besseres Vorgehen
+Größe vs. Kapazität
+Index: 0 1 2 3
+Kapazität: für das Array allozierter Speicher
+Adresse: 30 31 32 33
+Größe: tatsächlich benutzte Speicherzellen
+Daten: 4 48 89 1
+nach außen Sichtbar: Größe (via size())
+
+0 1 2 3 4 5 6 7
+82 83 84 85 86 87 88 89
+4 48 89 1 0
+
+Beispiel:
+
+Umsetzung von pushBack(x)
+pushBack(89) pushBack(1) pushBack(0)
+falls Kapazität > Größe: einfach einfügen
+sonst: erstelle neues Array mit doppelter Kapazität und verfahre wie bisher
+Kosten für das Einfügen von Elementen
+Kosten für ites Element, wenn i = 2j + 1: Θ(i) = Θ(2j )
+sonst: Θ(1)
+log
+n
+P
+P2 n
+Θ(1) +
+Θ(2j ) = Θ(n) + Θ(2log2 n ) = Θ(n)
+Einfügen von n Elementen:
+i=1
+
+j=0
+
+im Schnitt: Kosten Θ(1) pro Operation → besser geht’s nicht
+6
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Unbeschränkte Arrays: Anmerkungen
+Speicherverschwendung
+wir allozieren mehr Speicher als wir tatsächlich brauchen
+aber: höchstens einen Faktor 2 zu viel
+Was machen wir bei popBack()?
+hier kann man verschiedene Strategien verfolgen
+z.B.: einfach die Größe des Arrays verringern aber Kapazität beibehalten → Θ(1)
+Worst Case vs. Durchschnitt
+im Worst Case benötigt eine einzelne Operation Θ(n) Zeit (n = Arraygröße)
+aber: im Schnitt benötigt jede Operation nur Θ(1) Zeit
+wir sagen: pushBack() hat amortisiert konstante Laufzeit
+(werden wir später noch kennen lernen)
+Abgrenzung zum Average Case
+Average Case: Durchschnitt über alle möglichen Eingaben/Ausführungen
+amortisiert: Durchschnitt über alle Operationen für beliebige (Worst Case) Eingabe
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Amortisierung: Was heißt das genau?
+Theorem
+Eine beliebige Abfolge von n Operationen (pushBack oder popBack) auf einem initial
+leeren Array benötigt Θ(n) Zeit.
+Folgerung
+Sei A ein Algorithmus, der ein Array benutzt. Sei Θ(f (n)) die Laufzeit von A, die man
+unter der Annahme erhält, dass jede Array-Operation (pushBack, popBack) Θ(1) Zeit
+benötigt. Dann ist die tatsächliche Laufzeit von A auch Θ(f (n)).
+Anmerkung
+wir sagen, dass die Laufzeit jeder Operation amortisiert Θ(1) ist
+manchmal sind einzelne Operationen teurer
+wir können bei der Analyse des Algorithmus aber so tun als wäre das nicht der Fall
+
+8
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Unbeschränkte Arrays in der Wildnis
+C++
+
+9
+
+Thomas Bläsius – Algorithmen 1
+
+https://en.cppreference.com/w/cpp/container/vector
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Unbeschränkte Arrays in der Wildnis
+Java
+
+9
+
+Thomas Bläsius – Algorithmen 1
+
+https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ArrayList.html
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Unbeschränkte Arrays: Zusammenfassung
+Effiziente Operationen ((amortisiert) konstant)
+Zugriff an beliebiger Stelle
+hinten einfügen
+hinten löschen
+Langsame Operationen (linear)
+einfügen an beliebiger Stelle
+löschen an beliebiger Stelle
+zwei Arrays konkatenieren
+Teilarray löschen
+
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Ausflug: Amortisierte Analyse
+Situation
+Sequenz von vielen Operationen
+manche sind teuer, die meisten sind günstig → günstig im Durchschnitt
+Amortisierte Analyse
+Worst Case über alle möglichen Sequenzen von Operationen
+Garantie: Gesamtlaufzeit verhält sich, als wäre jede Operation günstig
+Jetzt: verschiedene Techniken für die Analyse
+Aggregation
+Charging
+Konto
+Potential
+jeweils am Beispiel von n pushBack Operationen
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Amortisierte Analyse: Aggregation
+Allgemeines Vorgehen
+summiere die Kosten für alle Operationen
+teile Gesamtkosten durch Anzahl Operationen
+Am Beispiel pushBack
+log
+n
+P
+P2 n
+Θ(1) +
+Θ(2j ) = Θ(n)
+Kosten für das Einfügen von n Elementen:
+i=1
+
+j=0
+
+durchschnittliche Kosten pro Operation: Θ(1)
+Anmerkungen
+schön einfach und direkt
+manchmal unpraktikabel, insbesondere bei mehrere Operationen unterschiedlichen Typs
+
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Amortisierte Analyse: Charging
+Allgemeines Vorgehen
+verteile Kosten-Tokens von teuren zu günstigen Operationen (Charging)
+zeige: jede Operation hat am Ende nur wenige Tokens
+Am Beispiel pushBack
+ite Operation hat i Tokens, falls i = 2j + 1, sonst 1 Token
+i: 6
+7
+8
+9 10 11 12 13 14 15 16
+
+17
+
+18
+
+19
+
+Tokens:
+
+verschiebe von 2j + 1 je zwei Tokens auf jede der 2j−1 − 1 Operation in (2j−1 + 1; 2j ]
+falls i = 2j + 1: Operation wird 2j − 2 = i − 3 Tokens los → 3 Tokens verbleiben
+sonst: Operation erhält höchstens zwei zusätzliche Tokens → maximal 3 Tokens
+Anmerkung
+lokal: hohe Kosten fallen an → charge sie rückwirkend auf vorherige Operationen
+global: aufpassen, dass keine Operation zu viele Token bekommt
+13
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Amortisierte Analyse: Konto
+Allgemeines Vorgehen
+günstige Operation: bezahlt mehr als sie tatsächlich Kostet → ins Konto einzahlen
+teure Operation: bezahlt tatsächlich Kosten zum Teil mit Guthaben aus dem Konto
+Am Beispiel pushBack
+günstige Operation (i ∈ (2j−1 + 1; 2j ]): Kosten 1, bezahle 3 → zahle 2 ins Konto ein
+Guthaben nach Operation 2j beträgt mindestens 2 · (2j − (2j−1 + 1)) = 2j − 2
+teure Operation (i = 2j + 1): Kosten i, bezahle 3 → hebe i − 3 = 2j − 2 vom Konto ab
+jede Operation bezahlt nur 3 und Konto ist nie negativ ⇒ amortisiert Θ(1)
+Anmerkung
+lokal: günstige Operationen zahlen vorausschauend Kosten für spätere Operationen
+global: aufpassen, dass nie mehr abgehoben wird als schon eingezahlt wurde
+sehr ähnlich zum Charging, aber leicht andere Perspektive
+14
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Amortisierte Analyse: Potential
+Allgemeines Vorgehen
+bei der Konto-Methode:
+definiere wie viel jede Operation (amortisiert) bezahlt
+daraus ergibt sich: Änderung des Kontostands
+bei der Potential-Methode:
+definiere Kontostand abhängig vom Zustand der Datenstruktur → Potentialfunktion
+daraus ergibt sich: die amortisierten Kosten jeder Operation
+genauer:
+Potentialfunktion Φ(A): bildet den Zustand des Arrays A auf eine Zahl ≥ 0 ab
+Avor und Anach : die Zustände vor bzw. nach einer Operation
+amortisierte Kosten = tatsächliche Kosten + Φ(Anach ) − Φ(Avor )
+Korrektheit: folgt aus der Korrektheit der Kontomethode
+
+15
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Amortisierte Analyse: Potential
+Am Beispiel pushBack
+Potentialfunktion: Φ(A) = 2 · A:size() − A:capacity()
+beachte: Φ(A) ≥ 0
+günstige Operation:
+Größe wächst um 1; Kapazität bleibt gleich
+Φ(Anach ) − Φ(Avor ) = 2
+amortisierte Kosten = tatsächliche Kosten + 2 ∈ Θ(1)
+teure Operation (i = 2j + 1):
+Größe wächst um 1; Kapazität wächst um 2j
+Φ(Anach ) − Φ(Avor ) = 2 − 2j
+amortisierte Kosten = tatsächliche Kosten + 2 − 2j ∈ Θ(1)
+
+n
+2
+
+n
+2
+
+Φ
+
+`
+
+´
+
+=0
+
+Φ
+
+`
+
+´
+
+=n
+
+n
+
+Erinnerung: amortisierte Kosten = tatsächliche Kosten + Φ(Anach ) − Φ(Avor )
+16
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Amortisierte Analyse: Potential – Anmerkungen
+Wie kommt man auf die Potentialfunktion?
+das ist der Knackpunkt; wenn man die erstmal hat ist der Rest einfach
+Interpretation 1: Maß dafür, wie nah man an einer teuren Operation ist
+niedrig: kommende Operationen sind günstig
+Erinnerung: Φ für pushBack()
+hoch: bald kommt vermutlich eine teure Operation
+Φ(A) = 2 · A:size() − A:capacity()
+n
+n
+Interpretation 2: Maß für die Unordnung der DS
+2
+2
+`
+´
+niedrig: aufgeräumt; nahe dem Idealzustand
+Φ
+=0
+`
+´
+hoch: unordentlich; weit vom Idealzustand entfernt
+Φ
+=n
+Vor- und Nachteile
+Beweis oft recht kompakt
+Potentialfunktion manchmal intuitiv schwer nachvollziehbar
+
+n
+
+(man kann das Ergebnis zwar nachrechnen, weiß aber gar nicht so genau, was man da rechnet)
+
+17
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Amortisierte Analyse
+Amortisierte Kosten
+Charging-Methode
+betrachte beliebige Sequenz statt einzelne Operation
+charge Kosten teurer Operationen rückwirkend auf
+vorherige günstige Operationen
+zeige: Summe der Kosten ist klein
+direkter Beweis: Aggregations-Methode
+amortisiert
+tatsächlich
+Operation 1
+
+Operation 2
+
+Operation 3
+
+Konto-Methode
+günstige Operationen zahlen
+vorausschauend in Konto ein
+teure Operationen heben ab
+zeige: Konto ≥ 0
+
+Operation 2
+
+Konto
+
+Φ
+amortisiert
+
+tatsächlich
+
+tatsächlich
+
+Thomas Bläsius – Algorithmen 1
+
+Operation 3
+
+Potential-Methode
+wie Konto, aber: definiere Kontostand Φ
+Konto
+amort. = tats. + Φnach − Φvor
+
+amortisiert
+
+Operation 1
+18
+
+Operation 1
+
+Operation 2
+
+Operation 3
+
+Operation 1
+
+Operation 2
+
+Operation 3
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Arrays, Datenstrukturen, amortisierte Analyse
+Beschränkte Arrays
+ein Stück Speicher (konsekutive Speicherzellen) auf das man mittels Adresse zugreift
+andere Arten Daten zu speichern basieren immer auf diesem Grundbaustein
+Unbeschränkte Arrays
+Interface für dynamisch wachsendes Array → abstrahiert von einem Stück Speicher
+effiziente Implementierung mittels sinnvoller Größenänderungs-Strategie
+Drei Sichtweisen auf eine Datenstruktur
+Mathe abstraktes Objekt (hier: Folge von Zahlen ⟨4; 48; 89; 1; 0; 9; 13; 7; 32; 76; 17; 5⟩)
+Softwaretechnik Funktionalität (hier: Zugriff mit Index, pushBack, popBack, size)
+Algorithmik Repräsentation und effiziente Umsetzung
+Amortisierte Analyse
+wichtige Technik für die Analyse von Algorithmen
+19
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+Hochschulgruppen
+Was ist das?
+studentisch organisierte Gruppen
+große thematische Bandbreite: von sozialem Engagement bis hin zum Rennauto bauen
+Mitgliederwerbung
+viele Gruppen suchen neue Mitglieder
+einige Infoveranstaltungen in den nächsten Wochen
+siehe auch: Link auf der Homepage
+
+20
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+

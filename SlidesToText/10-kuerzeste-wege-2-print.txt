@@ -1,0 +1,1028 @@
+Algorithmen 1
+Kürzeste Wege: negative Kanten und APSP
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Kürzeste Pfade mit negativen Kantenlängen
+Problem: Single-Source Shortest Path (SSSP)
+Gegeben einen gerichteten Graphen G = (V; E), Kantenlängen len : E → Z und s ∈ V ,
+berechne dist(s; t) für alle t ∈ V .
+Negative Kreise
+Pfad kann mehrfach im Kreis laufen
+beliebig kleine Länge möglich (Distanzen −∞?)
+
+2
+
+3
+
+1
+
+2
+
+s
+−1
+
+−5
+3
+
+2
+
+Möglichkeit 1
+erlaube nur einfache Pfade, die keine Knoten mehrfach besuchen
+Problem Hamilton-Pfad als Spezialfall
+(vermutlich kein polynomieller Algorithmus möglich, siehe TGI nächstes Semester)
+
+Möglichkeit 2
+erkenne negative Kreise
+Abbruch, wenn negativer Kreis gefunden
+2
+
+Thomas Bläsius – Algorithmen 1
+
+diese Variante betrachten wir im Folgenden
+(daher auch gerichtete Graphen)
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Erinnerung: Dijkstras Algorithmus
+Grundsätzliches Vorgehen
+speichere d[v ] für jeden Knoten v : Länge des kürzesten bekannten sv -Pfades
+Relaxierung der Kante (u; v ): wenn d[v ] > d[u] + len(u; v ), setze d[v ] = d[u] + len(u; v )
+3
+
+3
+s
+
+Reihenfolge der Relaxierungen bei Dijkstra
+Exploriere Knoten u: relaxiere alle ausgehenden Kanten von u
+exploriere Knoten aufsteigend nach d[u]
+Korrektheit: beim Explorieren gilt d[u] = dist(s; u)
+
+0
+
+u
+
+2
+
+8
+
+8
+
+5
+
+v
+5
+
+0
+
+5
+
+s
+3
+
+−3
+∞
+1
+
+3
+Mit negativen Kantenlängen
+Problem: d[u] könnte später wegen negativem Pfad noch kleiner werden
+Hoffnung: einfach weiter relaxieren bis sich nichts mehr ändert führt zum Ziel
+3
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Algorithmus von Bellman und Ford
+Grober Plan
+Relaxierung der Kante (u; v )
+relaxiere jede Kante einmal
+3
+3
+u
+8
+iteriere, bis sich keines der d[v ] mehr ändert
+s
+2
+5
+8
+−4
+∞
+∞
+4
+0
+0
+Problemfall negative Kreise
+v
+Pfade werden immer kürzer,
+wenn d[v ] > d[u] + len(u; v )
+1
+5
+je länger man im Kreis läuft
+setze d[v ] = d[u] + len(u; v )
+terminiert nicht
+∞
+−2
+0
+1
+−3
+Ohne negative Kreise
+in jeder Iteration wird die Gesamtsumme der d[v ] um mindestens 1 kleiner
+die Gesamtsumme der finalen Lösung ist von unten beschränkt (̸= −∞)
+also: Terminierung nach endlich vielen Iterationen
+Ziel im Folgenden
+beweise obere Schranke für die Anzahl Iterationen
+Erkennung negativer Kreise
+4
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Wie viele Iterationen sind nötig?
+Betrachte einen kürzesten st-Pfad
+Best-Case: wir relaxieren von vorne nach hinten
+sind nach einer Iteration schon fertig
+s
+
+3
+
+v1 −2 v2 1
+
+v3 2
+
+Algorithmus
+relaxiere jede Kante einmal
+iteriere, bis sich kein d[v ] ändert
+
+t
+Relaxierung der Kante (u; v )
+
+∞
+3
+
+0
+
+∞
+1
+
+∞
+2
+
+∞
+4
+
+3
+
+Problem: wir wissen vorher nicht, welche Reihenfolge gut ist
+Worst-Case: wir relaxieren von hinten nach vorne
+s
+0
+
+3
+
+v1 −2 v2 1
+
+v3 2
+
+t
+
+∞
+3
+
+∞
+2
+
+∞
+4
+
+∞
+1
+
+s
+0
+
+8
+
+3
+
+u
+
+2
+
+8
+
+5
+
+v
+
+wenn d[v ] > d[u] + len(u; v )
+setze d[v ] = d[u] + len(u; v )
+
+nach i Iterationen: korrekte Distanz bis vi
+kürzester st-Pfad besteht aus k Kanten ⇒ höchstens k Iterationen
+⇒ n − 1 Iterationen sollten ausreichen
+(werden wir im Folgenden noch formal beweisen)
+5
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Beweis: n − 1 Iterationen genügen
+Beobachtung
+Teilpfade kürzester Pfade sind kürzeste Pfade.
+
+kürzester sv -Pfad
+
+u
+
+s
+
+v
+
+kürzester su-Pfad kürzester uv -Pfad
+Begründung
+wenn es einen kürzeren su-Pfad gäbe
+dann wäre dieser zusammen mit dem uv -Pfad auch ein kürzerer sv -Pfad
+
+Achtung: Umkehrung gilt nicht
+kürzeste su- und uv -Pfade bilden zusammen nicht zwangsweise einen kürzesten sv -Pfad
+das gilt nur, wenn u auch auf dem kürzesten sv -Pfad liegt
+u
+4
+
+3
+s
+
+6
+
+Thomas Bläsius – Algorithmen 1
+
+5
+
+v
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Beweis: n − 1 Iterationen genügen
+Beobachtung
+Teilpfade kürzester Pfade sind kürzeste Pfade.
+
+kürzester sv -Pfad
+
+u
+
+s
+kürzester su-Pfad
+
+Lemma
+Wenn es einen kürzesten sv -Pfad gibt, der aus k Kanten
+besteht, dann gilt d[v ] = dist(s; v ) nach k Iterationen.
+
+v
+kürzester uv -Pfad
+
+Algorithmus
+relaxiere jede Kante einmal
+iteriere, bis sich kein d[v ] ändert
+
+Relaxierung der Kante (u; v )
+Beweis: Induktion über k
+3
+3
+k = 1: Kante (s; v ) ist kürzester Pfad ⇒ eine Iteration genügt
+u
+8
+s
+2
+5
+k > 1: betrachte Vorgänger u von v auf kürzestem sv -Pfad
+8
+0
+v
+es gibt kürzesten su-Pfad mit k − 1 Kanten
+wenn d[v ] > d[u] + len(u; v )
+I.V. ⇒ d[u] = dist(s; u) nach k − 1 Iterationen
+setze d[v ] = d[u] + len(u; v )
+Relaxierung von (u; v ) in kter Iteration setzt d[v ] = dist(s; v )
+
+6
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Beweis: n − 1 Iterationen genügen
+Beobachtung
+Teilpfade kürzester Pfade sind kürzeste Pfade.
+
+kürzester sv -Pfad
+
+u
+
+s
+kürzester su-Pfad
+
+kürzester uv -Pfad
+
+Lemma
+Wenn es einen kürzesten sv -Pfad gibt, der aus k Kanten
+besteht, dann gilt d[v ] = dist(s; v ) nach k Iterationen.
+
+Algorithmus
+relaxiere jede Kante einmal
+iteriere, bis sich kein d[v ] ändert
+
+Beachte
+kürzester Pfad hat höchstens n Knoten und n − 1 Kanten
+(vorausgesetzt, wir haben keine negativen Kreise)
+
+Relaxierung der Kante (u; v )
+3
+s
+0
+
+Theorem
+Wenn der Graph keine negativen Kreise hat, so gilt nach
+n − 1 Iterationen für alle Knoten v , dass d[v ] = dist(s; v ).
+6
+
+v
+
+Thomas Bläsius – Algorithmen 1
+
+8
+
+3
+
+u
+
+2
+
+8
+
+5
+
+v
+
+wenn d[v ] > d[u] + len(u; v )
+setze d[v ] = d[u] + len(u; v )
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Erkennung von negativen Kreisen
+Theorem
+Wenn der Graph keine negativen Kreise hat, so gilt nach n − 1 Iterationen für alle Knoten
+v , dass d[v ] = dist(s; v ).
+Situation: nach n − 1 Iterationen
+
+Algorithmus
+relaxiere jede Kante einmal
+iteriere, bis sich kein d[v ] ändert
+
+Wenn es keinen negativen Kreis gibt
+weitere Relaxierungen ändern nichts mehr
+für jede Kante (u; v ) ∈ E gilt: d[v ] ≤ d[u] + len(u; v )
+∞
+4
+Wenn es negativen Kreis gibt
+man kann immer kürzere Pfade finden
+5
+Relaxierungen haben weiterhin Effekt
+es gibt (u; v ) ∈ E mit: d[v ] > d[u] + len(u; v ) −2
+0
+
+Relaxierung der Kante (u; v )
+−4
+
+∞
+0
+
+s
+0
+
+1
+−3
+
+3
+
+∞
+1
+
+3
+
+u
+
+2
+
+8
+
+8
+
+5
+
+v
+
+wenn d[v ] > d[u] + len(u; v )
+setze d[v ] = d[u] + len(u; v )
+
+Test auf negativen Kreis: überprüfe ob d[v ] ≤ d[u] + len(u; v ) für alle (u; v ) ∈ E
+7
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Pseudocode und Laufzeit
+BellmanFord(Graph G; Node s)
+d := Array of size n initialized with ∞
+d[s] := 0
+for n − 1 iterations do
+for Edge (u; v ) ∈ E do
+if d[v ] > d[u] + len(u; v ) then
+d[v ] := d[u] + len(u; v )
+// test for negative cycle
+for Edge (u; v ) ∈ E do
+if d[v ] > d[u] + len(u; v ) then
+return negative cycle
+return d
+
+Laufzeit
+n mal über alle Kanten iterieren
+damit: Θ(n · m)
+Abbrechen, wenn alle d [v ] gleich bleiben
+in der Praxis sinnvoll
+hilft im Worst-Case nicht asymptotisch
+Geschickte Wahl der Kantenreihenfolge
+kann konstante Faktoren sparen
+hilft im Worst-Case nicht asymptotisch
+Weitere Anmerkungen zu Laufzeit
+kein asymptotisch besserer Algo bekannt
+sehr langsam verglichen mit Θ(n log n + m)
+(Dijkstras Algo für nicht-negative Kantenlängen)
+
+8
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ All Pair Shortest Path
+Problem: All-Pair Shortest Path (APSP)
+Gegen einen gerichteten Graphen G = (V; E) mit Kantenlängen len : E → Z. Berechne
+dist(s; t) für alle Knotenpaare s; t ∈ V .
+Anmerkungen
+Distanzmatrix als Ausgabe
+Ausgabe ist bereits quadratisch groß
+wir nehmen erstmal an, dass es keine
+negativen Kreise gibt
+Zwischenknoten
+Pfad ⟨v1 ; v2 ; : : : ; vk ⟩
+v1 ist Startknoten, vk Endknoten
+alle anderen sind Zwischenknoten
+9
+
+Thomas Bläsius – Algorithmen 1
+
+1
+A
+
+A 0
+
+5
+
+7
+
+8 10 9
+
+B 1
+
+0
+
+2
+
+3
+
+C 2
+
+7
+
+0 10 12 11
+
+D
+
+D 1
+
+6 −1 0
+
+2
+
+E −1 4 −3 7
+
+E
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+
+B
+
+5 3
+
+2
+C
+
+3
+
+6
+
+−3
+
+A
+Startknoten
+
+B
+
+F
+
+−1
+D
+
+E
+
+Zwischenknoten
+
+5
+
+2
+
+4
+
+1
+
+0 −1
+
+C
+Endknoten
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Eingeschränkte Menge an Zwischenknoten
+ohne Zwischenknoten
+
+1
+A
+
+B
+
+5 3
+
+2
+C
+
+6
+D
+
+3
+
+2
+
+−3
+
+E
+
+−1
+
+F
+
+Zwischenknoten: {A, B, C}
+
+Zwischenknoten: {A, B}
+
+A 0
+
+5 ∞ ∞ ∞ ∞
+
+A 0
+
+5 ∞ ∞ ∞ ∞
+
+A 0
+
+5 ∞ 8 ∞ ∞
+
+B 1
+
+0 ∞ 3 ∞ ∞
+
+B 1
+
+0 ∞ 3 ∞ ∞
+
+B 1
+
+0 ∞ 3 ∞ ∞
+
+C 2 ∞ 0 ∞ ∞ ∞
+
+C 2
+
+7
+
+0 ∞ ∞ ∞
+
+C 2
+
+7
+
+0 10 ∞ ∞
+
+D ∞ 6
+
+D ∞ 6
+
+2 ∞
+
+D 7
+
+6
+
+3
+
+3
+
+0
+
+2 ∞
+
+3
+
+0
+
+0
+
+2 ∞
+
+E ∞ ∞ −3 ∞ 0 −1
+
+E ∞ ∞ −3 ∞ 0 −1
+
+E ∞ ∞ −3 ∞ 0 −1
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+
+Zwischenknoten: {A, B, C, D}
+
+Zwischenknoten: {A, B, C, D, E}
+
+alle Zwischenknoten
+
+A 0
+
+5 ∞ 8 ∞ ∞
+
+A 0
+
+5 11 8 10 ∞
+
+A 0
+
+5
+
+7
+
+8 10 9
+
+A 0
+
+5
+
+7
+
+8 10 9
+
+B 1
+
+0 ∞ 3 ∞ ∞
+
+B 1
+
+0
+
+6
+
+5 ∞
+
+B 1
+
+0
+
+2
+
+3
+
+4
+
+B 1
+
+0
+
+2
+
+3
+
+C 2
+
+7
+
+0 10 ∞ ∞
+
+C 2
+
+7
+
+0 10 12 ∞
+
+C 2
+
+7
+
+0 10 12 11
+
+C 2
+
+7
+
+0 10 12 11
+
+D 5
+
+6
+
+3
+
+0
+
+2 ∞
+
+D 5
+
+6
+
+3
+
+0
+
+2 ∞
+
+D 1
+
+6 −1 0
+
+D 1
+
+6 −1 0
+
+E −1 4 −3 7
+
+0 −1
+
+E −1 4 −3 7
+
+0 −1
+
+E −1 4 −3 7
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+10
+
+Zwischenknoten: {A}
+
+Thomas Bläsius – Algorithmen 1
+
+3
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+
+5
+
+2
+
+1
+
+0 −1
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+
+E −1 4 −3 7
+
+5
+
+2
+
+4
+
+1
+
+0 −1
+
+F ∞ ∞ ∞ ∞ ∞ 0
+A B C D E F
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Umsetzung als Algorithmus
+Teillösungen für die Distanzen
+ordne Knotenmenge V = {v1 ; : : : ; vn }
+Di : Distanzmatrix bezüglich Zwischenknoten aus Vi = {v1 ; : : : ; vi } → Endergebnis Dn
+Di [u][v ]: Länge eines kürzesten uv -Pfads der nur Zwischenknoten aus Vi verwendet
+u
+Algorithmus von Floyd und Warshall
+Di−1 v
+D0 ist leicht zu berechnen: quasi die Adjazenzmatrix
+vi
+berechne iterativ Di aus Di−1
+u v vi
+u
+v
+vi ist neuer erlaubter Zwischenknoten
+Fall 1: kürzester uv -Pfad enthält vi
+u
+⇒ Di [u][v ] = Di−1 [u][vi ] + Di−1 [vi ][v ]
+vi
+Di v
+vi
+Fall 2: kürzester uv -Pfad enthält vi nicht
+u v vi
+⇒ Di [u][v ] = Di−1 [u][v ]
+Entscheidung für den richtigen Fall: teste ob Di−1 [u][vi ] + Di−1 [vi ][v ] < Di−1 [u][v ]
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Anmerkungen und Pseudocode
+Beachte
+Korrektheit folgt direkt induktiv
+(mit der Fallunterscheidung der vorherigen Folie)
+
+Änderungen in Iteration i machen
+für diese Iteration nichts kaputt
+→ eine Matrix für alle Di genügt
+Betrachtung aller Paare: für u = v ,
+u = vi oder vi = v passiert nichts
+(Ausnahme: es gibt negativen Kreis → stellt man so fest)
+
+Laufzeit
+n Iterationen
+n2 Knotenpaare pro Iteration
+Θ(n3 )
+12
+
+Thomas Bläsius – Algorithmen 1
+
+FloydWarshall(Graph G)
+D := n × n Matrix initialized with ∞
+for (u; v ) ∈ E do D[u][v ] := len(u; v )
+for v ∈ V do D[v ][v ] := 0
+for i := 1; : : : ; n do
+// compute Di from Di−1
+for all pairs of nodes (u; v ) ∈ V × V do
+D[u][v ] := min(D[u][v ]; D[u][vi ] + D[vi ][v ])
+return D
+u
+
+v
+
+vi
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Dynamische Programmierung (DP)
+Algorithmische Technik
+definiere Teillösungen
+Berechnung größerer aus kleinen Teillösungen
+Wiederverwendung berechneter Teillösungen
+Anmerkung
+Berechnung ist meist eine Rekurrenz
+Korrektheit folgt meist induktiv
+rekursive Umsetzung: sehr teuer (meist exponentiell), da keine Wiederverwendung von Teillösungen
+
+Beispiel: Floyd-Warshall
+Di [u][v ]: Distanz bzgl. Zwischenknoten
+aus Vi = {v1 ; : : : ; vi }
+Di [u][v ] = min(Di−1 [u][v ];
+Di−1 [u][vi ] + Di−1 [vi ][v ])
+Di [u][w ] = min(Di−1 [u][w ];
+Di−1 [u][vi ]+Di−1 [vi ][w ])
+u
+
+v
+w
+
+vi
+
+Hauptschwierigkeit: Definition geeigneter Teillösungen
+Welche Infos sind essentiell für eine Teillösung?
+Xi aus Xi−1 berechnen ist schwierig, aber es geht, wenn ich zusätzlich Yi−1 kenne
+jetzt muss ich aber auch Yi berechnen (aus Xi−1 und Yi−1 )
+13
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Dynamische Programmierung (DP) – Hinweise
+Vergleich mit Teile und Herrsche
+(typischerweise disjunkte Teilprobleme)
+ähnlich: auch hier werden Teillösungen kombiniert
+(Teilprobleme nicht disjunkt)
+Besonderheit beim DP: Wiederverwendung von Teilergebnissen
+Häufiger Fehler: Fokus auf Rekurrenz statt Definition von Teillösungen
+Knackpunkt: geeignete Definition der Teillösungen
+Aufschrieb eines DP: sollte immer mit Definition der Teillösungen beginnen
+Rekurrenz ist dann oft mehr oder weniger offensichtlich
+Teillösungen iterativ aufbauen
+meist wird irgendetwas Schritt für Schritt vergrößert
+Floyd-Warshall: Menge der Zwischenknoten Vi
+(so, wie man von einer Induktion über i spricht)
+Sprechweise: DP über Menge der Zwischenknoten
+Mentaler Shortcut: Wenn man mit DPs vertraut ist, dann kommt das
+einer vollständigen Beschreibung des Floyd–Warshall Algos gleich.
+14
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ SSSP, APSP, DP
+SSSP mit negativen Kanten
+Bellman–Ford: Θ(nm)
+Erkennung negativer Kreise
+ist im Prinzip ein DP über die Anzahl Kanten auf dem kürzesten Weg
+APSP
+Floyd–Warshall: Θ(n3 )
+DP über die Menge der Zwischenknoten Vi = {v1 ; : : : ; vi }
+Dynamsiche Programmierung (DP)
+wichtige algorithmische Technik
+wir werden später noch weitere DPs kennenlernen
+
+15
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Ausblick: APSP – Geht es besser als Θ(n 3 )?
+(Möglicherweise) bessere Algorithmen
+n mal Dijkstra → Θ(n2 log n + nm)
+Pettie, Ramachandran: Θ(nm log ¸(m; n))
+
+Beachte
+m ∈ O(n2 )
+
+nicht-negative Kantenlängen
+
+dünne Graphen: m ≪ n2
+
+(¸(m; n): sehr langsam wachsende inverse Ackermannfunktion)
+
+Thorup: Θ(nm)
+3
+
+√
+Ω( log n)
+
+Williams: n =2
+
+natürliche Kantenlängen
+
+Johnson: Bellman–Ford + Längenanpassung + n Mal Dijkstra → Θ(n2 log n + nm)
+(Stichwort: Fine-Grained Complexity)
+substantiell besser als n3 bzw. nm geht vermutlich nicht
+Warum lernen wir hier nur den langsamen Floyd-Warshall kennen?
+schön einfach
+Algorithmus der Wahl für dichte Graphen
+algorithmische Technik: dynamische Programmierung
+16
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 

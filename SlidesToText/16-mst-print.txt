@@ -1,0 +1,401 @@
+Algorithmen 1
+Minimale Spannbäume
+
+1 – Die Forschungsuniversität in der Helmholtz-Gemeinschaft
+KIT
+
+www.kit.edu
+
+ Problemstellung MST
+Definition
+Sei G = (V; E) ein Graph. Ein Baum auf der selben Knotenmenge T = (V; ET ) mit ET ⊆ E heißt Spannbaum von G.
+Problem: Minimaler Spannbaum (MST)
+Sei G = (V; E) ein Graph mit Kantengewichten w : E → Z. Finde einen Spannbaum
+T = (V; ET ), sodass die Summe der Gewichte in ET minimal ist.
+Vereinfachende Annahme
+eindeutige Gewichte, also w (e1 ) ̸= w (e2 ) wenn e1 ̸= e2
+kein echter Unterschied, vereinfacht aber ein paar Dinge
+
+2
+1
+
+4
+
+6
+
+7
+
+Plan im Folgenden
+gewinne ein paar strukturelle Einsichten über MSTs
+leite daraus zwei Algorithmen ab
+2
+
+Thomas Bläsius – Algorithmen 1
+
+5
+
+3
+8
+
+9
+
+Gewicht: 1 + 2 + 4 + 5 + 8 = 20
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Grundsätzliche Anmerkungen zu Bäumen und Schnitten
+Bäume sind charakterisiert durch
+sie sind kreisfrei
+je zwei der Eigenschaften
+sie sind zusammenhängend
+implizieren die dritte
+sie haben n − 1 Kanten
+Definition
+Sei G = (V; E) ein Graph. Ein Schnitt ist eine Zerlegung von V in zwei nicht-leere Teilmengen S und V \ S. Eine Kante zwischen einem Knoten aus S und einem aus V \ S
+heißt Schnittkante.
+S
+
+3
+
+Thomas Bläsius – Algorithmen 1
+
+V \S
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Beweisbar essentielle Kanten
+Idee
+zeige, dass gewissen Kanten in jedem MST enthalten sind
+finde iterativ solche Kanten und wähle sie aus
+nach n − 1 Schritten bilden die n − 1 gewählten Kanten den MST
+Kurz vorm Ziel: Welche Kante ist essentiell?
+Annahme: bereits n − 2 Kanten gewählt (grün)
+die zwei Teilbäume induzieren einen Schnitt
+Auswahl der letzten Kante (Schritt n − 1):
+wir müssen eine Schnittkante wählen
+jede Schnittkante liefert einen Baum
+⇒ minimale Schnittkante muss gewählt werden
+
+7
+6
+2
+3
+
+5
+
+8
+4
+
+(Erinnerung: wir nehmen an, dass das Minimum eindeutig ist)
+Lemma
+Für jeden Schnitt gilt, dass die minimale Schnittkante in jedem MST enthalten ist.
+4
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Minimale Schnittkanten
+(Erinnerung: wir nehmen an, dass das Minimum eindeutig ist)
+Lemma
+Für jeden Schnitt gilt, dass die minimale Schnittkante in jedem MST enthalten ist.
+
+u
+
+Beweis
+betrachte Schnitt mit minimaler Schnittkante {u; v }
+betrachte einen Spannbaum T ohne {u; v }
+
+v
+
+Ziel: zeige, dass T kein MST ist
+betrachte eindeutigen Pfad von u nach v in T
+mindestens eine der Pfadkanten {x; y } ist auch eine Schnittkante
+neuer Teilgraph T ′ : lösche {x; y } und füge {u; v } zu T hinzu
+Beobachtung
+T ′ ist ein Baum (kreisfrei, n − 1 Kanten)
+T ′ hat kleineres Gewicht als T (w ({u; v }) < w ({x; y }))
+5
+
+Thomas Bläsius – Algorithmen 1
+
+x
+y
+
+⇒ T ist kein MST
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ pwa.klicker.uzh.ch/join/algo1
+
+Strukturelle Einsicht → Algorithmus von Prim
+Idee
+zeige, dass gewisse Kanten in jedem MST enthalten sind
+finde iterativ solche Kanten und wähle sie aus
+nach n − 1 Schritten bilden die n − 1 gewählten Kanten den MST
+Finde essentielle Kanten
+betrachte Schnitt zwischen abgearbeiteten und nicht-abgearbeiteten Knoten
+starte mit einem abgearbeiteten Knoten
+pro Schritt: markiere Endpunkt der hinzugefügten Kante als abgearbeitet
+3
+
+5
+2
+
+2
+
+6
+
+2
+
+6
+3
+
+4
+6
+
+6
+
+5
+
+7
+
+4
+
+4
+
+Welche Laufzeit hat der Algorithmus?
+
+Thomas Bläsius – Algorithmen 1
+
+6
+5
+4
+6
+
+abgearbeitet
+nicht-abgearbeitet
+
+Lemma
+Für jeden Schnitt gilt, dass die minimale
+Schnittkante in jedem MST enthalten ist.
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Algorithmus von Prim – Effiziente Umsetzung
+Was müssen wir in jedem der n − 1 Schritte tun?
+(z.B. binärer Heap: Θ(log n) pro Operation)
+bestimme Schnittkante mit minimalem Gewicht Prioritätswarteschlange (Heap)
+naive Lösung: jede Kante einmal anschauen
+push(x; p)
+Element x mit Priorität p einfügen
+popMin()
+→ Θ(m) → insgesamt Θ(n · m)
+Element mit minimaler Priorität extrahieren
+decPrio(a; p)
+Priorität von Knoten a auf p verkleinern
+Idee: benutze eine Priority-Queue
+C++: priority_queue
+
+Java: PriorityQueue
+
+(Prioritätsänderungen muss man sich ggf. selbst bauen: Lazy Evaluation)
+
+abgearbeitet
+nicht-abgearbeitet
+5
+2
+
+4
+
+4
+3
+
+3
+7
+
+6
+
+2
+
+4
+
+4
+6
+
+Eine mögliche Umsetzung mit Priority-Queue Q
+Ziel für den Zustand von Q zu jedem Zeitpunkt
+5
+∞
+3
+3
+Q enthält die noch nicht abgearbeiteten Knoten
+Priorität: minimale Kante zu abgearbeiteten Knoten
+2 5
+7
+6
+pro Schritt: abarbeiten von u = Q:popMin()
+5
+6
+betrachte jeden Nachbarn v ∈ N(u) von u
+∞
+7
+4 2
+verringere ggf. die Priorität von v zu w ({u; v })
+∞
+6
+
+∞
+6
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Algorithmus von Prim – Laufzeit & Anmerkungen
+Eine mögliche Umsetzung mit Priority-Queue Q
+pro Schritt: abarbeiten von u = Q:popMin()
+betrachte jeden Nachbarn v ∈ N(u) von u
+verringere ggf. die Priorität von v zu w ({u; v })
+Initialisierung: jeden Knoten in Q einfügen
+
+Θ(n) mal popMin
+Θ(m) mal decPrio
+Θ(n) mal push
+
+⇒ Θ((n + m) · log n) mit einem binären und Θ(n log n + m) mit einem Fibonacci Heap
+Anmerkung – Vergleich zu Dijkstra
+der Algorithmus hat sehr große Ähnlichkeit zu Dijkstras Algorithmus (kürzeste Wege)
+nur die Prioritäten werden leicht anders aktualisiert
+Anmerkung – Greedy-Algorithmus
+wir wählen in jedem Schritt die minimale Kante, die den bisherigen Teilbaum vergrößert
+wir nennen ein solches Vorgehen auch Greedy-Algorithmus (gieriger Algorithmus)
+8
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Evaluation
+
+https://onlineumfrage.kit.edu/evasys/online/online.php?p=A5Q8D
+9
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Alternative Greedy-Strategie: Kruskal
+Greedy Auswahl
+wähle in jedem Schritt minimale Kante
+Prim: unter allen Kanten, die den bisherigen Teilbaum vergrößern
+Kruskal: unter allen Kanten, die keinen Kreis mit schon gewählten Kanten bilden
+u
+2
+
+v
+
+5
+
+2
+
+6
+
+2
+
+6
+3
+
+5
+
+7
+
+4
+
+4
+
+3
+
+4
+6
+
+6
+5
+4
+6
+
+Lemma
+Für jeden Schnitt gilt, dass die minimale
+Schnittkante in jedem MST enthalten ist.
+10
+
+Thomas Bläsius – Algorithmen 1
+
+Korrektheit
+sei {u; v } kleinste Kante, die keinen Kreis schließt
+beobachte: es gibt einen Schnitt sodass
+{u; v } ist Schnittkante
+keine Schnittkante ist schon gewählt
+beobachte: Schnittkanten schließen keinen Kreis
+daher: {u; v } ist minimale Schnittkante
+Korrektheit folgt aus dem Lemma
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Algorithmus von Kruskal: Umsetzung
+Greedy Auswahl
+wähle in jedem Schritt minimale Kante
+unter allen Kanten, die keinen Kreis mit schon gewählten Kanten bilden
+Algorithmische Umsetzung
+sortiere Kanten aufsteigend und iteriere über sie
+zwei Optionen für jede so betrachtete Kante {u; v }:
+{u; v } schließt Kreis → {u; v } überspringen
+{u; v } schließt keinen Kreis → {u; v } auswählen
+
+u
+
+v
+
+v
+
+u
+überspringen
+
+u
+
+v
+
+u
+
+v
+
+auswählen
+
+Wie testen wir schnell, ob {u; v } Kreis schließt?
+{u; v } schließt Kreis ⇔ u und v liegen bzgl. gewählter Kanten in der selben Komponente
+jedes Mal BFS oder DFS ist zu teuer (Θ(m))
+nächstes Mal: Datenstruktur zur effizienten Verwaltung der Komponenten
+11
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ Minimale Spannbäume und Greedy Algorithmen
+Greedy Algorithmen im Allgemeinen
+Vorgehen: triff iterativ Entscheidungen, die in dem Moment am besten aussehen
+oft nicht optimal (und ggf. sehr schlecht im Worst Case), aber gute Heuristik für die Praxis
+wenn optimal: Beweis mittels Austauschargument
+(für jede Lösung ohne das greedy gewählte Element gibt es eine mindestens genauso gute mit dem Element)
+
+mehr Theorie dazu: sucht mal nach dem Stichwort Matroid
+Minimaler Spannbaum (MST)
+zwei Greedy-Varianten, die optimale Lösung liefern (Prim, Kruskal)
+tatsächlich funktioniert fast jegliche Greedy-Variante korrekt
+(z.B. lösche iterativ die größte Kante auf einem Kreis)
+effiziente Implementierung von Prim: Priority-Queue
+effiziente Implementierung von Kruskal: Union-Find (nächstes Mal)
+
+12
+
+Thomas Bläsius – Algorithmen 1
+
+Institut für Theoretische Informatik, Skalierbare Algorithmen
+
+ 
