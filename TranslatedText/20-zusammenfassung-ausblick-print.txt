@@ -1,1 +1,39 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Lecture 20
+Average-Case Analysis, Summary & Outlook
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Why is everything so heavy?
+The world needs efficient algorithms
+Basic functions describing running times
+√
+√
+2
+3
+1 log n log n
+n
+n n n log n n² n³ n^{log n}
+
+√
+
+2
+
+n
+
+n
+
+2
+
+n
+
+3
+
+n
+
+4
+
+n!

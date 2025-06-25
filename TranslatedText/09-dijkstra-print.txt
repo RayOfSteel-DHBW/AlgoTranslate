@@ -1,1 +1,39 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Shortest Paths in Weighted Graphs – Dijkstra's Algorithm
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Problem statement
+Given
+A graph G = (V, E) (undirected or directed)
+A weight function len : E → Z that assigns each edge e ∈ E a length len(e)
+Start vertex s
+Path lengths and distances
+Length of a path ⟨v0, …, vk⟩:
+
+2
+7
+
+s
+6
+
+2
+
+1
+
+5
+
+3
+
+1
+1
+3
+2
+
+k
+P
+
+len(v_{i−1}, v_i)

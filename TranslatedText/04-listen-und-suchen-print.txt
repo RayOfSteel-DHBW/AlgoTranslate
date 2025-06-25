@@ -1,1 +1,40 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Lists and Binary Search
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Review: Two Ways of Storing Data
+Index: 0 1 2 3 4 5 6 7 8 9 10 11
+Arrays
+Address: 30 31 32 33 34 35 36 37 38 39 40 41
+A sequence of consecutive memory cells
+Data: 4 48 89 1 0 9 13 7 32 76 17 5
+Access by address or index anywhere in Θ(1)
+Very close to the hardware
+Last time: convenience functions for dynamic growth
+3 4 5
+Pointer-based structures
+17 18 19
+4 48 17
+Many small memory pieces (nodes)
+42 ⊥ ⊥
+A node stores:
+48 49 50
+Data we actually care about
+7 23 17
+Memory addresses of other nodes (pointers)
+Access by navigating along pointers
+23 24 25
+15 ⊥ ⊥
+More abstracted from the hardware
+Today: lists as a simple example
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Informatics, Scalable Algorithms
+
+Doubly linked list

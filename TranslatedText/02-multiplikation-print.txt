@@ -1,1 +1,39 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Divide and Conquer
+Karatsuba's Algorithm and the Master Theorem
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Multiplication: Idea → Code
+How does that work again?
+a
+b
+5678 · 1234
+5678
+113
+15
+16
+17
+20
+23
+24
++
+223
+73
+12
+7006652
+
+Compute a · bi for each digit bi of b = (bn−1 … b0)
+Shift the result i positions to the left
+Add up all results
+High level of abstraction
+Easy to understand
+Hard to implement
+2
+
+Thomas Bläsius – Algorithms 1
+
+Refinement via pseudocode

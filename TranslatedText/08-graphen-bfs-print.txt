@@ -1,1 +1,40 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Graphs and Breadth-First Search
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Graphs: Basic Terms
+Vertices & edges
+Vertex
+
+Neighborhood
+v
+
+Edge
+
+Neighborhood N(v)
+
+Graph G = (V, E)
+|V| = n, |E| = m
+Simple graphs
+no loops
+no multiple edges
+
+Vertex degree
+1
+3
+6
+
+Components
+
+Directed graphs
+undirected
+e
+u
+v
+e = {u, v}
+
+directed

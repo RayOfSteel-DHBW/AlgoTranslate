@@ -1,1 +1,39 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Generic Optimization Methods
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Example: Balanced and Cheap
+Problem
+Burgers do not meet the official nutrition guidelines
+per serving we are missing 0.5 mg vitamin A, 15 mg vitamin C, 4 g fiber
+Goal: remedy this problem at minimal cost
+Pickles
+
+Carrots
+
+Cabbage
+
+Vitamin A (mg/kg)
+
+35
+
+0.5
+
+0.5
+
+Vitamin C (mg/kg)
+
+60
+
+300
+
+10
+
+Fiber (g/kg)
+
+30
+0.75

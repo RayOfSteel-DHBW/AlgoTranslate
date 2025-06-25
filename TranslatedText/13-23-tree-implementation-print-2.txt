@@ -1,1 +1,40 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+(2,3)-Trees – Implementation
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Last time
+Search tree for managing sorted sequences
+Pointer-based structure → good for insert/delete
+Tree structure → simulates binary search
+(2,3)-tree
+Almost binary: each internal node has 2 or 3 children
+Balanced: every leaf has the same depth
+Maintaining the structure when inserting and deleting
+Insertion may create nodes with 4 children → split
+Deletion may create nodes with only 1 child
+→ merge or rebalance
+Moves the problem step by step upward
+O(log n) height → O(log n) running time
+2
+
+Thomas Bläsius – Algorithms 1
+
+5
+1
+
+9
+
+0
+0
+
+4
+1
+
+4
+
+7
+5

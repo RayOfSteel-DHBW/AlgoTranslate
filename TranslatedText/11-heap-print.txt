@@ -1,1 +1,40 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Priority Queue: Binary Heap
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Recall: Priority Queue for Dijkstra
+Dijkstra's algorithm (computing shortest paths)
+Each step: find unexplored vertex with smallest currently known distance
+Desired data structure: priority queue
+push(v, 7): insert v with priority 7
+popMin(): extract element with smallest priority
+decPrio(v, 4): decrease priority of v to 4
+Note
+Priority is often also called key
+Other common names for the operations: insert, extractMin, decreaseKey
+Goal for today
+Develop a data structure supporting these operations
+Each operation should be fast (O(log n))
+First: only push and popMin
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Informatics, Scalable Algorithms
+
+Reminder and note: pointer-based structures
+3 4 5
+4 48 17
+
+Pointer-based structures
+Many small pieces of memory (nodes)
+A node stores:
+Data we actually care about
+Addresses of other nodes (pointers)
+Access by navigating along pointers
+Today: binary tree
+Each node stores:

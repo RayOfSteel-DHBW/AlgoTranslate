@@ -1,1 +1,39 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Sorting: Bucket Sort, Radix Sort, Word RAM
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Overview
+Last time we saw
+Sorting algorithms with running time O(n log n) (Mergesort, Quicksort)
+We only need to be able to compare elements and know nothing else about them
+Comparison-based → algorithms are universally applicable
+Lower bound: any comparison-based sorting algorithm needs Ω(n log n) comparisons
+Plan for today
+Sorting numbers in O(n): Bucket Sort, Radix Sort
+under certain assumptions about the size of the numbers
+
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Informatics, Scalable Algorithms
+
+Bucket Sort
+Theorem
+Any comparison-based sorting algorithm needs Ω(n log n) comparisons to sort a sequence of n elements.
+What can we do with numbers?
+Compare → doesn't help here
+Address array cells → we can use that
+Bucket Sort
+to sort: n numbers from [0; m)
+Create buckets: array B of size m
+For each number x: store x in B[x]
+Read off the sorted sequence from B
+
+Running time
+Θ(m)
+Θ(n)

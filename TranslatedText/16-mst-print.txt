@@ -1,1 +1,39 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Minimum Spanning Trees
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Problem statement MST
+Definition
+Let G = (V, E) be a graph. A tree on the same vertex set T = (V, E_T) with E_T ⊆ E is called a spanning tree of G.
+Problem: Minimum Spanning Tree (MST)
+Given a graph G = (V, E) with edge weights w : E → Z. Find a spanning tree T = (V, E_T) such that the sum of the weights in E_T is minimal.
+Simplifying assumption
+Unique weights, i.e., w(e1) ≠ w(e2) when e1 ≠ e2
+No real difference, but it simplifies some things
+
+2
+1
+
+4
+
+6
+
+7
+
+Plan in the following
+Gain some structural insights about MSTs
+Deduce two algorithms from them
+2
+
+Thomas Bläsius – Algorithms 1
+
+5
+
+3
+8
+
+9

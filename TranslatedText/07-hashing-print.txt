@@ -1,1 +1,40 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Hashing
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Phone Directory
+Scenario
+Key
+Value
+Given: pairs of (phone number; name)
+Goal: answer queries of the form
+Who owns the number 0721 1234567?
+Solution 1: sort and search
+Preprocessing: sort by key → O(n log n)
+Query: binary search → O(log n)
+Problem: updates (insert/delete) are expensive
+
+Number
+0721 3453180
+0721 7968745
+0721 7652872
+0721 1234567
+0721 2738459
+
+Name
+Peter Arbeitsloser
+Martyn Vorstand
+Henryk Engineer
+Kiki Unknown
+The Old Man
+
+Characters from: Qualityland, Marc-Uwe Kling
+
+Reminder
+Arrays
+fast searching
+slow insertion and deletion

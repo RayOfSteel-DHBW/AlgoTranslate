@@ -1,1 +1,38 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Union-Find
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Motivation: Union–Find
+Last lecture: Kruskal's algorithm
+In each step choose the minimum edge among all edges that do not form a cycle with already chosen edges
+u
+
+v
+
+skip
+What do we want to achieve?
+Quickly test whether {u, v} closes a cycle
+Equivalent: u and v lie in the same component
+Inserting an edge merges two components
+v
+u
+select
+Desired operations
+union(u, v): merge the components of u and v
+find(v): component* of v
+Test whether u and v are in the same component: find(u) = find(v)
+
+v
+
+u
+
+u
+
+v
+
+*Implementation: choose a unique representative for each component and return that
+2

@@ -1,1 +1,38 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Sorting: Mergesort, Quicksort, Lower Bounds
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Note: Lower bounds on running time
+The algorithm requires Ω(n²) steps – what does that mean?
+Interpretation 1: on every input the running time is at least quadratic
+Interpretation 2: there exist inputs for which the running time is at least quadratic
+What applies in this lecture?
+Unless explicitly stated, we always talk about the worst case
+So: Interpretation 2
+Why do we do it like that?
+Interpretation 1 looks at the best case – rarely relevant
+Interpretation 2 is useful in various situations:
+"every algorithm needs time Ω(n²)" → there is no sub-quadratic algorithm
+"a specific algorithm has time Ω(n²) and O(n³)" → in the worst case its running time is between quadratic and cubic
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Informatics, Scalable Algorithms
+
+Sorting
+7
+
+48 1
+9 82 4
+
+13
+5
+17 0 89
+76 28 32 63
+
+37

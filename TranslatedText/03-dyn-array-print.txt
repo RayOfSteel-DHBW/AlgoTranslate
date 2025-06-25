@@ -1,1 +1,40 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Dynamic Arrays & Amortized Analysis
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Data Structures
+What are they?
+Algorithm: sequence of steps. Each step ...
+reads (a few) data items from memory
+processes the read data
+writes data back to memory
+Access to memory via addresses
+Data structure: an abstraction layer above memory
+hides how data are stored in memory
+provides an interface with convenient operations
+
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Informatics, Scalable Algorithms
+
+Two Ways of Storing Data
+Arrays
+A sequence of contiguous memory cells
+Access via address/index anywhere in Θ(1)
+Very close to the hardware
+Today: convenience functions
+Pointer-Based Structures
+Many small pieces of memory (nodes)
+A node stores:
+data that actually interests us
+addresses of other nodes (pointers)
+Access by navigating through pointers
+More abstracted from the hardware
+Next time: lists as a simple example
+3

@@ -1,1 +1,40 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Shortest Paths: Negative Edges and APSP
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Shortest paths with negative edge lengths
+Problem: Single-Source Shortest Path (SSSP)
+Given a directed graph G = (V, E), edge lengths len : E → Z and s ∈ V,
+compute dist(s, t) for all t ∈ V.
+Negative cycles
+A path may go around a cycle multiple times
+Arbitrarily small length possible (distances −∞?)
+
+2
+
+3
+
+1
+
+2
+
+s
+−1
+
+−5
+3
+
+2
+
+Option 1
+Allow only simple paths that do not visit vertices multiple times
+Hamilton path problem as a special case
+(probably no polynomial-time algorithm, see TGI next semester)
+
+Option 2
+Detect negative cycles
+Abort when a negative cycle is found

@@ -1,1 +1,39 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Dynamic Programming
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+Fibonacci numbers
+Definition: F(1) = F(2) = 1; F(n) = F(n − 1) + F(n − 2) for n ≥ 3
+Fib(Number n)
+F := array of size n + 1
+F[1] := 1
+F[2] := 1
+for i in {3, …, n} do
+  F[i] := F[i − 1] + F[i − 2]
+return F[n]
+
+F(Number n)
+if n = 1 or n = 2 then
+  return 1
+return F(n − 1) + F(n − 2)
+Recursion tree:
+
+Running time
+iterative: Θ(n)
+√
+1 + √5
+n
+recursive: Θ(φ^n) with φ = (1 + √5)/2 ≈ 1.6181
+Thomas Bläsius – Algorithms 1
+
+F(6)
+
+F(5)
+F(4)
+F(3)
+
+2

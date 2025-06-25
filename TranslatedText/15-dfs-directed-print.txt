@@ -1,1 +1,40 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Depth-First Search on Directed Graphs
+Topological Ordering
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+In which order should I get dressed?
+Respect dependencies!
+
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Informatics, Scalable Algorithms
+
+Topological ordering
+Definition
+Let G = (V, E) be a directed graph. A topological ordering is a total order of the vertices V such that every edge points from a smaller to a larger vertex.
+
+3
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Informatics, Scalable Algorithms
+
+Topological ordering
+Definition
+Let G = (V, E) be a directed graph. A topological ordering is a total order of the vertices V such that every edge points from a smaller to a larger vertex.
+a
+b
+
+c
+e
+
+d
+
+Counting orders

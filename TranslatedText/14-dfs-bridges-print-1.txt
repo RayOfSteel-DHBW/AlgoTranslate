@@ -1,1 +1,37 @@
-[Translation unavailable due to environment limitations]
+Algorithms 1
+Depth-First Search: Finding Bridges
+
+1 – The Research University in the Helmholtz Association
+KIT
+
+www.kit.edu
+
+How do I become a GBI tutor?
+Motivation to pass on your experience to next year's first-year students
+Hold tutorials and grade exercises
+Slides from previous tutorials and sample solutions are provided
+Payment: 5 months, 40 hours each, €13.25/hour
+
+Send an email by the end of the week (28.6.) to
+philipp.kern@kit.edu
+
+2
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Informatics, Scalable Algorithms
+
+Bridges in Graphs
+Definition
+Let G = (V, E) be a graph. An edge e = {u, v} ∈ E is called a bridge if u and v lie in different connected components of G − e.
+Bridge
+
+Bridge
+
+Goal today
+find all bridges
+get to know depth-first search (DFS) better along the way
+
+Why do we care about bridges?
+Interesting graph-theoretic structure → minimal cuts
+splits the graph into several components → good for divide and conquer

@@ -1,6 +1,6 @@
 Algorithms 1
 Introduction
-Long Multiplication and Landau Notation
+Written Multiplication and Landau Notation
 
 1 – The Research University in the Helmholtz Association
 KIT
@@ -8,14 +8,112 @@ KIT
 www.kit.edu
 
 Agenda
-Generally speaking, you can find more details on the course homepage
+Generally speaking, more details are also available on the course webpage
 https://scale.iti.kit.edu/teaching/2024ss/algo1/start
 
 2
 
 Schedule
-two sessions per week
-exercise session every other week (usually Wednesdays)
-additional weekly tutorials
+Two meetings per week
+Exercise session every other week (usually Wednesday)
+plus weekly tutorials
 
-[Translation truncated due to environment limitations]
+Materials
+On the webpage
+Lecture recordings on Ilias
+
+Exercise Sheets & Tutorials
+Exercise sheets every Wednesday
+Submit in teams of two
+Very important for learning success
+Exam bonus
+Sign up by Friday noon
+
+Exercise Session
+Run by Marcus, Wendy and Jean-Pierre
+Deepens the material from the lecture
+More on this next Wednesday
+
+Thomas Bläsius – Algorithms 1
+
+Questions → Discord (link in Ilias)
+Institute for Theoretical Informatics, Scalable Algorithms
+
+pwa.klicker.uzh.ch/join/algo1
+
+Technical test
+How formal should it be?
+
+3
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Informatics, Scalable Algorithms
+
+"Algorithm"? Can you eat that?
+al-Khwarizmi
+Persian mathematician and astronomer
+lived around 780–840 in Baghdad
+Latinized name: Algorismi
+Origin of the term "algorithm"
+Modern definition (Wikipedia)
+An algorithm is a clear set of instructions for solving a problem or a class of problems.
+Algorithms consist of a finite number of well-defined steps.
+They can be implemented as computer programs or formulated in
+natural language.
+When solving a problem, specific input is transformed into specific output.
+
+4
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Informatics, Scalable Algorithms
+
+What are we learning here?
+Know, understand, apply
+Vocabulary of technical terms
+Algorithmic building blocks
+Algorithmic techniques
+
+What is amortized analysis?
+What does divide and conquer do?
+
+What is a recurrence and how do you solve it?
+What is a heap? What is a search tree? What can I do with them?
+What is dynamic programming?
+
+What is a greedy algorithm?
+
+Is the algorithm fast enough?
+Analyze, evaluate, create
+Running-time analysis
+How can I solve a given problem efficiently?
+Developing your own algorithms
+Which data structure should I use?
+Choosing appropriate techniques and building blocks – which algorithmic idea could work?
+Switch between levels of abstraction
+Is my idea actually implementable?
+Developing mental shortcuts
+Is my algorithm correct?
+
+5
+
+Thomas Bläsius – Algorithms 1
+
+Institute for Theoretical Informatics, Scalable Algorithms
+
+Abstraction level? Mental shortcuts?
+high
+
+natural language / pictures
+high-level idea
+intuitive arguments
+
+more formal
+proof
+
+pseudocode
+
+programming language
+low
+6
